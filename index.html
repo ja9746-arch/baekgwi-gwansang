@@ -127,7 +127,9 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .agewrap b i{font-style:normal;font-size:14px;color:var(--jae-dim);margin-left:3px}
 
 /* 거울 */
-.mirror{position:relative;width:min(92vw,420px);margin:4px auto 0;aspect-ratio:1/1}
+.mirror{position:relative;left:50%;transform:translateX(-50%);
+  width:min(116vw,560px);max-width:none;margin:0 auto;aspect-ratio:1/1}
+@media (min-width:600px){.mirror{width:min(92%,560px)}}
 .mirror .frame{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
   filter:drop-shadow(0 10px 30px rgba(0,0,0,.75))}
 .mirror::after{content:"";position:absolute;inset:-1px;z-index:4;pointer-events:none;
@@ -157,7 +159,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .order b{color:var(--geum-hot);font-weight:400}
 
 /* 얼굴 판 */
-.facewrap{position:relative;width:min(86vw,360px);margin:0 auto;aspect-ratio:398/347;
+.facewrap{position:relative;width:min(94%,420px);margin:0 auto;aspect-ratio:694/604;
   border-radius:50%;overflow:hidden;border:1px solid rgba(201,162,74,.4);
   box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 40px rgba(0,0,0,.6)}
 .facewrap .ph{position:absolute;left:50%;top:50%;transform-origin:center;max-width:none}
@@ -351,7 +353,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
   </div>
   <div class="order" id="order">사진을 올리면 법사가 자세를 잡아줍니다.</div>
   <div class="zoom" id="zoomRow" hidden>
-    <span>작게</span><input type="range" id="zoom" min="55" max="260" value="110" aria-label="크기"><span>크게</span>
+    <span>작게</span><input type="range" id="zoom" min="100" max="260" value="112" aria-label="크기"><span>크게</span>
   </div>
   <input type="file" id="fileCam" accept="image/*" capture="user" hidden>
   <input type="file" id="filePick" accept="image/*" hidden>
@@ -742,7 +744,7 @@ function onFile(e){
   const im=new Image();
   im.onload=()=>{
     S.natW=im.naturalWidth; S.natH=im.naturalHeight;
-    S.x=0;S.y=0;S.scale=1.1;
+    S.x=0;S.y=0;S.scale=1.12;
     phM.src=S.url; phM.hidden=false;
     $("holeEmpty").hidden=true;
     $("zoomRow").hidden=false;
@@ -771,7 +773,7 @@ $("live").addEventListener("click",async()=>{
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:1280}},audio:false});
     vid.srcObject=stream; vid.hidden=false; await vid.play();
     S.natW=vid.videoWidth||720; S.natH=vid.videoHeight||1280;
-    S.x=0;S.y=0;S.scale=1.1;
+    S.x=0;S.y=0;S.scale=1.12;
     $("holeEmpty").hidden=true; $("getrow").hidden=true;
     $("zoomRow").hidden=false; $("zoom").value=110; $("shotLive").hidden=false;
     $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
@@ -809,6 +811,11 @@ function layout(img,box){
   if(!S.natW||!r.width)return;
   const cover=Math.max(r.width/S.natW,r.height/S.natH);
   const w=S.natW*cover*S.scale, h=S.natH*cover*S.scale;
+  // 거울 밖으로 밀려나 빈 데가 생기지 않도록 가둔다
+  const limX=Math.max(0,(w-r.width)/2)/r.width*100;
+  const limY=Math.max(0,(h-r.height)/2)/r.height*100;
+  S.x=Math.max(-limX,Math.min(limX,S.x));
+  S.y=Math.max(-limY,Math.min(limY,S.y));
   img.style.width=w+"px"; img.style.height=h+"px";
   img.style.transform=`translate(calc(-50% + ${S.x*r.width/100}px), calc(-50% + ${S.y*r.height/100}px))`;
 }
