@@ -263,7 +263,7 @@ function divine(m, age, sex){
      m.left 는 사진의 왼쪽 반입니다. 사진의 왼쪽은 마주 선 사람의 오른쪽이고요.
      낮은 쪽을 찾아 사진 기준과 몸 기준을 함께 들고 다닙니다. */
   const tilt = (m.left - m.right) / Math.max(m.meanL,1);
-  const gyeol = Math.abs(tilt) < 0.035 ? null
+  const gyeol = Math.abs(tilt) < 0.022 ? null
               : (tilt < 0 ? "왼쪽" : "오른쪽");          /* 어두운 쪽이 낮은 쪽 */
   const gyeolMom = gyeol ? (gyeol==="왼쪽" ? "오른" : "왼") : null;
   /* 남좌여우 — 남자는 왼쪽, 여자는 오른쪽을 본인 자리로 봅니다 (몸 기준) */
