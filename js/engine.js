@@ -309,7 +309,8 @@ function prescribe(R){
     const saekColor = {
       "청":["쪽빛","#2a4a6b"], "적":["다홍","#b9372c"], "황":["치자","#c8a02e"],
       "백":["백자","#ddd6c7"], "흑":["먹빛","#1d1a1a"] }[R.gisaek];
-    hyung = [saekColor[0], saekColor[1], "올해는 몸에 지니지 마세요"];
+    hyung = [saekColor[0], saekColor[1], "올해는 몸에 지니지 마세요",
+             "지금 도는 "+R.gisaek+"기가 손님 그릇을 누르는 색입니다"];
   }
 
   /* 머리 — 그릇에 삼정을 더해 */
@@ -454,12 +455,30 @@ function findFace(srcEl, natW, natH){
   const widths = Array.from(rowW).filter(v=>v>0).sort((p,q)=>p-q);
   if(!widths.length) return null;
   const medW = widths[(widths.length/2)|0];
-  /* 목이나 어깨처럼 아래로 넓게 퍼진 부분은 얼굴에서 뺍니다 */
+  /* 턱 아래 — 목과 어깨는 얼굴이 아닙니다.
+     광대에서 가장 넓어졌다가 턱으로 좁아지고, 목에서 다시 가늘어집니다.
+     좁아지는 목을 찾아 턱을 끊고, 어깨처럼 넓어지는 데서도 끊습니다. */
   let yEnd = y1;
-  for(let y=y0+Math.round((y1-y0)*0.55); y<=y1; y++){
+  /* 1) 광대 — 위쪽 7할 안에서 가장 넓은 줄 */
+  let yWide = y0, maxW = 0;
+  const yLook = y0 + Math.round((y1-y0)*0.72);
+  for(let y=y0; y<=yLook; y++) if(rowW[y] > maxW){ maxW = rowW[y]; yWide = y; }
+  /* 2) 목 — 광대 아래에서 많이 좁아진 채 이어지는 자리 */
+  if(maxW > 0){
+    const thin = maxW * 0.62;
+    let run = 0;
+    for(let y=yWide+Math.round((y1-yWide)*0.12); y<=y1; y++){
+      if(rowW[y] > 0 && rowW[y] < thin){
+        if(++run >= 3){ yEnd = y - run + 1; break; }
+      } else run = 0;
+    }
+  }
+  /* 3) 어깨 — 아래로 다시 넓게 퍼지는 자리 */
+  for(let y=y0+Math.round((y1-y0)*0.55); y<=yEnd; y++){
     if(rowW[y] > medW*1.32){ yEnd = y-1; break; }
   }
-  if(yEnd - y0 < (y1-y0)*0.45) yEnd = y1;
+  /* 너무 짧게 끊겼으면 믿지 않습니다 */
+  if(yEnd - y0 < (y1-y0)*0.38) yEnd = Math.min(y1, y0 + Math.round((y1-y0)*0.72));
 
   let lx=W, rx=-1;
   for(let y=y0;y<=yEnd;y++)
@@ -488,7 +507,9 @@ function fitFace(face, natW, natH, holeW, holeH){
   const sW = tw / (natW * cover * face.w);
   const sH = th / (natH * cover * face.h);
   let scale = Math.min(sW, sH);
-  scale = Math.max(1, Math.min(2.6, scale));
+  /* 얼굴이 길잡이보다 크게 잡힌 사진은 줄여서도 맞춥니다.
+     줄어든 자리는 거울의 어둠이 메웁니다. */
+  scale = Math.max(0.55, Math.min(2.6, scale));
   const dispW = natW*cover*scale, dispH = natH*cover*scale;
   const x = -((face.cx - 0.5) * dispW) / holeW * 100;
   const y = -((face.cy - 0.5) * dispH) / holeH * 100;
