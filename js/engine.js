@@ -74,7 +74,32 @@ function readMetrics(canvas){
 
   const meanL = sumL/n;
   const sd = Math.sqrt(Math.max(0, sumL2/n - meanL*meanL));
-  const mR = sumR/n, mG = sumG/n, mB = sumB/n;
+  let mR = sumR/n, mG = sumG/n, mB = sumB/n;
+
+  /* 빛 보정 — 얼굴에서 가장 밝은 자리는 조명색에 가깝습니다.
+     그 색으로 나누어, 노란 전등 아래서 찍어도 기색이 흔들리지 않게 합니다. */
+  const hi = [];
+  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
+    if(y<0||y>=CH) continue;
+    for(let x=Math.floor(fx); x<Math.ceil(fx+fw); x++){
+      if(x<0||x>=CW||!inFace(x,y)) continue;
+      const i=(y*CW+x)*4;
+      hi.push([lum(i), px[i], px[i+1], px[i+2]]);
+    }
+  }
+  hi.sort((a,b)=>b[0]-a[0]);
+  const take = Math.max(12, Math.round(hi.length*0.03));
+  let iR=0,iG=0,iB=0;
+  for(let k=0;k<take;k++){ iR+=hi[k][1]; iG+=hi[k][2]; iB+=hi[k][3]; }
+  iR/=take; iG/=take; iB/=take;
+  const iL = (iR+iG+iB)/3;
+  if(iL > 24){
+    const kR = iL/Math.max(iR,1), kG = iL/Math.max(iG,1), kB = iL/Math.max(iB,1);
+    const lim = v => Math.max(0.72, Math.min(1.38, v));
+    mR = Math.min(255, mR*lim(kR));
+    mG = Math.min(255, mG*lim(kG));
+    mB = Math.min(255, mB*lim(kB));
+  }
 
   /* 살빛 자리를 추려 윤곽을 잡는다 */
   const loL = meanL*0.72, hiL = meanL*1.45;
@@ -162,8 +187,8 @@ function pickGisaek(m){
   const mx = Math.max(R,G,B), mn = Math.min(R,G,B);
   const chae  = (mx - mn) / Math.max(mx,1);
   const geuneul = (Math.max.apply(null,m.sam) - Math.min.apply(null,m.sam)) / Math.max(L,1);
-  if (chae < 0.12)      return geuneul > 0.30 ? "흑" : "백";
-  if (geuneul > 0.36)   return "흑";
+  if (chae < 0.12)      return geuneul > 0.42 ? "흑" : "백";
+  if (geuneul > 0.48)   return "흑";
   if (B >= G - 4)       return "청";
   const ddeum = (R - G) / Math.max(R - B, 1);   /* 붉은 쪽인가 누런 쪽인가 */
   if (ddeum > 0.60)     return "적";
@@ -340,4 +365,156 @@ function summarize(R){
     go, stop, dow, nur,
     openN: open.length, blockN: block.length
   };
+}
+
+/* ── 12. 얼굴 자리를 스스로 찾습니다 ─────────────
+   살빛이 도는 자리를 모아 가장 큰 덩어리의 테두리를 잡습니다.
+   찾으면 거울 안에서 얼굴이 길잡이 타원에 맞게 저절로 놓입니다. */
+function findFace(srcEl, natW, natH){
+  const W = 180, H = Math.max(1, Math.round(W*natH/natW));
+  if (!natW || !natH) return null;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d", { willReadFrequently:true });
+  try { g.drawImage(srcEl, 0, 0, W, H); } catch(e){ return null; }
+  let px;
+  try { px = g.getImageData(0,0,W,H).data; } catch(e){ return null; }
+
+  /* 조명색을 먼저 고릅니다. 푸른 전등이나 노란 전등 아래서도 살빛이 잡히게. */
+  let aR=0,aG=0,aB=0;
+  for(let p=0;p<px.length;p+=4){ aR+=px[p]; aG+=px[p+1]; aB+=px[p+2]; }
+  const tot=px.length/4; aR/=tot; aG/=tot; aB/=tot;
+  const avg=(aR+aG+aB)/3;
+  const nd=(v)=>Math.max(.88,Math.min(1.14,1+(avg/Math.max(v,1)-1)*0.55));
+  const wR=nd(aR), wG=nd(aG), wB=nd(aB);
+
+  /* 살빛 판정 — 밝기에 덜 끌리도록 색의 치우침으로 봅니다 */
+  const mask = new Uint8Array(W*H);
+  let cnt = 0;
+  for(let i=0,p=0; i<W*H; i++, p+=4){
+    const r=Math.min(255,px[p]*wR), gg=Math.min(255,px[p+1]*wG), b=Math.min(255,px[p+2]*wB);
+    const mx=Math.max(r,gg,b), mn=Math.min(r,gg,b);
+    const ok = r>52 && gg>30 && b>14 && (mx-mn)>11 &&
+               r>=gg && gg>=b-16 && (r-gg)>5 && (r-b)>10 && mx<253;
+    if(ok){ mask[i]=1; cnt++; }
+  }
+  if(cnt < W*H*0.02) return null;
+
+  /* 가장 큰 덩어리 */
+  const lab = new Int32Array(W*H).fill(-1);
+  const stack = new Int32Array(W*H);
+  let best=-1, bestN=0, cur=0;
+  for(let i=0;i<W*H;i++){
+    if(!mask[i] || lab[i]>=0) continue;
+    let sp=0, n=0; stack[sp++]=i; lab[i]=cur;
+    while(sp){
+      const q=stack[--sp]; n++;
+      const x=q%W, y=(q/W)|0;
+      for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+        const nx=x+dx, ny=y+dy;
+        if(nx<0||ny<0||nx>=W||ny>=H) continue;
+        const k=ny*W+nx;
+        if(mask[k] && lab[k]<0){ lab[k]=cur; stack[sp++]=k; }
+      }
+    }
+    if(n>bestN){ bestN=n; best=cur; }
+    cur++;
+  }
+  if(best<0 || bestN < W*H*0.02) return null;
+
+  /* 가로줄마다 폭을 재서 가장자리 잡티를 걷어냅니다 */
+  let x0=W, x1=-1, y0=H, y1=-1;
+  const rowW = new Int32Array(H);
+  for(let y=0;y<H;y++){
+    let a=-1,b2=-1;
+    for(let x=0;x<W;x++) if(lab[y*W+x]===best){ if(a<0)a=x; b2=x; }
+    if(a>=0){ rowW[y]=b2-a+1; if(y<y0)y0=y; y1=y; if(a<x0)x0=a; if(b2>x1)x1=b2; }
+  }
+  const widths = Array.from(rowW).filter(v=>v>0).sort((p,q)=>p-q);
+  if(!widths.length) return null;
+  const medW = widths[(widths.length/2)|0];
+  /* 목이나 어깨처럼 아래로 넓게 퍼진 부분은 얼굴에서 뺍니다 */
+  let yEnd = y1;
+  for(let y=y0+Math.round((y1-y0)*0.55); y<=y1; y++){
+    if(rowW[y] > medW*1.32){ yEnd = y-1; break; }
+  }
+  if(yEnd - y0 < (y1-y0)*0.45) yEnd = y1;
+
+  let lx=W, rx=-1;
+  for(let y=y0;y<=yEnd;y++)
+    for(let x=0;x<W;x++) if(lab[y*W+x]===best){ if(x<lx)lx=x; if(x>rx)rx=x; }
+  if(rx<=lx) return null;
+
+  /* 머리카락과 이마 윗부분을 조금 얹어 얼굴 틀에 맞춥니다 */
+  const fh0 = yEnd - y0 + 1;
+  const top = Math.max(0, y0 - fh0*0.16);
+  const bot = Math.min(H-1, yEnd + fh0*0.04);
+
+  return {
+    cx: ((lx+rx)/2) / W,
+    cy: ((top+bot)/2) / H,
+    w:  (rx-lx+1) / W,
+    h:  (bot-top+1) / H
+  };
+}
+
+/* 찾은 얼굴을 길잡이 타원에 맞춰 크기와 자리를 셈합니다 */
+function fitFace(face, natW, natH, holeW, holeH){
+  if(!face) return null;
+  const cover = Math.max(holeW/natW, holeH/natH);
+  const tw = holeW * (FACE.w/100) * 0.98;
+  const th = holeH * (FACE.h/100) * 0.98;
+  const sW = tw / (natW * cover * face.w);
+  const sH = th / (natH * cover * face.h);
+  let scale = Math.min(sW, sH);
+  scale = Math.max(1, Math.min(2.6, scale));
+  const dispW = natW*cover*scale, dispH = natH*cover*scale;
+  const x = -((face.cx - 0.5) * dispW) / holeW * 100;
+  const y = -((face.cy - 0.5) * dispH) / holeH * 100;
+  return { scale, x, y };
+}
+
+/* ── 13. 지난번과 견주기 ──────────────────────────
+   얼굴 사진은 남기지 않습니다. 판정만 기기 안에 적어 두었다가,
+   다음에 오셨을 때 어느 자리가 달라졌는지 짚어 드립니다. */
+const KEEP = "baekgwi-gwansang-last";
+
+function saveReading(R){
+  try{
+    localStorage.setItem(KEEP, JSON.stringify({
+      t: Date.now(),
+      age: R.yunAge || null,
+      hyeong: R.hyeong, gisaek: R.gisaek, samjeong: R.samjeong,
+      dan: R.gyo.dan,
+      boss: { k:R.boss.g.k, n:R.boss.g.n, bg:R.boss.bg },
+      lv: R.jari.map(j=>[j.g.k, j.lv, j.bg])
+    }));
+  }catch(e){}
+}
+function loadReading(){
+  try{
+    const v = JSON.parse(localStorage.getItem(KEEP)||"null");
+    if(!v || !v.lv || !v.lv.length) return null;
+    return v;
+  }catch(e){ return null; }
+}
+function clearReading(){ try{ localStorage.removeItem(KEEP); }catch(e){} }
+
+/* 지난 판정과 이번 판정을 맞대어 봅니다 */
+function compareReading(prev, R){
+  if(!prev) return null;
+  const days = Math.max(0, Math.round((Date.now()-prev.t)/86400000));
+  const was = {}; prev.lv.forEach(([k,lv,bg])=>{ was[k]={lv,bg}; });
+  const better=[], worse=[], same=[];
+  R.jari.forEach(j=>{
+    const w = was[j.g.k]; if(!w) return;
+    if(j.lv < w.lv) better.push({ n:j.g.n, from:w.lv, to:j.lv });
+    else if(j.lv > w.lv) worse.push({ n:j.g.n, from:w.lv, to:j.lv });
+    else same.push(j.g.n);
+  });
+  const bossMoved = prev.boss.k !== R.boss.g.k;
+  const bossGone  = !bossMoved && prev.boss.bg !== R.boss.bg;
+  return { days, better, worse, same, bossMoved, bossGone,
+           prevBoss: prev.boss, prevHyeong: prev.hyeong, prevGisaek: prev.gisaek,
+           gisaekMoved: prev.gisaek !== R.gisaek };
 }
