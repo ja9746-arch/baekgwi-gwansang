@@ -7,15 +7,17 @@
 <meta name="description" content="원안법사가 얼굴에 새겨진 기운을 읽습니다. 삼정과 십이궁, 유년운기부위로 타고난 그릇과 올해의 흐름을 살핍니다.">
 <title>백귀관상 — 원안법사</title>
 <link rel="icon" href="img/title.png">
-<link rel="apple-touch-icon" href="img/hero.webp">
+<link rel="apple-touch-icon" href="img/og.jpg">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="백귀관상">
 <meta property="og:title" content="백귀관상 — 원안법사">
 <meta property="og:description" content="얼굴을 한 번 비춰주세요. 백귀는 거울에 비친 것으로만 드러납니다.">
 <meta property="og:url" content="https://baekgwi-gwansang.vercel.app/">
-<meta property="og:image" content="https://baekgwi-gwansang.vercel.app/img/hero.webp">
-<meta property="og:image:width" content="1100">
-<meta property="og:image:height" content="1100">
+<meta property="og:image" content="https://baekgwi-gwansang.vercel.app/img/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="백귀관상 — 원안법사">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@200;300;400;500&display=swap">
@@ -58,11 +60,13 @@ img{max-width:100%;display:block}
 .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(201,162,74,.35) 18%,rgba(201,162,74,.35) 82%,transparent)}
 .top .brand{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--geum-dim)}
-.top .step{font-size:10px;letter-spacing:.16em;color:rgba(236,224,210,.26)}
-.top .snd{position:relative;flex:0 0 auto;margin-left:auto;
-  width:28px;height:28px;display:grid;place-items:center;border-radius:50%;
-  border:1px solid rgba(201,162,74,.26);background:transparent;
-  color:rgba(201,162,74,.66);font-size:13px;line-height:1;cursor:pointer}
+.top .step{font-size:11px;letter-spacing:.16em;color:rgba(236,224,210,.6)}
+.snd{position:relative;flex:0 0 auto;
+  width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid rgba(201,162,74,.36);background:transparent;
+  color:rgba(222,190,126,.92);font-size:14px;line-height:1;cursor:pointer}
+.snd::before{content:"";position:absolute;inset:-8px;border-radius:50%}
+.top .snd{margin-left:auto}
 .top .snd + .step{margin-left:12px}
 .hero .snd{position:absolute;z-index:3;top:max(12px,env(safe-area-inset-top,0px));
   right:14px;background:rgba(10,5,7,.55);backdrop-filter:blur(3px);
@@ -129,7 +133,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .titlewrap{position:absolute;left:0;right:0;bottom:6px;z-index:2;text-align:center;
   padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
 .eyebrow{display:inline-block;margin:10px 0 0;font-family:var(--serif);font-size:10.5px;
-  letter-spacing:.22em;color:#e0bc78;padding:4px 12px;
+  letter-spacing:.2em;font-size:11px;color:#e8c98c;padding:4px 12px;
   border-top:1px solid rgba(201,162,74,.35);border-bottom:1px solid rgba(201,162,74,.35);
   background:rgba(10,5,7,.5);text-shadow:0 1px 6px #000}
 .hero .titlewrap .titleimg{width:min(58%,236px);margin:0 auto;display:block;
@@ -308,10 +312,10 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .doc li{font-size:13px;line-height:1.95;color:#ded2c0;margin-bottom:6px}
 .doc b{color:#f3e7d2;font-weight:400}
 .doc .warn{margin-top:12px;border-left:2px solid var(--jusa);padding-left:10px;color:#d9b9a8}
-.footlinks{margin:10px 0 0;text-align:center;font-size:11.5px;color:rgba(163,148,134,.4)}
+.footlinks{margin:6px 0 0;text-align:center;font-size:11.5px;color:rgba(198,184,168,.78)}
 .footlinks span{margin:0 7px}
-.flink{font-family:var(--serif);font-size:11.5px;letter-spacing:.06em;
-  color:rgba(201,162,74,.72);text-decoration:underline;text-underline-offset:3px;padding:6px 2px}
+.flink{font-family:var(--serif);font-size:12px;letter-spacing:.06em;
+  color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:11px 6px}
 
 /* 족자 — 맺음과 교차에 쓰는 두루마리 */
 .scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);
@@ -433,7 +437,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .price::before{top:4px} .price::after{bottom:4px}
 .price .s{font-size:11px;letter-spacing:.2em;color:var(--jae-dim);font-family:var(--serif)}
 .price .b{font-family:var(--serif);font-size:30px;color:var(--geum-hot);margin-top:4px}
-.price .b del{font-size:15px;color:rgba(163,148,134,.55);margin-right:8px}
+.price .b del{font-size:15px;color:rgba(200,187,171,.8);margin-right:8px}
 .price .n{font-size:11.5px;color:var(--geum-dim);margin-top:6px}
 .valuegrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
 .valuegrid div{border:1px solid rgba(201,162,74,.2);background:rgba(10,6,7,.5);padding:9px 10px}
@@ -482,7 +486,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 @media (prefers-reduced-motion:reduce){ .tang .slot.boss{animation:none} }
 
 .foot{margin-top:26px;padding-top:14px;border-top:1px solid rgba(201,162,74,.14);
-  font-size:10.5px;line-height:1.8;color:rgba(163,148,134,.5);text-align:center}
+  font-size:11.5px;line-height:1.85;color:rgba(196,183,167,.82);text-align:center}
 .toast{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;
   background:rgba(14,8,10,.96);border:1px solid var(--line);color:#f0e4d2;
   padding:11px 18px;font-size:13px;font-family:var(--serif);opacity:0;transition:opacity .3s;pointer-events:none}
@@ -789,11 +793,17 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 
     <h3>복채(결제)</h3>
     <ul>
-      <li>무료로 명궁(命宮) 한 자리까지 보여 드립니다. 나머지 열한 자리와 처방은
-          3,990원에 열립니다.</li>
-      <li>봉인 안내가 처음 뜬 때부터 10분 안에 여시면 할인가 3,990원이 적용되고,
-          10분이 지나면 정가 5,900원이 적용됩니다.</li>
+      <li>무료로 명궁(命宮) 한 자리까지 보여 드립니다. 나머지 열한 자리와
+          처방(점자리·길한 색·머리 모양)·백귀도는 <b>3,990원</b>에 열립니다.</li>
+      <li>얼굴과 사주를 맞대어 보는 교차 풀이(연애·금전·직장사업·이동수)는
+          <b>9,900원</b>이며, 위 3,990원과 별개의 상품입니다.</li>
+      <li>3,990원은 여는 날 기념값입니다. 기념 기간이 끝나면 정가 5,900원으로
+          올리며, 값이 바뀌기 전에 이 쪽에 먼저 적습니다.</li>
       <li>단건 결제이며 자동 갱신이나 정기 결제는 없습니다.</li>
+      <li>한 번 복채를 내시면 그 기기의 브라우저에서는 다시 내지 않으셔도 됩니다.
+          다만 얼굴 사진을 저장하지 않으므로, 풀이를 다시 보시려면 얼굴을 한 번 더
+          비춰 주셔야 합니다. 브라우저 기록을 지우거나 다른 기기에서 여실 때는
+          다시 결제해야 합니다.</li>
       <li>결제는 결제대행사를 통해 처리되며, 본 서비스는 카드번호 등 결제수단 정보를
           보관하지 않습니다.</li>
     </ul>
@@ -1290,7 +1300,7 @@ function startRead(){
     },700+i*150);
   });
 
-  setTimeout(()=>{ ord.innerHTML=`<b>다 보았습니다.</b>`; showReadOut(); },700+R.jari.length*150+600);
+  setTimeout(()=>{ ord.innerHTML=`<b>다 보았습니다.</b>`; ord.style.minHeight="0"; showReadOut(); },700+R.jari.length*150+600);
 }
 
 function showReadOut(){
@@ -1326,7 +1336,8 @@ function compareHTML(c){
   let head;
   if(c.bossMoved) head = `지난번 우두머리는 ${c.prevBoss.n}에 있었는데, 이번엔 ${R.boss.g.n}으로 옮겨 갔습니다.`;
   else if(c.bossGone) head = `${R.boss.g.n}을 쥔 것이 바뀌었습니다. ${JO(bgName(c.prevBoss.bg),"이","가")} 물러나고 ${JO(bgName(R.boss.bg),"이","가")} 섰어요.`;
-  else head = `우두머리는 그대로입니다. ${R.boss.g.n}의 ${JO(bgName(R.boss.bg),"이","가")} 아직 버티고 있어요.`;
+  else head = `우두머리는 그대로입니다. ${R.boss.g.n}의 ${JO(bgName(R.boss.bg),"이","가")} `+
+    ["아직 비켜선 채로 있어요.","아직 그 자리를 서성입니다.","아직 버티고 있어요."][R.boss.lv];
   return `<div class="scroll" style="margin-top:14px">`+
    `<div class="srow"><span class="sk">지난번</span><span class="sv">`+
      `${nal} 보셨네요. 그때는 ${OH[c.prevHyeong].nm}에 ${c.prevGisaek}기였습니다.`+
@@ -1598,8 +1609,20 @@ async function openCheckout(){
      return ok; */
   return false;
 }
+/* 복채 표 — 한 번 내시면 이 기기에서는 다시 내지 않으셔도 됩니다.
+   사진은 남기지 않으므로, 풀이를 다시 보시려면 얼굴만 한 번 더 비춰주시면 됩니다. */
+const TICKET="baekgwi-gwansang-ticket";
+function tickets(){
+  try{ return JSON.parse(localStorage.getItem(TICKET)||"{}")||{}; }catch(e){ return {}; }
+}
+function hasTicket(k){ return !!tickets()[k]; }
+function putTicket(k){
+  try{ const v=tickets(); v[k]=Date.now(); localStorage.setItem(TICKET,JSON.stringify(v)); }catch(e){}
+}
+S.paid = hasTicket("gung");
+
 function unlockAll(){
-  S.paid=true;
+  S.paid=true; putTicket("gung");
   go("s-board"); buildBoard();
 }
 $("payBtn").addEventListener("click",async()=>{
@@ -1778,8 +1801,16 @@ function buildEnd(){
 }
 
 /* ── 10. 맺음 ─────────────────────────────── */
+function paintCrossPrice(){
+  const paid=hasTicket("cross");
+  const pr=document.querySelector("#s-cross .price");
+  if(pr) pr.hidden=paid;
+  const g=$("crossGo");
+  if(g) g.textContent = paid ? "맞대어 보겠습니다" : "9,900원 · 맞대어 보겠습니다";
+  document.querySelectorAll("#s-cross .demonote").forEach(nd=>{ nd.hidden = paid || !DEMO_CHECKOUT; });
+}
 $("crossBtn").addEventListener("click",()=>{
-  S.ageWarned=false;
+  S.ageWarned=false; paintCrossPrice();
   $("crossFace").textContent = OH[R.hyeong].nm + " · " + R.gisaek + "기";
   go("s-cross");
 });
@@ -1810,9 +1841,12 @@ async function runCross(){
   }
 
   const b=$("crossGo"); b.disabled=true; const old=b.textContent; b.textContent="맞대어 보는 중…";
-  let ok=false;
-  try{ ok=await openCheckout(); }catch(e){ ok=false; }
-  if(!ok){ b.disabled=false; b.textContent=old; toast("결제가 끝나지 않았습니다"); return; }
+  if(!hasTicket("cross")){
+    let ok=false;
+    try{ ok=await openCheckout(); }catch(e){ ok=false; }
+    if(!ok){ b.disabled=false; b.textContent=old; toast("결제가 끝나지 않았습니다"); return; }
+    putTicket("cross");
+  }
 
   try{
     const P=fourPillars(y,m,d,h,mi,{hasTime:!noT});
@@ -1921,7 +1955,7 @@ if(S.prev){
   const nal = d===0 ? "오늘" : (d===1 ? "어제" : d+"일 전에");
   $("lastNote").innerHTML =
     `<div class="lastbox"><p>${nal} 한 번 보셨습니다. ${OH[S.prev.hyeong].nm} · `+
-    `${GISAEK[S.prev.gisaek].ja}색 · ${S.prev.boss.n}에 ${bgName(S.prev.boss.bg)}.</p>`+
+    `${S.prev.gisaek}기 · ${S.prev.boss.n}에 ${bgName(S.prev.boss.bg)}.</p>`+
     `<p class="small">다시 비추시면 그때와 견주어 어느 자리가 달라졌는지 짚어 드립니다.</p>`+
     `<button class="flink" id="forget">지난 기록 지우기</button></div>`;
   const fb=$("forget");
