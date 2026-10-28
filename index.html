@@ -1082,6 +1082,7 @@ $("live").addEventListener("click",async()=>{
     $("zoomRow").hidden=false; $("zoom").value=110; $("shotLive").hidden=false;
     $("order").innerHTML="길잡이 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
     S.fitOK=false; S.face=null; ritual=false;
+    $("redo").hidden=false; $("redo").textContent="사진첩에서 고르기";
     layout(vid,hole); watchFit(true);
   }catch(err){
     b.hidden=true; $("pickLbl").className="btn";
@@ -1091,6 +1092,7 @@ $("live").addEventListener("click",async()=>{
 });
 function stopLive(){
   watchFit(false);
+  $("redo").textContent="다른 사진으로 바꾸기";
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   vid.hidden=true; vid.srcObject=null; $("shotLive").hidden=true;
 }
@@ -1140,7 +1142,8 @@ function layout(img,box){
   S.x=Math.max(-limX,Math.min(limX,S.x));
   S.y=Math.max(-limY,Math.min(limY,S.y));
   img.style.width=w+"px"; img.style.height=h+"px";
-  img.style.transform=`translate(calc(-50% + ${S.x*r.width/100}px), calc(-50% + ${S.y*r.height/100}px))`;
+  const flip = (img.tagName==="VIDEO") ? " scaleX(-1)" : "";
+  img.style.transform=`translate(calc(-50% + ${S.x*r.width/100}px), calc(-50% + ${S.y*r.height/100}px))`+flip;
 }
 /* 길잡이 안에 얼굴이 들어앉았는지 봅니다 */
 let ritual=false;
@@ -1152,7 +1155,9 @@ function checkFit(){
   if(!r.width || !S.natW) return;
   const cover=Math.max(r.width/S.natW, r.height/S.natH)*S.scale;
   const dw=S.natW*cover, dh=S.natH*cover;
-  const cx=r.width/2  + S.x*r.width/100  + (S.face.cx-0.5)*dw;
+  /* 거울에 비칠 때는 좌우가 뒤집혀 보이므로 가로 셈도 뒤집습니다 */
+  const mir = (stream && !vid.hidden) ? -1 : 1;
+  const cx=r.width/2  + S.x*r.width/100  + mir*(S.face.cx-0.5)*dw;
   const cy=r.height/2 + S.y*r.height/100 + (S.face.cy-0.5)*dh;
   const fh=S.face.h*dh;
   const gx=(FX+FW/2)/100*r.width, gy=(FY+FH/2)/100*r.height, gh=FH/100*r.height;
@@ -1213,7 +1218,7 @@ function measureNow(){
     const r=hole.getBoundingClientRect();
     const src=(stream && !vid.hidden) ? vid : phM;
     const c=captureMirror(src,S,r.width,r.height);
-    const m=c && readMetrics(c);
+    const m=c && readMetrics(c, S.sex);
     if(!m || !m.ok) throw new Error("못 읽음");
     R=divine(m,S.age,S.sex);
     return true;
@@ -1307,7 +1312,7 @@ function startRead(){
     setTimeout(()=>{
       const d=document.createElement("div");
       d.className="pt lvl"+j.lv;
-      d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
+      d.style.left=px(gungX(j.g,S.sex))+"%"; d.style.top=py(j.g.y)+"%";
       d.innerHTML="<i></i>";
       fw.appendChild(d);
     },700+i*150);
@@ -1319,7 +1324,11 @@ function startRead(){
 function showReadOut(){
   const oh=OH[R.hyeong], gi=GISAEK[R.gisaek], sj=SAMJEONG[R.samjeong];
   const gyeol = R.gyeol
-    ? `<p>그리고 ${R.gyeol} 일월각이 조금 낮습니다. 양쪽에서 받은 것이 고르지 않다는 뜻이에요.</p>` : "";
+    ? `<p>그리고 사진에서 <em>${R.gyeol}</em> 일월각이 조금 낮습니다. 손님 몸으로는 ${R.gyeolMom}쪽이에요. `+
+      (R.gyeolMom===R.ju
+        ? `남좌여우(男左女右)로 ${R.ju}쪽이 손님 본인 자리인데 그 편이 눌렸습니다. 손님이 스스로 떠안고 오신 것이 있다는 뜻이에요.`
+        : `남좌여우(男左女右)로 손님 본인 자리는 ${R.ju}쪽인데, 눌린 건 그 반대편입니다. 곁에서 받은 것이 고르지 않았다는 뜻이에요.`)+
+      `</p>` : "";
   $("readOut").innerHTML=
    `<div class="verdict">
       <div class="vrow"><span class="vk">형상</span>
@@ -1393,7 +1402,7 @@ function onMark(e){
   const cx=(e.clientX-r.left)/r.width*100, cy=(e.clientY-r.top)/r.height*100;
   let best=null,bd=1e9;
   GUNG.forEach(g=>{
-    const dx=px(g.x)-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
+    const dx=px(gungX(g,S.sex))-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
     if(d<bd){bd=d;best=g;}
   });
   S.mark=best;
@@ -1503,7 +1512,7 @@ function buildBoard(){
   R.jari.forEach(j=>{
     const d=document.createElement("button");
     d.className="pt "+(isOpen(j)?"lvl"+j.lv:"locked");
-    d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
+    d.style.left=px(gungX(j.g,S.sex))+"%"; d.style.top=py(j.g.y)+"%";
     d.innerHTML="<i></i>"; d.dataset.k=j.g.k;
     d.setAttribute("aria-label",j.g.n);
     d.addEventListener("click",()=>tapGung(j));
@@ -1677,7 +1686,7 @@ function buildCure(){
     `<div class="colrow" style="border-color:rgba(192,54,42,.3)">`+
     `<span class="chip molechip"></span>`+
     `<span><span class="cn">${m.t}</span><br><span class="cd">${m.w}</span></span></div>`).join("")+
-    `<p class="hint" style="margin-top:8px">먹이나 화장으로 한 달만 찍어 보세요. 빼는 건 나중 일입니다.</p>`;
+    `<p class="hint" style="margin-top:8px">먹이나 화장으로 한 달만 찍어 보세요. 빼는 건 나중 일입니다.<br>왼쪽·오른쪽은 <b>사진에 보이는 대로</b>입니다. 거울 앞에서는 반대쪽이에요.</p>`;
 
   $("colors").innerHTML=
     RX.gil.map(c=>
@@ -1692,7 +1701,7 @@ function buildCure(){
       : "");
 
   $("hairOut").innerHTML=`<h4>${RX.mori[0]}</h4><p style="margin:0">${RX.mori[1]}</p>`+
-    `<p class="tagline" style="margin-top:8px">얼굴은 ${RX.oh.nm}으로 봅니다 · 삼정은 ${SAMJEONG[R.samjeong].nm}이 두텁습니다</p>`;
+    `<p class="tagline" style="margin-top:8px">얼굴은 ${RX.oh.nm}으로 봅니다 · 삼정은 ${SAMJEONG[R.samjeong].nm}이 두텁습니다<br>짝이 있는 자리는 남좌여우(男左女右)로, ${S.sex==="남"?"왼":"오른"}쪽을 손님 본인 자리로 놓고 읽었습니다</p>`;
 }
 function setMoles(v){
   document.querySelectorAll("#faceCure .mole").forEach((m,i)=>{

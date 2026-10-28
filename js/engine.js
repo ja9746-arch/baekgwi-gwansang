@@ -35,7 +35,7 @@ function captureMirror(srcEl, st, holeW, holeH){
 }
 
 /* ── 2. 수치를 뽑는다 ──────────────────────────────── */
-function readMetrics(canvas){
+function readMetrics(canvas, sex){
   const CW = canvas.width, CH = canvas.height;
   let px;
   try { px = canvas.getContext("2d").getImageData(0,0,CW,CH).data; }
@@ -132,7 +132,7 @@ function readMetrics(canvas){
   /* 궁별 자리 */
   const gung = {};
   for(const G of GUNG){
-    const gx = fx + fw*G.x/100, gy = fy + fh*G.y/100;
+    const gx = fx + fw*gungX(G, sex)/100, gy = fy + fh*G.y/100;
     const hw = fw*G.sx/200, hh = fh*G.sy/200;
     let gn=0, gs=0, gs2=0;
     for(let y=Math.round(gy-hh); y<=Math.round(gy+hh); y++){
@@ -259,10 +259,15 @@ function divine(m, age, sex){
   const gyo     = hyeongGisaekMal(hyeong, gisaek);
   const yun     = yunOf(age, sex);
 
-  /* 좌우 기울기 — 일월각 */
+  /* 좌우 기울기 — 일월각.
+     m.left 는 사진의 왼쪽 반입니다. 사진의 왼쪽은 마주 선 사람의 오른쪽이고요.
+     낮은 쪽을 찾아 사진 기준과 몸 기준을 함께 들고 다닙니다. */
   const tilt = (m.left - m.right) / Math.max(m.meanL,1);
   const gyeol = Math.abs(tilt) < 0.035 ? null
-              : (tilt > 0 ? "왼쪽" : "오른쪽");
+              : (tilt < 0 ? "왼쪽" : "오른쪽");          /* 어두운 쪽이 낮은 쪽 */
+  const gyeolMom = gyeol ? (gyeol==="왼쪽" ? "오른" : "왼") : null;
+  /* 남좌여우 — 남자는 왼쪽, 여자는 오른쪽을 본인 자리로 봅니다 (몸 기준) */
+  const ju = (sex==="남") ? "왼" : "오른";
 
   /* 열두 자리 — 그 얼굴 안에서 서로 견주어 가립니다.
      무서워하는 얼굴로 보여준 셋은 실제로 서지 않습니다. 말이 어긋나니까요. */
@@ -288,7 +293,7 @@ function divine(m, age, sex){
   const blocked = jari.filter(j=>j.lv===2).length;
   const opened  = jari.filter(j=>j.lv===0).length;
 
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol,
+  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }
 
