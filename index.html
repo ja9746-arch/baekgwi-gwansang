@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0507">
+<title>백귀관상 — 원안법사</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@200;300;400;500&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --mook:#0a0507; --mook2:#140a0c;
+  --jusa:#c0362a; --jusa-hot:#ff5436;
+  --geum:#c9a24a; --geum-hot:#e8c377; --geum-dim:#8a6f33;
+  --jae:#ece0d2; --jae-dim:#a39486;
+  --line:rgba(201,162,74,.26);
+  --serif:"Gowun Batang","Apple SD Gothic Neo",serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--mook);color:var(--jae);font-family:var(--sans);font-weight:300;
+  line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--geum);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+#stage{position:relative;max-width:520px;min-height:100svh;margin:0 auto;overflow:hidden;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(120,46,30,.30), transparent 60%),
+    radial-gradient(100% 50% at 50% 100%, rgba(90,30,22,.22), transparent 62%),
+    var(--mook);
+  box-shadow:0 0 90px rgba(0,0,0,.9)}
+#stage::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay}
+.screen{padding:0 20px 40px;animation:fade .6s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 머리글 */
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px}
+.top .brand{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--geum-dim)}
+.top .step{font-size:10px;letter-spacing:.16em;color:rgba(236,224,210,.26)}
+.demo{position:fixed;top:max(8px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:70;
+  font-size:9.5px;letter-spacing:.24em;color:rgba(201,162,74,.5);
+  border:1px solid rgba(201,162,74,.25);padding:2px 10px;border-radius:2px;background:rgba(10,5,7,.7)}
+
+h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
+  line-height:1.85;margin:0;letter-spacing:-.015em;text-shadow:0 2px 16px #000}
+.kick{font-family:var(--serif);font-size:11.5px;letter-spacing:.26em;color:var(--geum);margin:0 0 12px}
+.rule{width:54px;height:1px;margin:16px auto;background:linear-gradient(90deg,transparent,var(--geum-dim),transparent)}
+.hint{font-size:12.5px;color:var(--jae-dim);line-height:1.85}
+.center{text-align:center}
+
+/* 술사 대사 */
+.say{display:flex;gap:12px;align-items:flex-start;margin:18px 0;
+  border:1px solid var(--line);border-left:2px solid var(--jusa);
+  background:linear-gradient(180deg,rgba(28,14,16,.92),rgba(14,8,10,.92));padding:13px 14px}
+.say .por{width:46px;height:46px;flex:none;border-radius:50%;overflow:hidden;
+  border:1px solid rgba(201,162,74,.45);box-shadow:0 0 14px rgba(192,54,42,.25)}
+.say .por img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.say .txt{flex:1;min-width:0}
+.say .nm{font-family:var(--serif);font-size:11px;letter-spacing:.18em;color:var(--geum);margin-bottom:3px}
+.say p{margin:0;font-size:14px;line-height:1.95;color:#efe4d6}
+.say p+p{margin-top:7px}
+.say em{font-style:normal;color:var(--geum-hot)}
+
+/* 단추 */
+.btn{display:block;width:100%;margin-top:14px;padding:16px 14px;font-family:var(--serif);
+  font-size:16px;letter-spacing:.02em;text-align:center;
+  border:1px solid rgba(201,162,74,.55);
+  background:linear-gradient(180deg,rgba(58,38,18,.9),rgba(20,12,8,.95));
+  color:#f3e7d2;box-shadow:0 0 26px rgba(170,126,61,.12),inset 0 1px 0 rgba(255,220,160,.12);
+  transition:transform .12s,box-shadow .2s}
+.btn:active{transform:translateY(1px)}
+.btn.hot{border-color:rgba(192,54,42,.75);
+  background:linear-gradient(180deg,rgba(96,24,18,.92),rgba(30,10,9,.96));
+  box-shadow:0 0 30px rgba(192,54,42,.25),inset 0 1px 0 rgba(255,150,120,.14)}
+.btn.ghost{background:none;border-color:rgba(201,162,74,.22);color:var(--jae-dim);font-size:13px;padding:12px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* 들어가기 */
+#s-intro{padding:0 0 36px}
+.hero{position:relative}
+.hero img{width:100%}
+.hero::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,5,7,.55) 0%,rgba(10,5,7,0) 26%,rgba(10,5,7,.1) 58%,rgba(10,5,7,.92) 93%,var(--mook) 100%)}
+.hero.keyvis{overflow:hidden}
+.hero.keyvis img{display:block}
+.hero.keyvis::after{background:
+  linear-gradient(180deg,rgba(10,5,7,.34) 0%,rgba(10,5,7,0) 14%,rgba(10,5,7,0) 30%,
+    rgba(10,5,7,.30) 44%,rgba(10,5,7,.74) 56%,rgba(10,5,7,.95) 68%,var(--mook) 80%)}
+.titlewrap{position:absolute;left:0;right:0;bottom:6px;z-index:2;text-align:center;
+  padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
+.eyebrow{display:inline-block;margin:10px 0 0;font-family:var(--serif);font-size:10.5px;
+  letter-spacing:.22em;color:#e0bc78;padding:4px 12px;
+  border-top:1px solid rgba(201,162,74,.35);border-bottom:1px solid rgba(201,162,74,.35);
+  background:rgba(10,5,7,.5);text-shadow:0 1px 6px #000}
+.hero .titlewrap .titleimg{width:min(58%,236px);margin:0 auto;display:block;
+  filter:drop-shadow(0 3px 14px rgba(0,0,0,.95)) drop-shadow(0 0 26px rgba(255,120,40,.3))}
+.tagline2{margin:11px 0 0;font-family:var(--serif);font-size:13px;line-height:1.9;color:#e8dbc6;
+  text-shadow:0 2px 10px #000,0 0 20px rgba(0,0,0,.9)}
+.hero .cap{position:absolute;left:0;right:0;bottom:4px;text-align:center;z-index:2}
+.hero .cap .s{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--geum-dim)}
+.hero .cap .b{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:.04em;margin-top:4px;
+  background:linear-gradient(180deg,#f6e3b6,#c9a24a 58%,#8a6f33);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
+.intro-body{padding:12px 20px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:13px 0 16px}
+.tags span{font-family:var(--serif);font-size:11.5px;letter-spacing:.08em;color:#d6c6ae;
+  border:1px solid rgba(201,162,74,.4);padding:5px 10px;background:rgba(10,5,7,.55);
+  backdrop-filter:blur(2px);text-shadow:0 1px 6px #000}
+
+/* 묻기 */
+.fields{display:grid;gap:14px;margin-top:6px}
+.field{border:1px solid var(--line);background:rgba(18,10,12,.7);padding:12px 14px}
+.field label{display:block;font-family:var(--serif);font-size:11.5px;letter-spacing:.2em;color:var(--geum-dim);margin-bottom:8px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{padding:12px;border:1px solid rgba(201,162,74,.26);font-family:var(--serif);font-size:15px;color:var(--jae-dim);background:rgba(10,5,7,.5)}
+.seg button[aria-pressed="true"]{color:#f6e8ce;border-color:rgba(201,162,74,.8);background:linear-gradient(180deg,rgba(58,38,18,.9),rgba(20,12,8,.9));box-shadow:0 0 18px rgba(170,126,61,.18)}
+.agewrap{display:flex;align-items:center;gap:12px}
+.agewrap input{flex:1;accent-color:var(--geum);height:28px}
+.agewrap b{font-family:var(--serif);font-size:26px;color:var(--geum-hot);min-width:76px;text-align:right}
+.agewrap b i{font-style:normal;font-size:14px;color:var(--jae-dim);margin-left:3px}
+
+/* 거울 */
+.mirror{position:relative;width:min(92vw,420px);margin:4px auto 0;aspect-ratio:1/1}
+.mirror .frame{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
+  filter:drop-shadow(0 10px 30px rgba(0,0,0,.75))}
+.mirror::after{content:"";position:absolute;inset:-1px;z-index:4;pointer-events:none;
+  background:radial-gradient(circle at 50% 46%,transparent 56%,rgba(10,5,7,.35) 82%,var(--mook) 100%)}
+.hole{position:absolute;left:49.92%;top:45.06%;width:63.48%;height:55.34%;
+  transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;background:#070406;z-index:1;touch-action:none}
+.hole .ph{position:absolute;left:50%;top:50%;transform-origin:center;will-change:transform;
+  max-width:none;user-select:none;-webkit-user-drag:none}
+.hole .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:var(--jae-dim);font-size:12.5px;text-align:center;padding:0 24px;
+  background:radial-gradient(circle at 50% 42%,rgba(90,60,30,.35),rgba(7,4,6,.9) 70%)}
+.hole .empty .ico{font-family:var(--serif);font-size:30px;color:var(--geum-dim)}
+.guide{position:absolute;inset:0;z-index:2;pointer-events:none}
+.guide ellipse{fill:none;stroke:rgba(255,244,228,.72);stroke-width:1.3;stroke-dasharray:4 6;
+  filter:drop-shadow(0 0 3px rgba(0,0,0,.9))}
+.guide.ok ellipse{stroke:#f3dca6;stroke-dasharray:none;stroke-width:1.8;
+  filter:drop-shadow(0 0 9px rgba(243,220,166,.95))}
+.guide .dim{fill:rgba(6,3,4,.5);transition:fill .5s}
+.guide.ok .dim{fill:rgba(6,3,4,.16)}
+.guide line{stroke:rgba(236,224,210,.2);stroke-width:.7;stroke-dasharray:3 6}
+.guide.ok line{stroke:rgba(243,220,166,.5)}
+.zoom{display:flex;align-items:center;gap:10px;margin:14px 2px 0}
+.zoom span{font-size:11px;letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
+.zoom input{flex:1;accent-color:var(--geum)}
+.order{min-height:46px;display:block;text-align:center;line-height:1.8;
+  font-family:var(--serif);font-size:15px;color:#f0e4d2;margin-top:10px;transition:opacity .3s}
+.order b{color:var(--geum-hot);font-weight:400}
+
+/* 얼굴 판 */
+.facewrap{position:relative;width:min(86vw,360px);margin:0 auto;aspect-ratio:398/347;
+  border-radius:50%;overflow:hidden;border:1px solid rgba(201,162,74,.4);
+  box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 40px rgba(0,0,0,.6)}
+.facewrap .ph{position:absolute;left:50%;top:50%;transform-origin:center;max-width:none}
+.facewrap .veil{position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,transparent 40%,rgba(7,4,6,.55) 100%)}
+.pt{position:absolute;width:24px;height:24px;transform:translate(-50%,-50%);z-index:4;border:0;padding:0}
+.pt i{position:absolute;inset:9px;border-radius:50%;background:rgba(232,195,119,.9);
+  box-shadow:0 0 12px rgba(232,195,119,.9);animation:blip 2.4s ease-in-out infinite}
+.pt.locked i{inset:7px;background:rgba(10,5,7,.2);border:1.2px solid rgba(220,86,66,.95);
+  box-shadow:0 0 7px rgba(192,54,42,.6);animation:blip 3.2s ease-in-out infinite}
+.pt.open i{inset:8.5px;background:rgba(245,232,208,.95);border:0;
+  box-shadow:0 0 14px rgba(255,236,200,.8);animation:none}
+.pt.sel::after{content:"";position:absolute;inset:0;border:1px solid var(--geum-hot);border-radius:50%}
+@keyframes blip{0%,100%{opacity:.45;transform:scale(.8)}50%{opacity:1;transform:scale(1.12)}}
+.mole{position:absolute;width:14px;height:14px;transform:translate(-50%,-50%);z-index:5;pointer-events:none;
+  opacity:0;transition:opacity .5s}
+.mole::before{content:"";position:absolute;inset:4px;border-radius:50%;background:#8f1f17;
+  box-shadow:0 0 10px rgba(192,54,42,.9),inset 0 0 3px rgba(0,0,0,.8)}
+.mole.on{opacity:1}
+.tapmark{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);z-index:6;pointer-events:none}
+.tapmark::before,.tapmark::after{content:"";position:absolute;background:var(--jusa-hot);box-shadow:0 0 8px var(--jusa-hot)}
+.tapmark::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.tapmark::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+
+/* 백귀 패 */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:4px}
+.card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,.6);transition:transform .18s,border-color .2s}
+.card img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.card .nm{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;text-align:center;
+  font-family:var(--serif);font-size:12px;color:#f0e2c9;background:linear-gradient(180deg,transparent,rgba(5,3,4,.95))}
+.card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
+  box-shadow:0 14px 30px rgba(0,0,0,.7),0 0 22px rgba(201,162,74,.3)}
+.card.dim img{filter:grayscale(.6) brightness(.5)}
+
+.seal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;
+  width:52px;height:52px;display:grid;place-items:center;
+  border:1.5px solid rgba(192,54,42,.85);color:#e8705f;font-family:var(--serif);font-size:24px;
+  background:rgba(10,4,5,.5);box-shadow:0 0 18px rgba(192,54,42,.4)}
+
+/* 열두 자리 목록 */
+.gungs{display:grid;gap:8px;margin-top:4px}
+.gung{display:flex;gap:11px;align-items:center;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(22,12,14,.9),rgba(12,7,9,.92));padding:9px 11px;width:100%;text-align:left}
+.gung .th{width:42px;height:56px;flex:none;overflow:hidden;border:1px solid rgba(201,162,74,.3);position:relative;background:#0a0506}
+.gung .th img{width:100%;height:100%;object-fit:cover}
+.gung .th.lock img{filter:grayscale(.75) brightness(.38)}
+.gung .th .lk{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);
+  font-size:17px;color:#c4493a;text-shadow:0 0 10px rgba(192,54,42,.8)}
+.gung .mid{flex:1;min-width:0}
+.gung .nm2{display:block;font-family:var(--serif);font-size:15px;color:#f0e4d2;line-height:1.5}
+.gung .nm2 small{font-size:11px;color:var(--jae-dim);margin-left:6px;letter-spacing:.06em}
+.gung .sub{display:block;font-size:11.5px;color:var(--jae-dim);margin-top:3px;line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gung .sub.blur{filter:blur(3.2px);user-select:none;color:#b9986a}
+.gung .st{font-family:var(--serif);font-size:10px;letter-spacing:.1em;padding:3px 6px;border:1px solid rgba(192,54,42,.5);color:#c4493a;flex:none}
+.gung.opened .st{border-color:rgba(201,162,74,.5);color:var(--geum)}
+.gung.boss{border-color:rgba(192,54,42,.6);box-shadow:0 0 22px rgba(192,54,42,.18)}
+
+/* 풀이 서랍 */
+.panel{border:1px solid rgba(201,162,74,.3);border-top:0;background:rgba(10,6,7,.96);padding:13px 13px 15px;margin-top:-8px}
+.panel h4{font-family:var(--serif);font-size:14px;margin:0 0 7px;color:var(--geum-hot)}
+.panel p{margin:0 0 8px;font-size:13.5px;line-height:1.95;color:#e4d8c8}
+.panel .tagline{font-size:11px;letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
+.panel .cure{border-left:2px solid var(--jusa);padding-left:10px;margin-top:10px}
+
+/* 값 */
+.price{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:16px 10px;text-align:center;margin-top:18px;background:rgba(14,8,10,.7)}
+.price .s{font-size:11px;letter-spacing:.2em;color:var(--jae-dim);font-family:var(--serif)}
+.price .b{font-family:var(--serif);font-size:30px;color:var(--geum-hot);margin-top:4px}
+.price .b del{font-size:15px;color:rgba(163,148,134,.55);margin-right:8px}
+.price .n{font-size:11.5px;color:var(--geum-dim);margin-top:6px}
+.valuegrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.valuegrid div{border:1px solid rgba(201,162,74,.2);background:rgba(10,6,7,.5);padding:9px 10px}
+.valuegrid b{display:block;font-family:var(--serif);font-size:13px;color:#f0e4d2;font-weight:400}
+.valuegrid span{font-size:11px;color:var(--jae-dim)}
+
+/* 색 띠 */
+.colors{display:grid;gap:9px;margin-top:10px}
+.colrow{display:flex;align-items:center;gap:11px;border:1px solid var(--line);padding:9px 11px;background:rgba(12,7,9,.8)}
+.chip{width:40px;height:40px;flex:none;border:1px solid rgba(255,255,255,.18);box-shadow:0 0 16px rgba(0,0,0,.6)}
+.chip.molechip{border:1px dashed rgba(192,54,42,.45);background:rgba(10,5,7,.6);position:relative;box-shadow:none}
+.chip.molechip::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:11px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#8f1f17;box-shadow:0 0 9px rgba(192,54,42,.9)}
+.colrow .cn{font-family:var(--serif);font-size:14.5px;color:#f0e4d2}
+.colrow .cd{font-size:11.5px;color:var(--jae-dim)}
+.colrow.bad{border-color:rgba(192,54,42,.45)}
+.colrow.bad .cn{color:#d98272;text-decoration:line-through;text-decoration-color:rgba(192,54,42,.7)}
+
+/* 탱화 */
+.tang{position:relative;width:min(94vw,460px);margin:6px auto 0;aspect-ratio:1536/1024}
+.tang .bg{border:1px solid rgba(201,162,74,.3);box-shadow:0 16px 46px rgba(0,0,0,.72)}
+.tang .bg{position:absolute;inset:0;width:100%;height:100%}
+.tang .slot{position:absolute;overflow:hidden;border-radius:2px;opacity:0;transform:scale(.6);
+  box-shadow:0 0 12px rgba(232,195,119,.5)}
+.tang .slot img{width:100%;height:100%;object-fit:cover}
+.tang .slot.on{opacity:1;transform:none;transition:opacity .5s,transform .5s}
+.tang .slot.boss{box-shadow:0 0 0 2px rgba(255,110,80,.95),0 0 22px rgba(255,84,54,.9),0 0 44px rgba(192,54,42,.6)}
+
+.foot{margin-top:26px;padding-top:14px;border-top:1px solid rgba(201,162,74,.14);
+  font-size:10.5px;line-height:1.8;color:rgba(163,148,134,.5);text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;
+  background:rgba(14,8,10,.96);border:1px solid var(--line);color:#f0e4d2;
+  padding:11px 18px;font-size:13px;font-family:var(--serif);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="demo">데 모 판</div>
+<div id="stage">
+
+<!-- 0. 들어가기 -->
+<section class="screen" id="s-intro">
+  <div class="hero keyvis">
+    <img src="img/hero.webp" alt="원안법사">
+    <div class="titlewrap">
+      <img class="titleimg" src="img/title.png" alt="백귀관상">
+      <p class="eyebrow">원광법사의 제자 · 圓安法師</p>
+      <p class="tagline2">얼굴에 새겨진 기운을 읽어<br>타고난 성향과 운의 흐름을 살핍니다</p>
+      <div class="tags"><span>성향운</span><span>재물운</span><span>인연운</span><span>건강운</span><span>말년운</span></div>
+    </div>
+  </div>
+  <div class="intro-body">
+    <div class="say">
+      <div class="por"><img src="img/seer-mirror.webp" alt=""></div>
+      <div class="txt">
+        <div class="nm">원안법사 圓安法師</div>
+        <p>…저, 오셨네요. 거울을 하나 들고 있는데요…</p>
+        <p>백귀는 거울에 비친 것으로만 드러나서… 그래서, 얼굴을 한 번 비춰주셔야 해요. 괜찮으시면요…</p>
+      </div>
+    </div>
+    <button class="btn" data-go="s-ask">거울 앞에 서겠습니다</button>
+    <p class="foot">역사·설화를 바탕으로 재구성한 디지털 점찰 콘텐츠입니다.<br>사진은 이 기기 안에서만 쓰이고 어디에도 저장되지 않습니다.</p>
+  </div>
+</section>
+
+<!-- 1. 묻기 -->
+<section class="screen" id="s-ask" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">1 / 6</div></div>
+  <p class="kick">첫째 마디 · 묻기</p>
+  <h2 class="t">나이와 성별부터<br>여쭙겠습니다…</h2>
+  <div class="say">
+    <div class="por"><img src="img/seer-read.webp" alt=""></div>
+    <div class="txt">
+      <div class="nm">원안법사</div>
+      <p>얼굴에는 나이마다 자리가 정해져 있어요. <em>유년운기부위</em>라고 하는데… 몇 살인지를 알아야 올해 운이 어느 자리에 걸렸는지 짚을 수 있어서요.</p>
+      <p>…그리고 남녀가 세는 방향이 반대라서요. 죄송한데 둘 다 여쭐게요.</p>
+    </div>
+  </div>
+  <div class="fields">
+    <div class="field">
+      <label>성별</label>
+      <div class="seg" id="sexseg">
+        <button aria-pressed="false" data-sex="남">남자</button>
+        <button aria-pressed="false" data-sex="여">여자</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>나이 (세는 나이)</label>
+      <div class="agewrap">
+        <input type="range" id="age" min="16" max="75" step="1" value="34" aria-label="나이">
+        <b id="ageN">34<i>세</i></b>
+      </div>
+      <p class="hint" style="margin:8px 0 0" id="yunHint"></p>
+    </div>
+  </div>
+  <button class="btn" id="askGo" disabled>거울을 받겠습니다</button>
+</section>
+
+<!-- 2. 거울 -->
+<section class="screen" id="s-mirror" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">2 / 6</div></div>
+  <p class="kick">둘째 마디 · 비추기</p>
+  <div class="mirror" id="mirror">
+    <div class="hole" id="hole">
+      <div class="empty" id="holeEmpty">
+        <div class="ico">鏡</div>
+        <div>얼굴을 한 번 비춰주세요<br>정면, 민낯에 가까울수록 좋습니다</div>
+      </div>
+      <video class="ph" id="vid" playsinline muted hidden></video>
+      <img class="ph" id="phMirror" alt="" hidden>
+      <svg class="guide" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M19,50 A31,42 0 1,0 81,50 A31,42 0 1,0 19,50 Z"></path>
+        <ellipse cx="50" cy="50" rx="31" ry="42"></ellipse>
+        <line x1="50" y1="8" x2="50" y2="92"></line>
+        <line x1="19" y1="50" x2="81" y2="50"></line>
+      </svg>
+    </div>
+    <img class="frame" src="img/bronze.png" alt="청동경">
+  </div>
+  <div class="order" id="order">사진을 올리면 법사가 자세를 잡아줍니다.</div>
+  <div class="zoom" id="zoomRow" hidden>
+    <span>작게</span><input type="range" id="zoom" min="55" max="260" value="110" aria-label="크기"><span>크게</span>
+  </div>
+  <input type="file" id="fileCam" accept="image/*" capture="user" hidden>
+  <input type="file" id="filePick" accept="image/*" hidden>
+  <div id="getrow">
+    <label class="btn" for="fileCam">셀카 찍기</label>
+    <label class="btn ghost" for="filePick">사진첩에서 고르기</label>
+    <button class="btn ghost" id="live" hidden>거울에 바로 비추기</button>
+  </div>
+  <button class="btn" id="shotLive" hidden>이대로 찍겠습니다</button>
+  <button class="btn" id="shot" hidden>자세를 다 잡았습니다</button>
+  <label class="btn ghost" for="filePick" id="redo" hidden>다른 사진으로 바꾸기</label>
+  <p class="hint center" id="mirrorHint" style="margin-top:12px">사진은 올리는 즉시 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
+</section>
+
+<!-- 3. 읽기 -->
+<section class="screen" id="s-read" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">3 / 6</div></div>
+  <p class="kick">셋째 마디 · 읽기</p>
+  <div class="facewrap" id="faceRead">
+    <img class="ph" alt="">
+    <div class="veil"></div>
+  </div>
+  <div class="order" id="readOrder" style="min-height:62px"></div>
+</section>
+
+<!-- 4. 적중 -->
+<section class="screen" id="s-hit" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">3 / 6</div></div>
+  <p class="kick">셋째 마디 · 지나간 자리</p>
+  <h2 class="t" id="hitTitle"></h2>
+  <div class="say">
+    <div class="por"><img src="img/seer-read.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div><div id="hitSay"></div></div>
+  </div>
+  <div class="facewrap" id="faceHit">
+    <img class="ph" alt="">
+    <div class="veil"></div>
+  </div>
+  <p class="hint center" style="margin-top:12px" id="markHint">
+    …얼굴에 점이나 흉, 패인 자리가 있으면<br>사진 위에서 그 자리를 한 번 짚어주세요.
+  </p>
+  <div id="markOut"></div>
+  <button class="btn" id="hitGo" hidden>다음으로 넘어가겠습니다</button>
+  <button class="btn ghost" id="markSkip">짚을 자리가 없습니다</button>
+</section>
+
+<!-- 5. 고르기 -->
+<section class="screen" id="s-pick" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">4 / 6</div></div>
+  <p class="kick">넷째 마디 · 고르기</p>
+  <h2 class="t">셋 중에 하나를<br>골라보시겠어요…?</h2>
+  <div class="say">
+    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div>
+      <p>…그냥, 보시고 제일 마음이 걸리는 쪽으로요. 틀려도 괜찮아요. 아니, 틀리는 게 더 나을지도…</p>
+    </div>
+  </div>
+  <div class="cards3" id="pick3"></div>
+  <div id="pickOut"></div>
+  <button class="btn" id="pickGo" hidden>열두 자리를 보겠습니다</button>
+</section>
+
+<!-- 6. 열두 자리 -->
+<section class="screen" id="s-board" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">5 / 6</div></div>
+  <p class="kick">다섯째 마디 · 열두 자리</p>
+  <h2 class="t" id="boardTitle">얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…</h2>
+  <div class="facewrap" id="faceBoard" style="margin-top:16px">
+    <img class="ph" alt="">
+    <div class="veil"></div>
+  </div>
+  <p class="hint center" style="margin-top:10px">자리를 눌러 보세요. 서 있는 것이 비켜주면 풀이가 열립니다.</p>
+  <div class="gungs" id="gungs"></div>
+  <div id="boardTail"></div>
+</section>
+
+<!-- 7. 값 -->
+<section class="screen" id="s-pay" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">5 / 6</div></div>
+  <p class="kick">다섯째 마디 · 복채</p>
+  <h2 class="t">열한 자리가<br>아직 막혀 있어요…</h2>
+  <div class="say">
+    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div>
+      <p>…제가 저것들하고 말을 좀 섞어야 하는데요. 그게, 그냥은 안 비켜줘서…</p>
+      <p>이거까지만 봐드릴 테니, 자네도 마음을 정하셔야 해요…</p>
+    </div>
+  </div>
+  <div class="valuegrid">
+    <div><b>열두 자리 전부</b><span>십이궁 낱낱의 풀이</span></div>
+    <div><b>우두머리</b><span>올해를 쥔 하나</span></div>
+    <div><b>점자리</b><span>찍을 자리·뺄 자리</span></div>
+    <div><b>길한 색</b><span>쓸 색 둘, 꺼릴 색 하나</span></div>
+    <div><b>머리 모양</b><span>가릴 곳과 드러낼 곳</span></div>
+    <div><b>백귀도 한 장</b><span>열두 칸을 채운 그림</span></div>
+  </div>
+  <div class="price">
+    <div class="s">복 채</div>
+    <div class="b"><del>5,900원</del>3,990원</div>
+    <div class="n" id="payTimer">봉인 안내가 뜬 뒤 10분 안에만 이 값입니다</div>
+  </div>
+  <button class="btn hot" id="payBtn">3,990원 내고 열두 자리 열기</button>
+  <button class="btn ghost" data-go="s-board">조금 더 보고 정하겠습니다</button>
+  <p class="foot">데모판입니다. 실제 결제는 일어나지 않습니다.</p>
+</section>
+
+<!-- 8. 처방 -->
+<section class="screen" id="s-cure" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">6 / 6</div></div>
+  <p class="kick">여섯째 마디 · 흥정</p>
+  <h2 class="t" id="cureTitle"></h2>
+  <div class="say">
+    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div><div id="cureSay"></div></div>
+  </div>
+
+  <p class="kick" style="margin-top:22px">첫째 · 점자리</p>
+  <div class="facewrap" id="faceCure">
+    <img class="ph" alt="">
+    <div class="veil"></div>
+  </div>
+  <div class="zoom" style="margin-top:12px">
+    <span>찍기 전</span><input type="range" id="moleSlide" min="0" max="100" value="0" aria-label="점 찍기 전후"><span>찍은 뒤</span>
+  </div>
+  <div id="moleOut" style="margin-top:10px"></div>
+
+  <p class="kick" style="margin-top:24px">둘째 · 색</p>
+  <div class="colors" id="colors"></div>
+
+  <p class="kick" style="margin-top:24px">셋째 · 머리</p>
+  <div class="panel" style="border-top:1px solid rgba(201,162,74,.3);margin-top:0" id="hairOut"></div>
+
+  <button class="btn" id="cureGo">백귀도를 받겠습니다</button>
+</section>
+
+<!-- 9. 탱화 -->
+<section class="screen" id="s-tanghwa" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">6 / 6</div></div>
+  <p class="kick">맺음 · 백귀도</p>
+  <h2 class="t">열두 칸이<br>자네 얼굴로 채워졌어요.</h2>
+  <div class="tang" id="tang">
+    <img class="bg" src="img/tanghwa.png" alt="백귀도">
+  </div>
+  <p class="hint center" style="margin-top:12px">붉게 도는 칸이 올해를 쥔 우두머리입니다.</p>
+  <button class="btn" id="saveTang">한 장으로 합치기</button>
+  <div id="tangOut"></div>
+  <button class="btn ghost" id="tangGo">법사의 맺음말을 듣겠습니다</button>
+</section>
+
+<!-- 10. 맺음 -->
+<section class="screen" id="s-end" hidden>
+  <div class="hero" style="margin:0 -20px">
+    <img src="img/seer-end.webp" alt="">
+    <div class="cap"><div class="s">본 것은 인연, 아는 것은 복</div></div>
+  </div>
+  <div class="say" style="margin-top:18px">
+    <div class="por"><img src="img/seer-end.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div>
+      <p>…여기까지가 얼굴이에요. 그릇은 다 봤습니다.</p>
+      <p>그런데 <em>때는 얼굴에 적혀 있지 않아서요…</em> 언제 움직일지, 언제 멈출지는 생년월일을 봐야 알아요.</p>
+      <p>…원하시면요. 아니면 여기서 끝내셔도 괜찮습니다.</p>
+    </div>
+  </div>
+  <div class="valuegrid">
+    <div><b>연애운</b><span>처첩궁 × 배우자궁</span></div>
+    <div><b>금전운</b><span>재백궁 × 재성</span></div>
+    <div><b>직장·사업운</b><span>관록궁 × 관성</span></div>
+    <div><b>이동수</b><span>천이궁 × 역마</span></div>
+  </div>
+  <div class="price">
+    <div class="s">얼굴과 사주를 맞대어 보는 종합</div>
+    <div class="b">9,900원</div>
+    <div class="n">대면으로 사주·관상을 함께 보면 5만 원 선입니다</div>
+  </div>
+  <button class="btn hot" id="crossBtn">생년월일을 적겠습니다</button>
+  <button class="btn ghost" id="again">처음부터 다시 보겠습니다</button>
+  <p class="foot">데모판입니다. 교차 풀이는 아직 만들어지지 않았습니다.</p>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const S={sex:null,age:34,url:null,natW:0,natH:0,x:0,y:0,scale:1.2,
+         yun:null,boss:null,opened:new Set(),paid:false,picked:null,mark:null};
+
+/* ── 십이궁: 자리·부위·문지기 ───────────────────────── */
+const GUNG=[
+ {k:"명",  n:"명궁",  h:"命宮", bu:"인당(印堂)",   d:"타고난 기세와 올해의 숨길",
+  x:50,y:33, g:{nm:"어둑시니",hj:"",art:"img/baekgwi/061.webp"},
+  dx:"인당이 좁고 세로로 그늘이 져 있습니다. 숨 쉴 틈이 없는 얼굴이에요.",
+  hd:"어둑시니는 밝은 데서는 안 보여요. 자네가 혼자 있을 때, 결정을 앞두고 눈을 감을 때 거기 서 있습니다. 그래서 결정을 자꾸 미루게 되는 거예요.",
+  ac:"미간을 덮지 마세요. 앞머리로 가리면 그늘이 두 겹이 됩니다."},
+ {k:"관록",n:"관록궁",h:"官祿宮",bu:"중정(中正)",  d:"직장·사업·윗사람",
+  x:50,y:23, g:{nm:"관재귀",hj:"官災鬼",art:"img/baekgwi/095.webp"},
+  dx:"중정이 평평하지 않고 가운데가 눌려 있습니다. 윗사람 자리가 비어 있다는 뜻이에요.",
+  hd:"관재귀는 문서와 말이 어긋난 자리에 붙습니다. 자네가 잘못해서가 아니라, 자네 이름이 남의 일에 적혀 있어서예요.",
+  ac:"올해 안에 도장 찍을 일이 있으면 하루만 미루고 다시 읽으세요."},
+ {k:"복덕",n:"복덕궁",h:"福德宮",bu:"천창(天倉)",  d:"마음의 여유와 복",
+  x:33,y:24, g:{nm:"심마",hj:"心魔",art:"img/baekgwi/071.webp"},
+  dx:"천창이 꺼져 있습니다. 머리맡에 둘 것이 없는 얼굴이에요.",
+  hd:"심마는 바깥에서 오지 않아요. 자네가 밤에 되감는 그 장면에서 자랍니다. 복이 없는 게 아니라 들어올 자리가 없는 겁니다.",
+  ac:"자기 전에 되감지 마세요. 되감을 거면 아침에 하세요."},
+ {k:"천이",n:"천이궁",h:"遷移宮",bu:"역마(驛馬)",  d:"이동·이사·출타",
+  x:67,y:24, g:{nm:"야행귀",hj:"夜行鬼",art:"img/baekgwi/075.webp"},
+  dx:"역마 자리가 번들거리고 가장자리가 들떠 있습니다. 몸이 한곳에 못 있는 상이에요.",
+  hd:"야행귀는 밤에만 움직입니다. 자네가 늦은 시간에 내린 결정마다 자리를 옮기게 된 적이 있을 거예요.",
+  ac:"큰 이동은 해 지고 나서 정하지 마세요."},
+ {k:"부모",n:"부모궁",h:"父母宮",bu:"일월각(日月角)",d:"부모·윗대의 내력",
+  x:41,y:18, g:{nm:"접동새귀",hj:"",art:"img/baekgwi/030.webp"},
+  dx:"일각과 월각의 높이가 다릅니다. 한쪽이 먼저 기운 자리예요.",
+  hd:"접동새귀는 못다 한 말이 남은 자리에 와서 웁니다. 윗대에서 끊긴 말이 자네한테 내려와 있어요.",
+  ac:"올해 안에 한 번은 찾아가 뵙는 게 좋습니다. 말은 안 해도 됩니다."},
+ {k:"형제",n:"형제궁",h:"兄弟宮",bu:"눈썹(眉)",   d:"형제·동료·동업",
+  x:35,y:37, g:{nm:"이간귀",hj:"離間鬼",art:"img/baekgwi/091.webp"},
+  dx:"눈썹 꼬리가 흩어지고 숱이 끊겨 있습니다. 옆자리가 성글다는 뜻이에요.",
+  hd:"이간귀는 둘 사이에 서서 양쪽에 다른 말을 합니다. 자네가 오해받은 그 일, 자네 입에서 나간 말이 아니었어요.",
+  ac:"눈썹 꼬리를 끊지 말고 길게 그리세요. 끊긴 데를 메워야 합니다."},
+ {k:"전택",n:"전택궁",h:"田宅宮",bu:"눈두덩(田宅)",d:"집·부동산·머물 자리",
+  x:62,y:37, g:{nm:"업구렁이",hj:"業구렁이",art:"img/baekgwi/005.webp"},
+  dx:"눈두덩이 얇고 꺼져 있습니다. 집이 자네를 못 붙잡는 상이에요.",
+  hd:"업구렁이는 집을 지키던 것이에요. 그게 나갔다는 건, 집에 모아둔 것이 새고 있다는 뜻입니다.",
+  ac:"이사는 올해 안에 끝내든지 내후년까지 미루세요. 중간이 제일 나쁩니다."},
+ {k:"처첩",n:"처첩궁",h:"妻妾宮",bu:"어미(魚尾)",  d:"배우자·연애",
+  x:70,y:44, g:{nm:"변심귀",hj:"變心鬼",art:"img/baekgwi/027.webp"},
+  dx:"어미에 가는 금이 여럿 갈라져 있습니다. 한 사람에게 오래 못 머문 자리예요.",
+  hd:"변심귀는 마음을 빼앗는 게 아니라 자꾸 옮겨 놓습니다. 식은 게 아니라 옮겨진 거예요. 자네 쪽도, 그 사람 쪽도요.",
+  ac:"어미 쪽을 환하게 두세요. 옆머리로 덮으면 금이 더 갈라집니다."},
+ {k:"질액",n:"질액궁",h:"疾厄宮",bu:"산근(山根)",  d:"건강·고비",
+  x:50,y:42, g:{nm:"역귀",hj:"疫鬼",art:"img/baekgwi/049.webp"},
+  dx:"산근이 낮고 가로로 끊겨 있습니다. 마흔 고개에서 한 번 쉬어야 하는 상이에요.",
+  hd:"역귀는 약한 자리를 먼저 찾습니다. 자네가 이미 아는 그 자리, 매번 거기부터 탈이 났을 거예요.",
+  ac:"올해는 미루던 검사를 하나만 받으세요. 하나면 됩니다."},
+ {k:"남녀",n:"남녀궁",h:"男女宮",bu:"와잠(臥蠶)",  d:"자녀·아랫사람",
+  x:40,y:48, g:{nm:"동녀귀",hj:"童女鬼",art:"img/baekgwi/032.webp"},
+  dx:"와잠이 부었다 꺼졌다 합니다. 기다리는 일이 있는 자리예요.",
+  hd:"동녀귀는 떼를 씁니다. 울지도 않고 그냥 옆에 앉아 있어요. 자네가 자꾸 미루는 그 일을 보고 있는 겁니다.",
+  ac:"와잠 밑을 눌러서 가리지 마세요. 가리면 기다림이 길어집니다."},
+ {k:"재백",n:"재백궁",h:"財帛宮",bu:"준두(準頭)",  d:"재물·수입",
+  x:50,y:56, g:{nm:"불가사리",hj:"不可殺",art:"img/baekgwi/001.webp"},
+  dx:"준두는 둥근데 콧방울이 들려 있습니다. 벌기는 하는데 담기지 않는 상이에요.",
+  hd:"불가사리는 쇠를 먹고 큽니다. 자네가 번 돈 냄새를 맡고 붙어서, 들어오는 족족 씹어 삼킵니다. 그래서 액수가 아니라 남는 게 없는 거예요.",
+  ac:"들어온 날 바로 한 번 나누세요. 묵히면 다 먹힙니다."},
+ {k:"노복",n:"노복궁",h:"奴僕宮",bu:"지고(地庫)",  d:"아랫사람·말년의 사람",
+  x:35,y:71, g:{nm:"배신귀",hj:"背信鬼",art:"img/baekgwi/100.webp"},
+  dx:"턱 옆 지고가 패여 있습니다. 밑에 사람이 오래 안 남는 자리예요.",
+  hd:"배신귀는 등을 돌리게 합니다. 떠난 사람이 나빠서가 아니에요. 자네가 등을 보일 때를 저것이 기다립니다.",
+  ac:"올해는 아랫사람한테 돈 얘기를 먼저 꺼내지 마세요."}
+];
+const PICK3=[
+ {nm:"구미호",hj:"九尾狐",art:"img/baekgwi/021.webp"},
+ {nm:"두억시니",hj:"",art:"img/baekgwi/041.webp"},
+ {nm:"백호귀",hj:"白虎鬼",art:"img/baekgwi/056.webp"}
+];
+const PICKSAY={
+ "구미호":"…홀리는 쪽을 고르셨네요. 자네가 제일 무서워하는 건 사람한테 속는 일이군요.",
+ "두억시니":"…짓누르는 쪽이군요. 자네는 일이 몰려오는 걸 제일 겁내시는 거예요.",
+ "백호귀":"…한 번에 앗아가는 쪽이네요. 자네는 갑자기 잃는 걸 제일 두려워하시는군요."
+};
+
+/* 유년운기부위 */
+const YUN={15:["화성","관록"],16:["천중","부모"],17:["일각","부모"],18:["월각","부모"],
+ 19:["천정","관록"],20:["보각","관록"],21:["사공","관록"],22:["변성","천이"],23:["변성","천이"],
+ 24:["중정","관록"],25:["중정","관록"],26:["구릉","천이"],27:["총묘","천이"],28:["인당","명"],
+ 29:["산림","복덕"],30:["산림","복덕"],31:["능운","형제"],32:["자기","형제"],33:["번하","형제"],
+ 34:["채하","형제"],35:["태양","전택"],36:["태음","전택"],37:["중양","전택"],38:["중음","전택"],
+ 39:["소양","처첩"],40:["소음","처첩"],41:["산근","질액"],42:["정사","질액"],43:["광전","질액"],
+ 44:["연상","질액"],45:["수상","질액"],46:["관골","노복"],47:["관골","노복"],48:["준두","재백"],
+ 49:["난대","재백"],50:["정위","재백"],51:["인중","남녀"],52:["선고","남녀"],53:["선고","남녀"],
+ 54:["식창","재백"],55:["녹창","재백"],56:["법령","관록"],57:["법령","관록"],58:["호이","노복"],
+ 59:["호이","노복"],60:["수성","남녀"],61:["승장","노복"],62:["지고","노복"],63:["지고","노복"],
+ 64:["피지","노복"],65:["아압","노복"],66:["금루","전택"],67:["금루","전택"],68:["귀래","전택"],
+ 69:["귀래","전택"],70:["송당","복덕"],71:["지각","노복"],72:["지각","노복"],73:["노복","노복"],
+ 74:["시골","노복"],75:["시골","노복"]};
+function yunOf(age,sex){
+  if(age<=14){const s=sex==="여"?"오른쪽":"왼쪽";return{bu:s+" 귀",g:"명",ear:true};}
+  const y=YUN[Math.min(75,age)]||["지각","노복"];return{bu:y[0],g:y[1]};
+}
+const HITAGE=[19,22,25,28,31,35,38,41,44,48,51,56,60,64];
+const HITSAY={
+ "명":"그 무렵에 <em>혼자 정한 일</em>이 하나 있었을 거예요. 아무한테도 안 물어보고요.",
+ "관록":"그때 <em>자리가 한 번 바뀌었죠.</em> 자네가 원해서 바뀐 건 아니었을 거예요.",
+ "복덕":"그 해에 <em>마음을 한 번 접으셨어요.</em> 접은 걸 아무도 몰랐을 거고요.",
+ "천이":"그 무렵에 <em>사는 곳이나 다니는 길이 바뀌었습니다.</em> 급하게요.",
+ "부모":"그 해에 <em>윗대 쪽에서 일이 하나 있었어요.</em> 자네가 떠안았을 거예요.",
+ "형제":"그때 <em>옆에 있던 사람 하나가 떨어져 나갔습니다.</em> 말다툼은 없었을 거예요.",
+ "전택":"그 무렵 <em>집 문제로 한 번 크게 움직였어요.</em> 셈이 틀어졌을 거고요.",
+ "처첩":"그 해에 <em>사람 하나가 들어오거나 나갔습니다.</em> 둘 중 하나는 분명해요.",
+ "질액":"그때 <em>몸이 한 번 내려앉았어요.</em> 큰 병은 아니었지만 오래 끌었을 겁니다.",
+ "남녀":"그 무렵에 <em>기다리던 일이 한 번 어긋났어요.</em> 아직도 기다리고 계시고요.",
+ "재백":"그 해에 <em>돈이 한 번 크게 나갔습니다.</em> 자네 손으로 내보낸 돈이었을 거예요.",
+ "노복":"그때 <em>믿던 사람한테 등을 보였어요.</em> 아니면 등을 보였다고 들으셨거나요."
+};
+/* 자국 짚기 */
+const MARKSAY={
+ "명":"인당의 자국은 <em>막히는 자국</em>입니다. 결정이 늘 하루씩 늦어지셨을 거예요.",
+ "관록":"중정의 자국은 <em>윗사람 자국</em>이에요. 공을 가로채인 적이 있으시죠.",
+ "복덕":"천창의 자국은 <em>잠이 얕아지는 자국</em>입니다. 새벽에 깨신 지 오래됐을 거예요.",
+ "천이":"역마의 자국은 <em>떠도는 자국</em>이에요. 한곳에 삼 년을 못 채우셨을 겁니다.",
+ "부모":"일월각의 자국은 <em>내려받은 자국</em>입니다. 윗대 중 한 분과 같은 자리에 있을 거예요.",
+ "형제":"눈썹의 자국은 <em>갈라지는 자국</em>이에요. 동업 얘기가 나왔다가 엎어진 적이 있으시죠.",
+ "전택":"눈두덩의 자국은 <em>새는 자국</em>입니다. 집에 들인 돈이 돌아오지 않았어요.",
+ "처첩":"어미의 자국은 <em>옮기는 자국</em>이에요. 마음이 한 번 크게 건너간 적이 있습니다.",
+ "질액":"산근의 자국은 <em>끊기는 자국</em>입니다. 거기가 약한 걸 자네도 이미 아시죠.",
+ "남녀":"와잠의 자국은 <em>기다리는 자국</em>이에요. 아직 안 온 소식이 있습니다.",
+ "재백":"준두와 콧방울의 자국은 <em>새는 자국</em>입니다. 이게 제일 흔하고, 제일 아픕니다.",
+ "노복":"지고의 자국은 <em>떠나보내는 자국</em>이에요. 사람이 오래 안 남습니다."
+};
+/* 점자리 처방 */
+const MOLE=[
+ {x:60,y:51,t:"왼 눈 밑 와잠 아래",why:"기다리는 일을 끊어 주는 자리"},
+ {x:42,y:57,t:"오른 콧방울 옆",why:"새는 재물을 막는 자리"},
+ {x:53,y:66,t:"인중 왼쪽",why:"뒤를 이어 주는 자리"}
+];
+/* 색 */
+const COLORS={
+ "목":[["쪽빛","#2a4a6b","겉옷과 가방"],["먹빛","#1d1a1a","신발과 시계"],["다홍","#b9372c","지갑"]],
+ "화":[["치자","#c8a02e","지갑과 열쇠고리"],["황토","#8d6a3a","겉옷"],["쪽빛","#2a4a6b","침구"]],
+ "토":[["다홍","#b9372c","지갑"],["백자","#ddd6c7","윗옷"],["먹빛","#1d1a1a","가방"]],
+ "금":[["먹빛","#1d1a1a","겉옷"],["쪽빛","#2a4a6b","지갑"],["치자","#c8a02e","현관"]],
+ "수":[["백자","#ddd6c7","윗옷"],["치자","#c8a02e","지갑"],["다홍","#b9372c","차와 열쇠"]]
+};
+const OHAENG=["목","화","토","금","수"];
+const OHJA={"목":"木","화":"火","토":"土","금":"金","수":"水"};
+const HAIR={
+ "목":["이마를 드러내세요","앞머리를 내리면 관록궁이 덮입니다. 가르마는 왼쪽으로 타시고요."],
+ "화":["옆을 눌러 주세요","윗머리를 세우면 기운이 위로만 뻗습니다. 옆을 붙여 가라앉히세요."],
+ "토":["턱선을 드러내세요","목을 덮는 길이는 지고를 가립니다. 귀 밑에서 끝나는 게 좋아요."],
+ "금":["가르마를 오른쪽으로","왼쪽 가르마는 일각을 더 높여 한쪽으로 기웁니다."],
+ "수":["앞머리를 짧게","눈썹을 덮으면 형제궁이 끊긴 채로 굳습니다. 눈썹 위에서 끊으세요."]
+};
+/* 탱화 열두 칸 (512x398 기준 → 비율) */
+const RAW=[[692,94,150,139],[866,143,147,139],[997,269,149,138],[1036,424,148,139],
+           [992,579,147,141],[866,698,147,143],[692,740,150,137],[521,698,145,141],
+           [396,579,146,139],[350,424,149,138],[390,269,148,137],[521,143,146,137]];
+const PAD=3;
+const SLOT=RAW.map(s=>[s[0]-PAD,s[1]-PAD,s[2]+PAD*2,s[3]+PAD*2]);
+const TW=1536,TH=1024;
+
+/* ── 화면 전환 ─────────────────────────────── */
+function go(id){
+  document.querySelectorAll(".screen").forEach(s=>s.hidden=true);
+  const el=$(id); el.hidden=false;
+  el.style.animation="none"; void el.offsetWidth; el.style.animation="";
+  window.scrollTo({top:0,behavior:"instant"});
+  requestAnimationFrame(relayoutAll);
+  if(id==="s-pay" && !S.paid) startTimer();
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+let toastT;
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("on");
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2200);}
+
+/* ── 1. 묻기 ──────────────────────────────── */
+$("sexseg").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  S.sex=b.dataset.sex;
+  [...e.currentTarget.children].forEach(c=>c.setAttribute("aria-pressed",String(c===b)));
+  refreshAsk();
+});
+$("age").addEventListener("input",e=>{S.age=+e.target.value;$("ageN").innerHTML=S.age+"<i>세</i>";refreshAsk();});
+function refreshAsk(){
+  const ok=!!S.sex;
+  $("askGo").disabled=!ok;
+  if(ok){
+    const y=yunOf(S.age,S.sex);
+    S.yun=y;
+    $("yunHint").innerHTML=`올해 운은 <b style="color:var(--geum-hot);font-weight:400">${y.bu}</b> 자리에 걸립니다.`;
+  }else $("yunHint").textContent="";
+}
+$("askGo").addEventListener("click",()=>{
+  S.yun=yunOf(S.age,S.sex);
+  S.boss=GUNG.find(g=>g.k===S.yun.g)||GUNG[0];
+  go("s-mirror");
+});
+
+/* ── 2. 거울 ──────────────────────────────── */
+const hole=$("hole"), phM=$("phMirror"), vid=$("vid");
+let stream=null;
+
+function onFile(e){
+  const f=e.target.files && e.target.files[0]; if(!f)return;
+  stopLive();
+  if(S.url) URL.revokeObjectURL(S.url);
+  S.url=URL.createObjectURL(f);
+  const im=new Image();
+  im.onload=()=>{
+    S.natW=im.naturalWidth; S.natH=im.naturalHeight;
+    S.x=0;S.y=0;S.scale=1.1;
+    phM.src=S.url; phM.hidden=false;
+    $("holeEmpty").hidden=true;
+    $("zoomRow").hidden=false;
+    $("getrow").hidden=true; $("redo").hidden=false; $("shot").hidden=false;
+    $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 끌어서 옮기고, 아래로 크기를 맞추면 됩니다.";
+    $("zoom").value=Math.round(S.scale*100);
+    layout(phM,hole);
+  };
+  im.onerror=()=>{ $("order").innerHTML="사진을 읽지 못했습니다. 다른 장으로 해보세요."; };
+  im.src=S.url;
+}
+$("fileCam").addEventListener("change",onFile);
+$("filePick").addEventListener("change",onFile);
+
+const BOXED = (function(){ try{ return window.self!==window.top; }catch(e){ return true; } })();
+if(!BOXED && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) $("live").hidden=false;
+if(BOXED){
+  const n=document.createElement("p");
+  n.className="hint center"; n.style.marginTop="12px";
+  n.innerHTML="지금 보시는 틀 안에서는 <b style='color:#d98272;font-weight:400'>카메라가 막혀 있습니다.</b><br>셀카를 쓰시려면 사진첩에서 골라 주시거나,<br>따로 올린 주소에서 열어 주세요.";
+  $("getrow").appendChild(n);
+}
+$("live").addEventListener("click",async()=>{
+  const b=$("live"); b.disabled=true; b.textContent="거울을 닦는 중…";
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:1280}},audio:false});
+    vid.srcObject=stream; vid.hidden=false; await vid.play();
+    S.natW=vid.videoWidth||720; S.natH=vid.videoHeight||1280;
+    S.x=0;S.y=0;S.scale=1.1;
+    $("holeEmpty").hidden=true; $("getrow").hidden=true;
+    $("zoomRow").hidden=false; $("zoom").value=110; $("shotLive").hidden=false;
+    $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
+    layout(vid,hole);
+  }catch(err){
+    b.hidden=true;
+    $("order").innerHTML="이 화면에서는 거울을 켤 수 없습니다. 위의 <b>셀카 찍기</b>로 해주세요.";
+  }
+  b.disabled=false; b.textContent="거울에 바로 비추기";
+});
+function stopLive(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  vid.hidden=true; vid.srcObject=null; $("shotLive").hidden=true;
+}
+$("shotLive").addEventListener("click",()=>{
+  if(!stream)return;
+  const r=hole.getBoundingClientRect();
+  const c=document.createElement("canvas");
+  c.width=S.natW; c.height=S.natH;
+  c.getContext("2d").drawImage(vid,0,0,c.width,c.height);
+  c.toBlob(bl=>{
+    if(!bl){ toast("찍지 못했습니다"); return; }
+    if(S.url) URL.revokeObjectURL(S.url);
+    S.url=URL.createObjectURL(bl);
+    phM.src=S.url; phM.hidden=false;
+    stopLive();
+    $("redo").hidden=false;
+    layout(phM,hole);
+    runOrders();
+  },"image/jpeg",0.92);
+});
+
+function layout(img,box){
+  const r=box.getBoundingClientRect();
+  if(!S.natW||!r.width)return;
+  const cover=Math.max(r.width/S.natW,r.height/S.natH);
+  const w=S.natW*cover*S.scale, h=S.natH*cover*S.scale;
+  img.style.width=w+"px"; img.style.height=h+"px";
+  img.style.transform=`translate(calc(-50% + ${S.x*r.width/100}px), calc(-50% + ${S.y*r.height/100}px))`;
+}
+function relayoutAll(){
+  layout(stream?vid:phM,hole);
+  document.querySelectorAll(".facewrap").forEach(fw=>{
+    const im=fw.querySelector(".ph"); if(im && im.src) layout(im,fw);
+  });
+}
+window.addEventListener("resize",relayoutAll);
+$("zoom").addEventListener("input",e=>{S.scale=+e.target.value/100;layout(stream?vid:phM,hole);unlock();});
+/* 끌기 */
+let drag=null;
+hole.addEventListener("pointerdown",e=>{
+  if(!S.url && !stream)return;
+  drag={px:e.clientX,py:e.clientY,x:S.x,y:S.y};
+  hole.setPointerCapture(e.pointerId);
+});
+hole.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  const r=hole.getBoundingClientRect();
+  S.x=drag.x+(e.clientX-drag.px)/r.width*100;
+  S.y=drag.y+(e.clientY-drag.py)/r.height*100;
+  layout(stream?vid:phM,hole); unlock();
+});
+["pointerup","pointercancel"].forEach(ev=>hole.addEventListener(ev,()=>{drag=null;}));
+function unlock(){ $("guide").classList.remove("ok"); }
+
+/* 자세 확인 의식 */
+const ORDERS=["…고개를 아주 조금만 들어주세요.","…빛을 마주 보셔야 해요. 그늘이 반쪽만 져 있어서요.","…네. 그대로요. 움직이지 마세요."];
+$("shot").addEventListener("click",()=>{ if(S.url) runOrders(); });
+function runOrders(){
+  $("shot").hidden=true; $("redo").hidden=true; $("getrow").hidden=true;
+  $("zoomRow").hidden=true; $("shotLive").hidden=true;
+  const g=$("guide"), ord=$("order");
+  let i=0;
+  (function step(){
+    if(i<ORDERS.length){
+      ord.style.opacity=0;
+      setTimeout(()=>{ord.innerHTML=ORDERS[i];ord.style.opacity=1;i++;setTimeout(step,1150);},220);
+    }else{
+      g.classList.add("ok");
+      chime();
+      ord.innerHTML="<b>되었습니다.</b>";
+      setTimeout(()=>{ flash(); setTimeout(startRead,520); },700);
+    }
+  })();
+}
+function flash(){
+  const f=document.createElement("div");
+  f.style.cssText="position:fixed;inset:0;background:#f6e8cd;z-index:99;opacity:.92;transition:opacity .45s;pointer-events:none";
+  document.body.appendChild(f);
+  requestAnimationFrame(()=>{f.style.opacity="0";});
+  setTimeout(()=>f.remove(),520);
+}
+let actx;
+function chime(){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const t=actx.currentTime;
+    [880,1320].forEach((f,k)=>{
+      const o=actx.createOscillator(),g=actx.createGain();
+      o.type="sine";o.frequency.value=f;
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(k?0.05:0.09,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+1.6);
+      o.connect(g).connect(actx.destination);o.start(t);o.stop(t+1.7);
+    });
+  }catch(e){}
+}
+
+/* 얼굴 판 공통 */
+function mountFace(wrapId){
+  const fw=$(wrapId), im=fw.querySelector(".ph");
+  im.src=S.url;
+  if(im.complete) layout(im,fw); else im.onload=()=>layout(im,fw);
+  return fw;
+}
+/* 얼굴 틀 안 좌표 → 원 안 백분율 */
+const FX=19, FY=8, FW=62, FH=84;
+const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
+
+/* ── 3. 읽기 ──────────────────────────────── */
+function startRead(){
+  go("s-read");
+  const fw=mountFace("faceRead");
+  fw.querySelectorAll(".pt,.scanline").forEach(n=>n.remove());
+  const line=document.createElement("div");
+  line.className="scanline";
+  line.style.cssText="position:absolute;left:0;right:0;height:2px;z-index:5;background:linear-gradient(90deg,transparent,#e8c377,transparent);box-shadow:0 0 18px rgba(232,195,119,.9);top:0";
+  fw.appendChild(line);
+  const t0=performance.now(), dur=2200;
+  (function anim(t){
+    const k=Math.min(1,(t-t0)/dur);
+    line.style.top=(k*100)+"%";
+    if(k<1) requestAnimationFrame(anim); else line.remove();
+  })(performance.now());
+
+  const ord=$("readOrder"); ord.innerHTML="";
+  GUNG.forEach((g,i)=>{
+    setTimeout(()=>{
+      const d=document.createElement("div");
+      d.className="pt"; d.style.left=px(g.x)+"%"; d.style.top=py(g.y)+"%";
+      d.innerHTML="<i></i>";
+      fw.appendChild(d);
+      ord.innerHTML=`<span style="font-size:13px;color:var(--jae-dim)">${g.n} · ${g.bu} … 짚었습니다</span>`;
+    },260+i*180);
+  });
+  setTimeout(()=>{
+    ord.innerHTML=`<b>열두 자리를 다 짚었습니다.</b>`;
+    setTimeout(showHit,900);
+  },260+GUNG.length*180+500);
+}
+
+/* ── 4. 적중 ──────────────────────────────── */
+function showHit(){
+  go("s-hit");
+  const cands=HITAGE.filter(a=>a<=S.age-1);
+  const hitAge=cands.length?cands[cands.length-1]:Math.max(15,S.age-2);
+  const y=yunOf(hitAge,S.sex);
+  const gu=GUNG.find(g=>g.k===y.g)||GUNG[0];
+  S.hit={age:hitAge,bu:y.bu,gung:gu};
+  $("hitTitle").innerHTML=`${num(hitAge)} 살,<br>${y.bu} 자리를 지날 때요…`;
+  $("hitSay").innerHTML=
+    `<p>얼굴은 나이마다 자리가 정해져 있어요. ${num(hitAge)} 살은 <em>${y.bu}</em>, ${gu.n}에 걸립니다.</p>`+
+    `<p>${HITSAY[y.g]}</p>`+
+    `<p>…맞으면, 하나만 더 여쭐게요.</p>`;
+  const fw=mountFace("faceHit");
+  fw.querySelectorAll(".pt,.tapmark").forEach(n=>n.remove());
+  const d=document.createElement("div");
+  d.className="pt sel"; d.style.left=px(gu.x)+"%"; d.style.top=py(gu.y)+"%"; d.innerHTML="<i></i>";
+  fw.appendChild(d);
+  fw.onclick=onMark;
+}
+function num(n){
+  const a=["","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"];
+  const b=["","열","스물","서른","마흔","쉰","예순","일흔"];
+  return (b[Math.floor(n/10)]||"")+(a[n%10]||"");
+}
+function onMark(e){
+  const fw=e.currentTarget;
+  if(S.mark)return;
+  const r=fw.getBoundingClientRect();
+  const cx=(e.clientX-r.left)/r.width*100, cy=(e.clientY-r.top)/r.height*100;
+  let best=null,bd=1e9;
+  GUNG.forEach(g=>{
+    const dx=px(g.x)-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
+    if(d<bd){bd=d;best=g;}
+  });
+  S.mark=best;
+  const m=document.createElement("div");
+  m.className="tapmark"; m.style.left=cx+"%"; m.style.top=cy+"%";
+  fw.appendChild(m);
+  $("markHint").hidden=true;
+  $("markOut").innerHTML=
+    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
+    `<div class="txt"><div class="nm">원안법사</div>`+
+    `<p>거기는 <em>${best.bu}</em>, ${best.n}이에요.</p>`+
+    `<p>${MARKSAY[best.k]}</p>`+
+    `<p>…자국은 그냥 생기지 않아요. 누가 손을 댄 자리예요.</p></div></div>`;
+  $("markSkip").hidden=true; $("hitGo").hidden=false;
+  fw.onclick=null;
+}
+$("markSkip").addEventListener("click",()=>{
+  $("markHint").hidden=true; $("markSkip").hidden=true; $("hitGo").hidden=false;
+  $("markOut").innerHTML=
+    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
+    `<div class="txt"><div class="nm">원안법사</div>`+
+    `<p>…없으면 다행이에요. 아직 손을 안 댄 거니까요.</p></div></div>`;
+});
+$("hitGo").addEventListener("click",()=>{ go("s-pick"); buildPick(); });
+
+/* ── 5. 고르기 ────────────────────────────── */
+function buildPick(){
+  const w=$("pick3"); w.innerHTML="";
+  PICK3.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="card"; b.setAttribute("aria-pressed","false");
+    b.innerHTML=`<img src="${c.art}" alt="${c.nm}"><div class="nm">${c.nm}</div>`;
+    b.addEventListener("click",()=>choose(c,b));
+    w.appendChild(b);
+  });
+  $("pickOut").innerHTML=""; $("pickGo").hidden=true;
+}
+function choose(c,btn){
+  if(S.picked)return;
+  S.picked=c.nm;
+  [...$("pick3").children].forEach(n=>{
+    n.setAttribute("aria-pressed",String(n===btn));
+    if(n!==btn)n.classList.add("dim");
+  });
+  const boss=S.boss;
+  $("pickOut").innerHTML=
+   `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-deal.webp" alt=""></div>`+
+   `<div class="txt"><div class="nm">원안법사</div>`+
+   `<p>${PICKSAY[c.nm]}</p>`+
+   `<p>…그런데요. 그건 자네가 <em>무서워하는 얼굴</em>이지, 자네 앞에 서 있는 건 아니에요.</p>`+
+   `<p>올해 자네 ${S.yun.bu} 자리를 막고 선 건 <em>${boss.g.nm}</em>입니다. ${boss.n}에 서 있어요.</p></div></div>`+
+   `<div class="cards3" style="grid-template-columns:1fr;max-width:170px;margin:12px auto 0">`+
+   `<div class="card" style="border-color:rgba(192,54,42,.7)"><img src="${boss.g.art}" alt="${boss.g.nm}">`+
+   `<div class="nm">${boss.g.nm}${boss.g.hj?" "+boss.g.hj:""}</div></div></div>`;
+  $("pickGo").hidden=false;
+}
+$("pickGo").addEventListener("click",()=>{ go("s-board"); buildBoard(); });
+
+/* ── 6. 열두 자리 ─────────────────────────── */
+function buildBoard(){
+  const fw=mountFace("faceBoard");
+  fw.querySelectorAll(".pt,.mole").forEach(n=>n.remove());
+  GUNG.forEach(g=>{
+    const d=document.createElement("button");
+    d.className="pt"+(isOpen(g)?" open":" locked");
+    d.style.left=px(g.x)+"%"; d.style.top=py(g.y)+"%";
+    d.innerHTML="<i></i>"; d.dataset.k=g.k;
+    d.setAttribute("aria-label",g.n);
+    d.addEventListener("click",()=>tapGung(g));
+    fw.appendChild(d);
+  });
+  renderGungs();
+  $("boardTitle").innerHTML = S.paid
+    ? "열두 자리가 모두 열렸습니다.<br>하나씩 보셔도 돼요…"
+    : "얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…";
+  $("boardTail").innerHTML = S.paid
+    ? `<button class="btn" id="toCure">법사와 흥정을 보겠습니다</button>`
+    : `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-mirror.webp" alt=""></div>`+
+      `<div class="txt"><div class="nm">원안법사</div>`+
+      `<p>…${GUNG[0].n}은 제가 그냥 열어드렸어요. 맞는지 보셔야 하니까요.</p>`+
+      `<p>나머지 열한 자리는… 저것들이 안 비켜줘서요. 제가 말을 좀 섞어야 해요.</p></div></div>`+
+      `<button class="btn hot" data-go="s-pay">막힌 열한 자리를 열겠습니다</button>`;
+  const tc=$("toCure"); if(tc) tc.addEventListener("click",()=>{ go("s-cure"); buildCure(); });
+  $("boardTail").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+}
+function isOpen(g){ return S.paid || g.k===GUNG[0].k; }
+function renderGungs(){
+  const w=$("gungs"); w.innerHTML="";
+  GUNG.forEach(g=>{
+    const open=isOpen(g), boss=g.k===S.boss.k;
+    const row=document.createElement("div");
+    row.innerHTML=
+      `<button class="gung${open?" opened":""}${boss&&open?" boss":""}" data-k="${g.k}">`+
+      `<span class="th${open?"":" lock"}"><img src="${g.g.art}" alt="">${open?"":'<span class="lk">封</span>'}</span>`+
+      `<span class="mid"><span class="nm2">${g.n}<small>${g.bu}</small></span>`+
+      `<span class="sub${open?"":" blur"}">${open?g.dx:"자리를 막고 선 것이 아직 비키지 않았습니다"}</span></span>`+
+      `<span class="st">${open?(boss?"우두머리":"열림"):"封"}</span></button>`+
+      `<div class="panel" hidden></div>`;
+    const btn=row.firstElementChild, panel=row.lastElementChild;
+    btn.addEventListener("click",()=>{
+      if(!isOpen(g)){ go("s-pay"); return; }
+      const on=!panel.hidden;
+      w.querySelectorAll(".panel").forEach(p=>p.hidden=true);
+      if(!on){ panel.hidden=false; panel.innerHTML=panelHTML(g); }
+      markSel(g.k, !on);
+    });
+    w.appendChild(row);
+  });
+}
+function panelHTML(g){
+  const boss=g.k===S.boss.k;
+  return `<p class="tagline">${g.h} · ${g.d}</p>`+
+   `<h4>자리</h4><p>${g.dx}</p>`+
+   `<h4>막고 선 것 — ${g.g.nm}${g.g.hj?" "+g.g.hj:""}</h4><p>${g.hd}</p>`+
+   (boss?`<p style="color:#d98272">…올해 운이 걸린 자리가 바로 여기예요. 이것이 우두머리입니다.</p>`:"")+
+   `<div class="cure"><h4 style="margin:0 0 4px">이렇게 하세요</h4><p style="margin:0">${g.ac}</p></div>`;
+}
+function markSel(k,on){
+  document.querySelectorAll("#faceBoard .pt").forEach(p=>{
+    p.classList.toggle("sel", on && p.dataset.k===k);
+  });
+}
+function tapGung(g){
+  if(!isOpen(g)){ go("s-pay"); return; }
+  const btn=$("gungs").querySelector(`.gung[data-k="${g.k}"]`);
+  if(btn){ btn.click(); btn.scrollIntoView({behavior:"smooth",block:"center"}); }
+}
+
+/* ── 7. 값 ────────────────────────────────── */
+let payLeft=600, payTick;
+function startTimer(){
+  clearInterval(payTick);
+  payTick=setInterval(()=>{
+    payLeft--;
+    if(payLeft<=0){clearInterval(payTick);$("payTimer").textContent="할인 시간이 지났습니다 (데모라 값은 그대로 둡니다)";return;}
+    const m=String(Math.floor(payLeft/60)).padStart(2,"0"), s=String(payLeft%60).padStart(2,"0");
+    $("payTimer").innerHTML=`이 값은 <b style="color:var(--geum-hot);font-weight:400">${m}:${s}</b> 뒤에 5,900원으로 돌아갑니다`;
+  },1000);
+}
+$("payBtn").addEventListener("click",()=>{
+  S.paid=true; clearInterval(payTick);
+  toast("봉인이 풀렸습니다");
+  go("s-board"); buildBoard();
+});
+
+/* ── 8. 처방 ──────────────────────────────── */
+function ohaeng(){ return OHAENG[(S.age+(S.sex==="여"?3:0))%5]; }
+function buildCure(){
+  const b=S.boss, oh=ohaeng();
+  $("cureTitle").innerHTML=`${b.g.nm}하고<br>말을 좀 섞었습니다…`;
+  $("cureSay").innerHTML=
+    `<p>물러가는 대가로 뭘 원하느냐고 물었어요. 세 가지를 말하더군요.</p>`+
+    `<p>…저는 전해드릴 뿐이에요. 지키실지는 자네가 정하세요.</p>`;
+  const fw=mountFace("faceCure");
+  fw.querySelectorAll(".mole,.pt").forEach(n=>n.remove());
+  MOLE.forEach(m=>{
+    const d=document.createElement("div");
+    d.className="mole"; d.style.left=px(m.x)+"%"; d.style.top=py(m.y)+"%";
+    fw.appendChild(d);
+  });
+  $("moleSlide").value=0; setMoles(0);
+  $("moleOut").innerHTML=MOLE.map(m=>
+    `<div class="colrow" style="border-color:rgba(192,54,42,.3)">`+
+    `<span class="chip molechip"></span>`+
+    `<span><span class="cn">${m.t}</span><br><span class="cd">${m.why}</span></span></div>`).join("")+
+    `<p class="hint" style="margin-top:8px">먹이나 화장으로 한 달만 찍어 보세요. 빼는 건 나중 일입니다.</p>`;
+  const cs=COLORS[oh];
+  $("colors").innerHTML=
+    `<div class="colrow"><span class="chip" style="background:${cs[0][1]}"></span>`+
+    `<span><span class="cn">${cs[0][0]}</span><br><span class="cd">${cs[0][2]}에 쓰세요</span></span></div>`+
+    `<div class="colrow"><span class="chip" style="background:${cs[1][1]}"></span>`+
+    `<span><span class="cn">${cs[1][0]}</span><br><span class="cd">${cs[1][2]}에 쓰세요</span></span></div>`+
+    `<div class="colrow bad"><span class="chip" style="background:${cs[2][1]}"></span>`+
+    `<span><span class="cn">${cs[2][0]}</span><br><span class="cd">${cs[2][2]}에는 올해 쓰지 마세요</span></span></div>`;
+  const h=HAIR[oh];
+  $("hairOut").innerHTML=`<h4>${h[0]}</h4><p style="margin:0">${h[1]}</p>`+
+    `<p class="tagline" style="margin-top:8px">얼굴은 ${oh}형(${OHJA[oh]}形)으로 봅니다</p>`;
+}
+function setMoles(v){
+  document.querySelectorAll("#faceCure .mole").forEach((m,i)=>{
+    const th=i*25;
+    m.classList.toggle("on", v>th);
+  });
+}
+$("moleSlide").addEventListener("input",e=>setMoles(+e.target.value));
+$("cureGo").addEventListener("click",()=>{ go("s-tanghwa"); buildTang(); });
+
+/* ── 9. 탱화 ──────────────────────────────── */
+function buildTang(){
+  const t=$("tang");
+  t.querySelectorAll(".slot").forEach(n=>n.remove());
+  GUNG.forEach((g,i)=>{
+    const s=SLOT[i], d=document.createElement("div");
+    d.className="slot"+(g.k===S.boss.k?" boss":"");
+    d.style.left=(s[0]/TW*100)+"%"; d.style.top=(s[1]/TH*100)+"%";
+    d.style.width=(s[2]/TW*100)+"%"; d.style.height=(s[3]/TH*100)+"%";
+    d.innerHTML=`<img src="${g.g.art}" alt="${g.g.nm}">`;
+    d.title=g.n+" · "+g.g.nm;
+    t.appendChild(d);
+    setTimeout(()=>d.classList.add("on"),180+i*110);
+  });
+}
+$("saveTang").addEventListener("click",async()=>{
+  const btn=$("saveTang"); btn.disabled=true; btn.textContent="합치는 중…";
+  const c=document.createElement("canvas"); c.width=1536; c.height=1024;
+  const x=c.getContext("2d");
+  const load=async src=>{
+    try{
+      const r=await fetch(src);
+      if(r.ok){
+        const bl=await r.blob();
+        if(self.createImageBitmap) return await createImageBitmap(bl);
+        const u=URL.createObjectURL(bl);
+        return await new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=u;});
+      }
+    }catch(e){}
+    return await new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});
+  };
+  x.fillStyle="#0a0507"; x.fillRect(0,0,1536,1024);
+  const bg=await load("img/tanghwa.png");
+  if(bg)x.drawImage(bg,0,0,1536,1024);
+  for(let i=0;i<GUNG.length;i++){
+    const s2=SLOT[i], im=await load(GUNG[i].g.art);
+    if(!im)continue;
+    const X=s2[0],Y=s2[1],W=s2[2],H=s2[3];
+    const k=Math.max(W/im.width,H/im.height);
+    const w=im.width*k,h=im.height*k;
+    x.save();x.beginPath();x.rect(X,Y,W,H);x.clip();
+    x.drawImage(im,X+(W-w)/2,Y+(H-h)/2,w,h);
+    x.restore();
+    if(GUNG[i].k===S.boss.k){x.strokeStyle="rgba(255,110,80,.95)";x.lineWidth=5;x.strokeRect(X+3,Y+3,W-6,H-6);}
+  }
+  let url;
+  try{ url=c.toDataURL("image/png"); }catch(e){ url=null; }
+  if(!url){ btn.textContent="한 장으로 합치기"; btn.disabled=false; toast("합치지 못했습니다 — 화면을 그대로 갈무리해 주세요"); return; }
+  $("tang").hidden=true;
+  $("tangOut").innerHTML=`<img src="${url}" alt="백귀도" style="width:100%;border:1px solid rgba(201,162,74,.35);box-shadow:0 14px 40px rgba(0,0,0,.7)">`+
+    `<p class="hint center" style="margin-top:10px">그림을 길게 눌러 사진첩에 저장하세요.</p>`;
+  btn.hidden=true;
+});
+$("tangGo").addEventListener("click",()=>go("s-end"));
+
+/* ── 10. 맺음 ─────────────────────────────── */
+$("crossBtn").addEventListener("click",()=>toast("데모판입니다 — 교차 풀이는 아직입니다"));
+$("again").addEventListener("click",()=>{stopLive();location.reload();});
+
+refreshAsk();
+</script>
+
+</body>
+</html>
