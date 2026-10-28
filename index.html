@@ -201,17 +201,17 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .facewrap .veil{position:absolute;inset:0;
   background:radial-gradient(ellipse at 50% 46%,transparent 34%,rgba(7,4,6,.42) 72%,rgba(5,3,4,.88) 100%);
   box-shadow:inset 0 0 0 1px rgba(201,162,74,.32),inset 0 0 28px rgba(0,0,0,.8)}
-.pt{position:absolute;width:24px;height:24px;transform:translate(-50%,-50%);z-index:4;border:0;padding:0}
-.pt i{position:absolute;inset:9px;border-radius:50%;background:rgba(232,195,119,.9);
+.pt{position:absolute;width:38px;height:38px;transform:translate(-50%,-50%);z-index:4;border:0;padding:0}
+.pt i{position:absolute;inset:16px;border-radius:50%;background:rgba(232,195,119,.9);
   box-shadow:0 0 12px rgba(232,195,119,.9);animation:blip 2.4s ease-in-out infinite}
 .pt.lvl0 i{background:#9fd5b0;box-shadow:0 0 12px rgba(159,213,176,.85)}
 .pt.lvl1 i{background:#e8c377;box-shadow:0 0 12px rgba(232,195,119,.8)}
 .pt.lvl2 i{background:#d8604c;box-shadow:0 0 14px rgba(216,96,76,.9)}
-.pt.locked i{inset:7px;background:rgba(10,5,7,.2);border:1.2px solid rgba(220,86,66,.95);
+.pt.locked i{inset:14px;background:rgba(10,5,7,.2);border:1.2px solid rgba(220,86,66,.95);
   box-shadow:0 0 7px rgba(192,54,42,.6);animation:blip 3.2s ease-in-out infinite}
-.pt.open i{inset:8.5px;background:rgba(245,232,208,.95);border:0;
+.pt.open i{inset:15.5px;background:rgba(245,232,208,.95);border:0;
   box-shadow:0 0 14px rgba(255,236,200,.8);animation:none}
-.pt.sel::after{content:"";position:absolute;inset:0;border:1px solid var(--geum-hot);border-radius:50%}
+.pt.sel::after{content:"";position:absolute;inset:9px;border:1px solid var(--geum-hot);border-radius:50%}
 @keyframes blip{0%,100%{opacity:.45;transform:scale(.8)}50%{opacity:1;transform:scale(1.12)}}
 .mole{position:absolute;width:14px;height:14px;transform:translate(-50%,-50%);z-index:5;pointer-events:none;
   opacity:0;transition:opacity .5s}
@@ -264,8 +264,11 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .cmeter{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--jae-dim);
   font-family:var(--serif);letter-spacing:.04em;margin-bottom:4px}
 .cmeter .cs{margin-left:auto;color:#e8dcc9}
-.cmeter i{width:14px;height:3px;background:rgba(201,162,74,.22);flex:none}
+.cmeter .bars{display:flex;gap:3px;margin-left:4px}
+.cmeter i{width:13px;height:3px;background:rgba(201,162,74,.18);flex:none;display:block}
 .cmeter i.m0{background:#9fd5b0}.cmeter i.m1{background:#e8c377}.cmeter i.m2{background:#d8604c}
+.cmeter i.s1{background:#8a6f33}.cmeter i.s2{background:#c9a24a}.cmeter i.s3{background:#f3dca6}
+.cmeter .cs{margin-left:auto}
 .cact{margin-top:10px;border-left:2px solid var(--jusa);padding-left:10px;
   font-size:13px;line-height:1.9;color:#e4d8c8}
 .cact b{display:block;font-family:var(--serif);color:var(--geum-hot);font-weight:400;
@@ -356,6 +359,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   border:1px solid rgba(201,162,74,.34);filter:sepia(.2) saturate(1.2) brightness(1.16) contrast(1.05)}
 .bgrow span{flex:1;min-width:0;font-size:12.5px;line-height:1.8;color:var(--jae-dim)}
 .bgrow b{color:#efe2cd;font-weight:400;font-family:var(--serif);font-size:14px}
+.pre{color:var(--jae-dim)}
 .bosswarn{color:#e08a76;border-left:2px solid rgba(192,54,42,.6);padding-left:9px}
 .byline{color:#bfa98a;border-left:1px solid rgba(201,162,74,.4);padding-left:9px;
   font-size:12.5px!important;line-height:1.85!important}
@@ -532,7 +536,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     <div class="field">
       <label>나이 (세는 나이)</label>
       <div class="agewrap">
-        <input type="range" id="age" min="16" max="75" step="1" value="34" aria-label="나이">
+        <input type="range" id="age" min="16" max="90" step="1" value="34" aria-label="나이">
         <b id="ageN">34<i>세</i></b>
       </div>
       <p class="hint" style="margin:8px 0 0" id="yunHint"></p>
@@ -660,7 +664,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     <div class="por"><img src="img/seer-deal.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>…제가 저것들하고 말을 좀 섞어야 하는데요. 그게, 그냥은 안 비켜줘서…</p>
-      <p>이거까지만 봐드릴 테니, 자네도 마음을 정하셔야 해요…</p>
+      <p>이거까지만 봐드릴 테니, 손님도 마음을 정하셔야 해요…</p>
     </div>
   </div>
   <div class="valuegrid">
@@ -714,7 +718,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 <section class="screen" id="s-tanghwa" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">6 / 6</div></div>
   <p class="kick">맺음 · 백귀도</p>
-  <h2 class="t">열두 칸이<br>자네 얼굴로 채워졌어요.</h2>
+  <h2 class="t">열두 칸이<br>손님 얼굴로 채워졌어요.</h2>
   <div class="tang" id="tang">
     <img class="bg" src="img/tanghwa.png" alt="백귀도">
   </div>
@@ -743,7 +747,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     <div class="por"><img src="img/seer-end.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>…여기까지가 얼굴입니다. 그릇은 다 봤어요.</p>
-      <p>그런데 <em>때는 얼굴에 적혀 있지 않아서요.</em> 몇 월에 움직이고 몇 월에 멈출지까지는 위에 적어드렸지만, 올해가 자네 인생에서 어느 대목인지는 생년월일을 봐야 압니다.</p>
+      <p>그런데 <em>때는 얼굴에 적혀 있지 않아서요.</em> 몇 월에 움직이고 몇 월에 멈출지까지는 위에 적어드렸지만, 올해가 손님 인생에서 어느 대목인지는 생년월일을 봐야 압니다.</p>
     </div>
   </div>
   <div class="crossgrid">
@@ -879,7 +883,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   <div class="say">
     <div class="por"><img src="img/seer-mirror.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
-      <p>얼굴은 <em id="crossFace"></em>이라고 봤습니다. 거기에 자네 사주를 맞대 볼게요.</p>
+      <p>얼굴은 <em id="crossFace"></em>이라고 봤습니다. 거기에 손님 사주를 맞대 볼게요.</p>
       <p>…시는 모르셔도 됩니다. 아시면 더 정확하고요.</p>
     </div>
   </div>
@@ -1253,7 +1257,7 @@ function showReadOut(){
    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>${oh.seong}</p>${gyeol}
-      <p>열두 자리 중에 <em>${R.blocked}곳이 막혔고 ${R.opened}곳이 트였습니다.</em> 어디가 막혔는지는 이따가요…</p>
+      <p>열두 자리 중에 <em>${R.opened}곳이 트이고 ${R.blocked}곳이 막혔습니다.</em> 나머지 ${12-R.opened-R.blocked}곳은 반반이고요. 어디가 막혔는지는 이따가요…</p>
     </div></div>`;
   const cmp=compareReading(S.prev, R);
   if(cmp) $("readOut").insertAdjacentHTML("beforeend", compareHTML(cmp));
@@ -1369,8 +1373,8 @@ function choose(c,btn){
    `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-deal.webp" alt=""></div>`+
    `<div class="txt"><div class="nm">원안법사</div>`+
    `<p>${c.q}</p>`+
-   `<p>…그런데요. 그건 자네가 <em>무서워하는 얼굴</em>이지, 자네 앞에 서 있는 건 아닙니다.</p>`+
-   `<p>올해 자네 ${R.yun.bu} 자리를 막고 선 건 <em>${bgName(b.bg)}</em>입니다. ${b.g.n}에 서 있어요.</p></div></div>`+
+   `<p>…그런데요. 그건 <em>무서워하는 얼굴</em>이지, 손님 앞에 서 있는 건 아닙니다.</p>`+
+   `<p>올해 손님 ${R.yun.bu} 자리를 막고 선 건 <em>${bgName(b.bg)}</em>입니다. ${b.g.n}에 서 있어요.</p></div></div>`+
    `<div class="bosscard">${bgCard(b.bg," boss")}`+
    `<p class="bossline">${bg[3]}</p></div>`;
   $("pickGo").hidden=false;
@@ -1384,7 +1388,16 @@ function bgName(i){
   const c=BG[i];
   return c[0] + (/^[\u4e00-\u9fff]+$/.test(c[1]||"") ? " "+c[1] : "");
 }
-function isOpen(j){ return S.paid || j.g.k===R.jari[0].g.k; }
+function freeKey(){
+  if(R.__free) return R.__free;
+  const best=R.jari.filter(j=>j.lv===0 && j.g.k!==R.boss.g.k);
+  const pick=best.length ? best[0]
+            : (R.jari.find(j=>j.lv===1 && j.g.k!==R.boss.g.k)
+               || R.jari.find(j=>j.g.k==="명") || R.jari[0]);
+  R.__free=pick.g.k;
+  return R.__free;
+}
+function isOpen(j){ return S.paid || j.g.k===freeKey(); }
 function buildBoard(){
   const fw=mountFace("faceBoard");
   fw.querySelectorAll(".pt,.mole").forEach(n=>n.remove());
@@ -1399,12 +1412,12 @@ function buildBoard(){
   });
   renderGungs();
   $("boardTitle").innerHTML = S.paid
-    ? `열두 자리가 모두 열렸습니다.<br><span style="color:var(--geum-hot)">막힌 곳이 ${R.blocked}, 트인 곳이 ${R.opened}</span>`
+    ? `열두 자리가 모두 열렸습니다.<br><span style="color:var(--geum-hot)">트인 곳 ${R.opened} · 반반 ${12-R.opened-R.blocked} · 막힌 곳 ${R.blocked}</span>`
     : "얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…";
-  /* 가진 것을 먼저 — 트인 자리는 흉이 아니라 자네 몫입니다 */
+  /* 가진 것을 먼저 — 트인 자리는 흉이 아니라 손님 몫입니다 */
   const gang = R.jari.filter(j=>j.lv===0).slice(0,4);
   $("boardHead").innerHTML = (S.paid && gang.length)
-    ? `<p class="kick" style="margin-top:20px">먼저, 자네가 가진 것</p>`+
+    ? `<p class="kick" style="margin-top:20px">먼저, 손님이 가진 것</p>`+
       `<div class="gangs">`+gang.map(j=>
         `<div><span class="gn">${GANG[j.g.k][0]}</span>`+
         `<span class="gg">${j.g.n} · ${j.g.bu}</span>`+
@@ -1415,8 +1428,8 @@ function buildBoard(){
     ? `<button class="btn" id="toCure">법사와 흥정을 보겠습니다</button>`
     : `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-mirror.webp" alt=""></div>`+
       `<div class="txt"><div class="nm">원안법사</div>`+
-      `<p>…${R.jari[0].g.n}은 제가 그냥 열어드렸어요. 맞는지 보셔야 하니까요.</p>`+
-      `<p>나머지 열한 자리는… 저것들이 안 비켜줘서요. 제가 말을 좀 섞어야 합니다.</p></div></div>`+
+      `<p>…${GUNG.find(g=>g.k===freeKey()).n}은 제가 그냥 열어드렸어요. 손님께 제일 좋은 자리라, 맞는지 먼저 보셔야 하니까요.</p>`+
+      `<p>나머지 열한 자리는… 저것들이 안 비켜줘서요. 제가 말을 좀 섞어야 합니다. ${R.boss.g.n}도 거기 들어 있고요.</p></div></div>`+
       `<button class="btn hot" data-go="s-pay">막힌 열한 자리를 열겠습니다</button>`;
   const tc=$("toCure"); if(tc) tc.addEventListener("click",()=>{ go("s-cure"); buildCure(); });
   $("boardTail").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
@@ -1452,7 +1465,7 @@ function panelHTML(j){
    `<h4>${se.st} — ${bgName(j.bg)}</h4>`+
    `<div class="bgrow"><img src="img/baekgwi/${bg[2]}.webp" alt="${bg[0]}">`+
    `<span><b>${bg[3]}</b><br>${se.mal}</span></div>`+
-   `<p>${bg[4]}</p>`+
+   `<p>${se.pre?`<span class="pre">${se.pre}</span> `:""}${bg[4]}</p>`+
    `<h4>때</h4><p>${SI[g.k][j.lv]}</p>`+
    (j.lv===2?`<p class="byline">${GI_JARI[R.gisaek]}</p>`:"")+
    (boss?`<p class="bosswarn">올해 운이 걸린 자리가 바로 여기입니다. 이것이 우두머리예요.</p>`:"")+
@@ -1522,7 +1535,7 @@ function buildCure(){
   $("cureTitle").innerHTML=`${bg[0]}하고<br>말을 좀 섞었습니다…`;
   $("cureSay").innerHTML=
     `<p>물러가는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요.</p>`+
-    `<p>…저는 전해드릴 뿐이에요. 지키실지는 자네가 정하세요.</p>`;
+    `<p>…저는 전해드릴 뿐이에요. 지키실지는 손님이 정하세요.</p>`;
   const fw=mountFace("faceCure");
   fw.querySelectorAll(".mole,.pt").forEach(n=>n.remove());
   RX.jeom.forEach(m=>{
@@ -1544,7 +1557,7 @@ function buildCure(){
     `<div class="colrow bad"><span class="chip" style="background:${RX.hyung[1]}"></span>`+
     `<span><span class="cn">${RX.hyung[0]}</span><br><span class="cd">${RX.hyung[2]}</span></span></div>`+
     (R.gyo.dan==="극(剋)"
-      ? `<p class="hint" style="margin-top:8px">지금 도는 ${R.gisaek}기가 자네 ${RX.oh.nm}을 누르고 있어서, 그 색만은 올해 피하셔야 합니다.</p>`
+      ? `<p class="hint" style="margin-top:8px">지금 도는 ${R.gisaek}기가 손님 ${RX.oh.nm}을 누르고 있어서, 그 색만은 올해 피하셔야 합니다.</p>`
       : "");
 
   $("hairOut").innerHTML=`<h4>${RX.mori[0]}</h4><p style="margin:0">${RX.mori[1]}</p>`+
@@ -1648,7 +1661,7 @@ function buildEnd(){
   $("endSay").innerHTML=
     `<p>${E.verdictMore}</p>`+
     `<p>${E.boss}</p>`+
-    `<p>자네 그릇은 <em>${oh.nm}</em>이고, 올해 도는 기운은 <em>${GISAEK[R.gisaek].ja}색</em>입니다. 둘의 맞물림이 <em>${R.gyo.dan}</em>이에요.</p>`+
+    `<p>손님 그릇은 <em>${oh.nm}</em>이고, 올해 도는 기운은 <em>${GISAEK[R.gisaek].ja}색</em>입니다. 둘의 맞물림이 <em>${R.gyo.dan}</em>이에요.</p>`+
     `<p>열두 자리 중 트인 데가 ${E.openN}, 막힌 데가 ${E.blockN}입니다.</p>`;
 
   const go3=E.go.map(WOL).join("과 "), stop2=E.stop.map(WOL).join("과 ");
@@ -1658,8 +1671,8 @@ function buildEnd(){
    `<div class="srow bad"><span class="sk">피할 것 둘</span><span class="sv"><ol class="numlist">`+
      E.avoid.map(t=>`<li><b>${t.n}</b> ${t.t}</li>`).join("")+`</ol></span></div>`+
    `<div class="srow when"><span class="sk">시 기</span><span class="sv">`+
-     `<b class="go">${go3}</b>에 움직이세요. ${E.dow}의 달이라 자네 ${oh.nm}을 생합니다.<br>`+
-     `<b class="stop">${stop2}</b>은 멈추세요. ${E.nur}의 달이라 자네를 누릅니다.</span></div>`;
+     `<b class="go">${go3}</b>에 움직이세요. ${E.dow}의 달이라 손님 ${oh.nm}을 생합니다.<br>`+
+     `<b class="stop">${stop2}</b>은 멈추세요. ${E.nur}의 달이라 손님을 누릅니다.</span></div>`;
   $("crossFace").textContent=oh.nm+" · "+GISAEK[R.gisaek].ja+"색";
 }
 
@@ -1713,14 +1726,14 @@ function buildCross(C,P){
   /* 겹침 — 그냥 넘길 일이 아닙니다 */
   if(C.겹침){
     html += `<div class="alertbox"><p class="al">잠깐.</p>`+
-      `<p>자네 얼굴 ${R.boss.g.n}을 막고 선 것이 <b>${bgName(R.boss.bg)}</b>인데, `+
+      `<p>손님 얼굴 ${R.boss.g.n}을 막고 선 것이 <b>${bgName(R.boss.bg)}</b>인데, `+
       `사주에서 가장 빈 자리인 ${C.weak.gungN}에서도 같은 것이 나왔습니다.</p>`+
       `<p>이런 건 흔치 않습니다. 얼굴과 사주가 같은 이름을 부른 거예요. `+
-      `올해 자네가 가장 조심하셔야 할 자리가 거기입니다.</p></div>`;
+      `올해 손님이 가장 조심하셔야 할 자리가 거기입니다.</p></div>`;
   }
 
   /* 사주 네 기둥 */
-  html += `<p class="kick" style="margin-top:22px">자네 사주</p>`+
+  html += `<p class="kick" style="margin-top:22px">손님 사주</p>`+
     `<div class="pillars">`+
     [["년주",S4.year],["월주",S4.month],["일주",S4.day],["시주",S4.hour]].map(([k,v])=>
       `<div><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join("")+
@@ -1734,7 +1747,7 @@ function buildCross(C,P){
     `<div class="srow bind"><span class="sk">맞물림</span><span class="sv">`+
     `얼굴은 ${OH[R.hyeong].nm}, 사주의 일간은 ${S4.ilganOh}입니다. <b>${C.hap}</b><br>${C.hapMal}</span></div>`+
     `<div class="srow when"><span class="sk">올해</span><span class="sv">`+
-    `${C.seun.year}년은 <b class="go">${C.seun.text}</b>, 자네에게는 ${C.seun.god}의 해입니다. `+
+    `${C.seun.year}년은 <b class="go">${C.seun.text}</b>, 손님께는 ${C.seun.god}의 해입니다. `+
     `<b>${C.seun.title}</b><br>${C.seun.body}</span></div></div>`;
 
   /* 종합운 네 자리 */
@@ -1745,9 +1758,11 @@ function buildCross(C,P){
       `<p class="ct">${r.title}</p>`+
       `<p class="cb">${r.body}</p>`+
       `<div class="cmeter"><span>얼굴 ${r.gungN}</span>`+
-      `<i class="m${r.faceLv}"></i><i class="m${r.faceLv}"></i><i class="m${r.faceLv}"></i>`.slice(0, r.faceLv===0?999:999)+
+      `<span class="bars">${[0,1,2].map(i=>`<i class="${i<=(2-r.faceLv)?"m"+r.faceLv:""}"></i>`).join("")}</span>`+
       `<span class="cs">${["트임","반반","막힘"][r.faceLv]}</span></div>`+
-      `<div class="cmeter"><span>사주 ${r.saju}</span><span class="cs">${["없음","약함","보통","강함"][r.sajuPow]}</span></div>`+
+      `<div class="cmeter"><span>사주 ${r.saju}</span>`+
+      `<span class="bars">${[0,1,2].map(i=>`<i class="${i<r.sajuPow?"s"+r.sajuPow:""}"></i>`).join("")}</span>`+
+      `<span class="cs">${["없음","약함","보통","강함"][r.sajuPow]}</span></div>`+
       `<div class="cact"><b>이렇게 하세요</b> ${r.act}</div>`+
       `</div>`;
   });

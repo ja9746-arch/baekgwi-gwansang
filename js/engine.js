@@ -315,7 +315,7 @@ function prescribe(R){
   /* 머리 — 그릇에 삼정을 더해 */
   const mori = oh.mori.slice();
   if (R.samjeong === "하" && R.hyeong !== "토")
-    mori[1] += " 턱을 덮지 마시고요. 자네는 뒤로 갈수록 좋아지는 얼굴입니다.";
+    mori[1] += " 턱을 덮지 마시고요. 손님은 뒤로 갈수록 좋아지는 얼굴입니다.";
   if (R.samjeong === "상")
     mori[1] += " 이마는 끝까지 드러내세요. 초년에 받은 것이 거기 있습니다.";
 
@@ -336,25 +336,36 @@ function summarize(R){
   const block  = R.jari.filter(j=>j.lv===2);
   const mid    = R.jari.filter(j=>j.lv===1);
 
-  const todoSrc = (open.length>=3 ? open : open.concat(mid)).slice(0,3);
-  const todo = todoSrc.map(j=>({ n:j.g.n, t:j.g.lv[j.lv].ac }));
-  while(todo.length<3 && R.jari.length){
-    const j=R.jari[todo.length];
-    if(!todo.some(x=>x.n===j.g.n)) todo.push({ n:j.g.n, t:j.g.lv[j.lv].ac });
-    else break;
+  /* 할 일은 고쳐야 할 데에서 나옵니다. 우두머리를 맨 앞에 두고,
+     막힌 자리, 반반, 그래도 모자라면 트인 자리 순으로 셋을 고릅니다. */
+  const order = [R.boss].concat(
+    block.filter(j=>j!==R.boss), mid.filter(j=>j!==R.boss), open.filter(j=>j!==R.boss));
+  const todo = [];
+  for(const j of order){
+    if(todo.length>=3) break;
+    if(todo.some(x=>x.k===j.g.k)) continue;
+    todo.push({ k:j.g.k, n:j.g.n, t:j.g.lv[j.lv].ac });
   }
 
-  const avoidSrc = (block.length>=2 ? block : block.concat(mid)).slice(0,2);
-  const avoid = avoidSrc.map(j=>({ n:j.g.n, t:PIHAL[j.g.k] }));
+  /* 피할 것은 막힌 데에서. 할 일과 겹치지 않는 자리를 먼저 씁니다. */
+  const avoidPool = block.concat(mid).filter(j=>!todo.some(x=>x.k===j.g.k));
+  const avoidSrc = (avoidPool.length>=2 ? avoidPool
+                    : avoidPool.concat(block, mid)).slice(0,2);
+  const avoid = [];
+  for(const j of avoidSrc){
+    if(avoid.length>=2) break;
+    if(avoid.some(x=>x.k===j.g.k)) continue;
+    avoid.push({ k:j.g.k, n:j.g.n, t:PIHAL[j.g.k] });
+  }
 
   /* 한 줄 판정 — 맞물림과 우두머리로 */
   const bg = BG[R.boss.bg];
   const bgNm = bg[0] + (/^[\u4e00-\u9fff]+$/.test(bg[1]||"") ? " "+bg[1] : "");
   const dan = {
-    "생(生)":    { s:"밀어도 되는 해",   d:"기운이 자네 그릇을 받칩니다. 하려던 것을 하세요." },
+    "생(生)":    { s:"밀어도 되는 해",   d:"기운이 손님 그릇을 받칩니다. 하려던 것을 하세요." },
     "겹침":      { s:"한쪽으로 몰리는 해", d:"그릇과 기운이 같은 갈래라 색이 짙어집니다. 크게 되거나 크게 상합니다." },
     "설(洩)":    { s:"새는 해",         d:"쓰는 데가 많아 모이지 않습니다. 벌이보다 새는 자리를 먼저 막으세요." },
-    "극(剋)":    { s:"눌리는 해",       d:"재주가 있어도 올해는 안 펴집니다. 자네 탓이 아니에요. 버티는 것이 이기는 겁니다." },
+    "극(剋)":    { s:"눌리는 해",       d:"재주가 있어도 올해는 안 펴집니다. 손님 탓이 아니에요. 버티는 것이 이기는 겁니다." },
     "반극(反剋)":{ s:"밀면 되는 해",     d:"밀어붙이면 되기는 합니다. 다만 뒤가 상해요. 한 번에 다 가지려 하지 마세요." }
   }[R.gyo.dan] || { s:"", d:"" };
 
