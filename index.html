@@ -752,9 +752,9 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
       <svg class="guide idle" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M25,50 A25,37 0 1,0 75,50 A25,37 0 1,0 25,50 Z"></path>
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M26,50 A24,35 0 1,0 74,50 A24,35 0 1,0 26,50 Z"></path>
         <ellipse class="rim" cx="50" cy="50" rx="46" ry="46"></ellipse>
-        <ellipse class="face" cx="50" cy="50" rx="25" ry="37"></ellipse>
+        <ellipse class="face" cx="50" cy="50" rx="24" ry="35"></ellipse>
         <g class="tick">
           <line x1="50" y1="6" x2="50" y2="10.5"></line>
           <line x1="50" y1="89.5" x2="50" y2="94"></line>
@@ -1069,6 +1069,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <li>고객센터: 1866-0423</li>
       <li>이메일: ja9746@naver.com</li>
       <li>대표자 · 사업자등록번호 · 주소 · 통신판매업 신고번호: 준비 중</li>
+      <li>판 번호: <b id="buildNo">—</b> (새로고침해도 이 번호가 그대로면 옛 판을 보고 계신 겁니다)</li>
     </ul>
     <p class="warn">통신판매업 신고와 결제 연동을 마친 뒤 이 자리를 채웁니다.
        그 전까지는 실제 결제가 일어나지 않습니다.</p>
@@ -1133,12 +1134,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js"></script>
-<script src="js/gungsang.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/saju.js"></script>
-<script src="js/cross.js"></script>
-<script src="js/sound.js"></script>
+<script src="js/baekgwi.js?v=20261029d"></script>
+<script src="js/gungsang.js?v=20261029d"></script>
+<script src="js/engine.js?v=20261029d"></script>
+<script src="js/saju.js?v=20261029d"></script>
+<script src="js/cross.js?v=20261029d"></script>
+<script src="js/sound.js?v=20261029d"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1460,7 +1461,7 @@ function mountFace(wrapId){
   return fw;
 }
 /* 얼굴 틀 안 좌표 → 원 안 백분율 */
-const FX=25, FY=13, FW=50, FH=74;
+const FX=26, FY=15, FW=48, FH=70;
 const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
 
 /* ── 3. 읽기 ──────────────────────────────── */
@@ -2130,6 +2131,10 @@ function buildCross(C,P){
   $("coBody").innerHTML = html;
 }
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
+
+/* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
+const BUILD = "2026-10-29.4";
+(function(){ const b=$("buildNo"); if(b) b.textContent=BUILD; })();
 
 /* 배경음 — 처음에는 꺼져 있고, 눌러야 켜집니다 */
 (function(){
