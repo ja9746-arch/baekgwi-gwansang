@@ -104,12 +104,17 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 
 /* 단추 */
 .btn{display:block;width:100%;margin-top:14px;padding:17px 14px;font-family:var(--serif);
-  font-size:16.5px;letter-spacing:.02em;text-align:center;position:relative;
+  font-size:16.5px;letter-spacing:.02em;text-align:center;position:relative;overflow:hidden;
   border:1px solid rgba(201,162,74,.55);
-  background:linear-gradient(180deg,rgba(62,41,19,.92),rgba(20,12,8,.96));
-  color:#f6ead6;box-shadow:0 8px 24px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,224,170,.16),inset 0 -1px 0 rgba(0,0,0,.5);
+  background:linear-gradient(180deg,rgba(72,48,22,.95),rgba(38,24,13,.95) 46%,rgba(18,11,7,.97));
+  color:#f6ead6;box-shadow:0 10px 28px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,228,176,.22),inset 0 -1px 0 rgba(0,0,0,.55);
   transition:transform .12s,box-shadow .2s,border-color .2s}
+/* 위쪽에 닦아 놓은 금빛 한 줄 */
+.btn::before{content:"";position:absolute;left:12%;right:12%;top:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,232,186,.5),transparent)}
+.btn:hover{border-color:rgba(201,162,74,.8);box-shadow:0 12px 32px rgba(0,0,0,.55),
+  inset 0 1px 0 rgba(255,228,176,.3),0 0 22px rgba(170,126,61,.16)}
 .btn:active{border-color:rgba(201,162,74,.85)}
 .btn:active{transform:translateY(1px)}
 .btn.hot{border-color:rgba(200,64,48,.8);
@@ -145,23 +150,90 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .hero .cap .b{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:.04em;margin-top:4px;
   background:linear-gradient(180deg,#f6e3b6,#c9a24a 58%,#8a6f33);-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
-.intro-body{padding:0 20px 0}
-.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:13px 0 10px}
-.tags span{font-family:var(--serif);font-size:11.5px;letter-spacing:.08em;color:#d6c6ae;
-  border:1px solid rgba(201,162,74,.4);padding:5px 10px;background:rgba(10,5,7,.55);
+.intro-body{position:relative;padding:0 20px 0}
+/* 키비주얼의 온기가 본문 위까지 이어지게 */
+.intro-body::before{content:"";position:absolute;left:0;right:0;top:-120px;height:220px;z-index:-1;
+  pointer-events:none;
+  background:radial-gradient(ellipse 120% 100% at 50% 0%,rgba(122,52,18,.28),rgba(10,5,7,0) 70%)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:14px 0 8px}
+.tags span{position:relative;font-family:var(--serif);font-size:11.5px;letter-spacing:.1em;
+  color:#e6d6ba;padding:7px 11px 6px;
+  background:linear-gradient(180deg,rgba(38,22,16,.82),rgba(12,7,9,.86));
+  border-left:1px solid rgba(201,162,74,.28);border-right:1px solid rgba(201,162,74,.28);
+  box-shadow:0 2px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,224,170,.12);
   backdrop-filter:blur(2px);text-shadow:0 1px 6px #000}
+.tags span::before,.tags span::after{content:"";position:absolute;left:-1px;right:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.75),transparent)}
+.tags span::before{top:0} .tags span::after{bottom:0}
+
+/* 자 — 나이·크기·점자리 모두 같은 결로 */
+input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;
+  background:linear-gradient(180deg,#120a0b,#2a1a16);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 1px 0 rgba(201,162,74,.14)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;
+  background:linear-gradient(180deg,#120a0b,#2a1a16);box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:22px;height:22px;margin-top:-8.5px;border-radius:50%;border:1px solid rgba(255,230,180,.75);
+  background:radial-gradient(circle at 36% 30%,#fbeec6,#d9b064 48%,#8a6a2c);
+  box-shadow:0 2px 8px rgba(0,0,0,.65),0 0 14px rgba(216,174,96,.45)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  border:1px solid rgba(255,230,180,.75);
+  background:radial-gradient(circle at 36% 30%,#fbeec6,#d9b064 48%,#8a6a2c);
+  box-shadow:0 2px 8px rgba(0,0,0,.65),0 0 14px rgba(216,174,96,.45)}
+input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-offset:4px}
 
 /* 묻기 */
-.fields{display:grid;gap:14px;margin-top:6px}
-.field{border:1px solid var(--line);background:rgba(18,10,12,.7);padding:12px 14px}
-.field label{display:block;font-family:var(--serif);font-size:11.5px;letter-spacing:.2em;color:var(--geum-dim);margin-bottom:8px}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.seg button{padding:12px;border:1px solid rgba(201,162,74,.26);font-family:var(--serif);font-size:15px;color:var(--jae-dim);background:rgba(10,5,7,.5)}
-.seg button[aria-pressed="true"]{color:#f6e8ce;border-color:rgba(201,162,74,.8);background:linear-gradient(180deg,rgba(58,38,18,.9),rgba(20,12,8,.9));box-shadow:0 0 18px rgba(170,126,61,.18)}
-.agewrap{display:flex;align-items:center;gap:12px}
-.agewrap input{flex:1;accent-color:var(--geum);height:28px}
-.agewrap b{font-family:var(--serif);font-size:26px;color:var(--geum-hot);min-width:76px;text-align:right}
-.agewrap b i{font-style:normal;font-size:14px;color:var(--jae-dim);margin-left:3px}
+.fields{display:grid;gap:16px;margin-top:10px}
+.field{position:relative;border:1px solid var(--line);padding:15px 16px 17px;
+  background:linear-gradient(180deg,rgba(26,15,16,.86),rgba(13,8,10,.92));
+  box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,224,170,.07)}
+.field::before,.field::after{content:"";position:absolute;width:9px;height:9px;pointer-events:none;
+  border-color:rgba(201,162,74,.5);border-style:solid}
+.field::before{left:-1px;top:-1px;border-width:1px 0 0 1px}
+.field::after{right:-1px;bottom:-1px;border-width:0 1px 1px 0}
+.field label{display:block;font-family:var(--serif);font-size:11px;letter-spacing:.26em;
+  color:var(--geum-dim);margin-bottom:11px}
+.field label b{font-weight:400;color:rgba(201,162,74,.55);letter-spacing:.1em;font-size:10.5px;margin-left:6px}
+
+/* 성별 — 패 두 장 */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg button{position:relative;padding:16px 8px 13px;overflow:hidden;
+  border:1px solid rgba(201,162,74,.26);background:rgba(10,5,7,.55);
+  display:grid;gap:3px;justify-items:center;transition:border-color .2s,box-shadow .25s,background .25s}
+.seg .hj{font-family:var(--serif);font-size:30px;line-height:1;color:rgba(214,186,132,.5);
+  transition:color .25s,text-shadow .25s}
+.seg .ko{font-family:var(--serif);font-size:13.5px;letter-spacing:.14em;color:var(--jae-dim);transition:color .25s}
+.seg button[aria-pressed="true"]{border-color:rgba(201,162,74,.85);
+  background:radial-gradient(ellipse at 50% 30%,rgba(92,58,22,.9),rgba(18,11,8,.95) 72%);
+  box-shadow:0 0 22px rgba(170,126,61,.26),inset 0 1px 0 rgba(255,224,170,.18)}
+.seg button[aria-pressed="true"] .hj{color:#f3dca6;text-shadow:0 0 14px rgba(232,195,119,.55)}
+.seg button[aria-pressed="true"] .ko{color:#f6e8ce}
+.segnote{margin:10px 0 0;font-size:11.5px;line-height:1.75;color:rgba(201,162,74,.72);
+  font-family:var(--serif);min-height:20px;transition:opacity .3s}
+
+/* 나이 — 눈금 새긴 자 */
+.agewrap{display:flex;align-items:flex-end;gap:14px}
+.agebar{flex:1;position:relative;padding-top:4px}
+.agewrap input[type=range]{width:100%}
+.ageticks{display:flex;justify-content:space-between;margin:2px 2px 0}
+.ageticks span{font-family:var(--serif);font-size:9.5px;letter-spacing:.06em;color:rgba(201,162,74,.42)}
+.agewrap b{font-family:var(--serif);font-size:34px;line-height:1;color:var(--geum-hot);
+  min-width:84px;text-align:right;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.agewrap b i{font-style:normal;font-size:13px;color:var(--jae-dim);margin-left:4px}
+
+/* 올해 걸리는 자리 패 */
+.yunpae{display:flex;align-items:stretch;gap:12px;margin-top:14px;padding:11px 13px;
+  border:1px solid rgba(201,162,74,.22);background:rgba(8,5,6,.6)}
+.yunpae .bu{font-family:var(--serif);font-size:15.5px;color:#f0e2c9;white-space:nowrap;
+  display:flex;flex-direction:column;justify-content:center}
+.yunpae .bu small{font-size:10px;letter-spacing:.2em;color:var(--geum-dim);margin-bottom:3px}
+.yunpae .mal{flex:1;min-width:0;font-size:11.5px;line-height:1.65;color:var(--jae-dim);
+  display:flex;flex-direction:column;justify-content:center;
+  padding-left:12px;border-left:1px solid rgba(201,162,74,.18)}
+.yunpae .mal b{display:block;font-weight:400;color:#d9c7ac;font-family:var(--serif);font-size:13px;margin-bottom:2px}
+.askhint{margin:12px 0 0;text-align:center;font-size:12px;line-height:1.8;color:rgba(201,162,74,.66);font-family:var(--serif)}
+.btn[disabled]{opacity:.42;filter:saturate(.4)}
 
 /* 거울 */
 .mirror{position:relative;left:50%;transform:translateX(-50%);
@@ -185,7 +257,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
    테두리를 거울의 어둠으로 풀어 줍니다. */
 .hole::after{content:"";position:absolute;inset:-1px;z-index:3;pointer-events:none;
   border-radius:50%;
-  background:radial-gradient(circle at 50% 48%,
+  background:radial-gradient(circle at 50% 50%,
     rgba(7,4,6,0) 56%, rgba(7,4,6,.55) 78%, rgba(7,4,6,.95) 93%, #070406 100%)}
 .guide{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
 .guide.idle .tick,.guide.idle .dim{opacity:0}
@@ -205,7 +277,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .guide.set .tick line{stroke:rgba(232,200,122,.8)}
 .zoom{display:flex;align-items:center;gap:10px;margin:14px 2px 0}
 .zoom span{font-size:11px;letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
-.zoom input{flex:1;accent-color:var(--geum)}
+.zoom input{flex:1}
 .order{min-height:46px;display:block;text-align:center;line-height:1.8;
   font-family:var(--serif);font-size:15px;color:#f0e4d2;margin-top:10px;transition:opacity .3s}
 .order b{color:var(--geum-hot);font-weight:400}
@@ -555,22 +627,27 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   </div>
   <div class="fields">
     <div class="field">
-      <label>성별</label>
+      <label>성별 <b>男左女右</b></label>
       <div class="seg" id="sexseg">
-        <button aria-pressed="false" data-sex="남">남자</button>
-        <button aria-pressed="false" data-sex="여">여자</button>
+        <button aria-pressed="false" data-sex="남"><span class="hj">男</span><span class="ko">남자</span></button>
+        <button aria-pressed="false" data-sex="여"><span class="hj">女</span><span class="ko">여자</span></button>
       </div>
+      <p class="segnote" id="segNote">짝이 있는 자리는 남녀가 보는 쪽이 반대라서, 먼저 여쭙니다.</p>
     </div>
     <div class="field">
-      <label>나이 (세는 나이)</label>
+      <label>나이 <b>세는 나이</b></label>
       <div class="agewrap">
-        <input type="range" id="age" min="16" max="90" step="1" value="34" aria-label="나이">
+        <div class="agebar">
+          <input type="range" id="age" min="16" max="90" step="1" value="34" aria-label="나이">
+          <div class="ageticks"><span>16</span><span>35</span><span>53</span><span>71</span><span>90</span></div>
+        </div>
         <b id="ageN">34<i>세</i></b>
       </div>
-      <p class="hint" style="margin:8px 0 0" id="yunHint"></p>
+      <div class="yunpae" id="yunHint"></div>
     </div>
   </div>
   <button class="btn" id="askGo" disabled>거울을 받겠습니다</button>
+  <p class="askhint" id="askHint">먼저 성별을 골라 주세요.</p>
 </section>
 
 <!-- 2. 거울 -->
@@ -586,16 +663,16 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
       <svg class="guide idle" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M20,48 A30,37 0 1,0 80,48 A30,37 0 1,0 20,48 Z"></path>
-        <ellipse class="rim" cx="50" cy="50" rx="47" ry="47"></ellipse>
-        <ellipse class="face" cx="50" cy="48" rx="30" ry="37"></ellipse>
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M25,50 A25,37 0 1,0 75,50 A25,37 0 1,0 25,50 Z"></path>
+        <ellipse class="rim" cx="50" cy="50" rx="46" ry="46"></ellipse>
+        <ellipse class="face" cx="50" cy="50" rx="25" ry="37"></ellipse>
         <g class="tick">
-          <line x1="50" y1="5.5" x2="50" y2="10"></line>
-          <line x1="50" y1="86" x2="50" y2="90.5"></line>
-          <line x1="5.5" y1="48" x2="10" y2="48"></line>
-          <line x1="90" y1="48" x2="94.5" y2="48"></line>
-          <line x1="46.8" y1="48" x2="53.2" y2="48"></line>
-          <line x1="50" y1="44.8" x2="50" y2="51.2"></line>
+          <line x1="50" y1="6" x2="50" y2="10.5"></line>
+          <line x1="50" y1="89.5" x2="50" y2="94"></line>
+          <line x1="6" y1="50" x2="10.5" y2="50"></line>
+          <line x1="89.5" y1="50" x2="94" y2="50"></line>
+          <line x1="46.8" y1="50" x2="53.2" y2="50"></line>
+          <line x1="50" y1="46.8" x2="50" y2="53.2"></line>
         </g>
       </svg>
     </div>
@@ -1028,12 +1105,21 @@ $("age").addEventListener("input",e=>{S.age=+e.target.value;$("ageN").innerHTML=
 function refreshAsk(){
   const ok=!!S.sex;
   $("askGo").disabled=!ok;
+  $("askHint").textContent = ok ? "" : "먼저 성별을 골라 주세요.";
+  $("segNote").innerHTML = ok
+    ? `남좌여우 — 손님은 몸의 <b style="color:#e8c98c;font-weight:400">${S.sex==="남"?"왼":"오른"}쪽</b>이 본인 자리입니다. 짝이 있는 여덟 자리를 그쪽에서 읽습니다.`
+    : "짝이 있는 자리는 남녀가 보는 쪽이 반대라서, 먼저 여쭙니다.";
+  const pae=$("yunHint");
   if(ok){
     const y=yunOf(S.age,S.sex);
     S.yun=y;
-    $("yunHint").innerHTML=`올해 운은 <b style="color:var(--geum-hot);font-weight:400">${y.bu}</b> 자리에 걸립니다.`;
-  }else $("yunHint").textContent="";
+    const g=GUNG.find(G=>G.k===y.g);
+    pae.hidden=false;
+    pae.innerHTML=`<span class="bu"><small>올해 걸리는 자리</small>${y.bu}</span>`+
+      `<span class="mal">${g?"<b>"+g.n+" "+g.h+"</b>"+g.d:""}</span>`;
+  }else{ pae.hidden=true; pae.innerHTML=""; }
 }
+$("yunHint").hidden=true;
 $("askGo").addEventListener("click",()=>{ S.yun=yunOf(S.age,S.sex); go("s-mirror"); });
 
 /* ── 2. 거울 ──────────────────────────────── */
@@ -1279,7 +1365,7 @@ function mountFace(wrapId){
   return fw;
 }
 /* 얼굴 틀 안 좌표 → 원 안 백분율 */
-const FX=20, FY=11, FW=60, FH=74;
+const FX=25, FY=13, FW=50, FH=74;
 const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
 
 /* ── 3. 읽기 ──────────────────────────────── */
