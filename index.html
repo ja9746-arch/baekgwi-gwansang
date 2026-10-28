@@ -223,6 +223,63 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .tapmark::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
 .tapmark::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
 
+/* 생년월일 칸 */
+.drow{display:flex;align-items:center;gap:7px}
+.drow input{flex:1;min-width:0;background:rgba(8,5,6,.8);border:1px solid rgba(201,162,74,.3);
+  color:#f2e6d2;font-family:var(--serif);font-size:19px;text-align:center;padding:11px 4px}
+.drow input:disabled{opacity:.35}
+.drow span{font-family:var(--serif);font-size:13px;color:var(--jae-dim);flex:none}
+.field label input[type=checkbox]{margin-right:7px;accent-color:var(--geum);
+  width:16px;height:16px;vertical-align:-3px}
+
+/* 네 기둥 */
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.pillars div{border:1px solid rgba(201,162,74,.3);background:linear-gradient(180deg,rgba(26,16,13,.9),rgba(11,7,8,.95));
+  padding:11px 4px;text-align:center}
+.pk{display:block;font-size:10.5px;letter-spacing:.14em;color:var(--geum-dim);font-family:var(--serif)}
+.pv{display:block;margin-top:6px;font-family:var(--serif);font-size:14.5px;color:#f2e6d2;line-height:1.5}
+
+/* 겹침 알림 */
+.alertbox{margin-top:16px;border:1px solid rgba(200,64,48,.55);
+  background:linear-gradient(180deg,rgba(62,18,13,.72),rgba(20,8,8,.9));
+  padding:15px 15px;box-shadow:0 0 28px rgba(192,54,42,.22)}
+.alertbox .al{margin:0 0 7px;font-family:var(--serif);font-size:19px;color:#ff8b72;letter-spacing:.06em}
+.alertbox p{margin:0 0 8px;font-size:13.5px;line-height:1.95;color:#efdcd3}
+.alertbox p:last-child{margin-bottom:0}
+.alertbox b{color:#ffb9a4;font-weight:400}
+
+/* 종합운 한 자리 */
+.crow{margin-top:11px;border:1px solid rgba(201,162,74,.26);
+  background:linear-gradient(180deg,rgba(24,15,13,.92),rgba(12,7,9,.95));padding:14px 14px 13px}
+.crow.k-겹{border-color:rgba(159,213,176,.45)}
+.crow.k-둘{border-color:rgba(216,96,76,.45)}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.cn{font-family:var(--serif);font-size:16px;color:#f3e7d2}
+.ck{font-family:var(--serif);font-size:10.5px;letter-spacing:.1em;padding:3px 7px;
+  border:1px solid rgba(201,162,74,.45);color:var(--geum)}
+.k-겹 .ck{border-color:rgba(159,213,176,.5);color:#9fd5b0}
+.k-둘 .ck{border-color:rgba(216,96,76,.5);color:#d8604c}
+.ct{margin:0 0 7px;font-family:var(--serif);font-size:15px;color:var(--geum-hot);line-height:1.6}
+.cb{margin:0 0 10px;font-size:13.5px;line-height:1.95;color:#e2d6c4}
+.cmeter{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--jae-dim);
+  font-family:var(--serif);letter-spacing:.04em;margin-bottom:4px}
+.cmeter .cs{margin-left:auto;color:#e8dcc9}
+.cmeter i{width:14px;height:3px;background:rgba(201,162,74,.22);flex:none}
+.cmeter i.m0{background:#9fd5b0}.cmeter i.m1{background:#e8c377}.cmeter i.m2{background:#d8604c}
+.cact{margin-top:10px;border-left:2px solid var(--jusa);padding-left:10px;
+  font-size:13px;line-height:1.9;color:#e4d8c8}
+.cact b{display:block;font-family:var(--serif);color:var(--geum-hot);font-weight:400;
+  font-size:12.5px;margin-bottom:2px}
+
+/* 타고난 것 */
+.gangs{display:grid;gap:8px;margin-top:4px}
+.gangs div{border:1px solid rgba(159,213,176,.3);
+  background:linear-gradient(180deg,rgba(16,26,20,.85),rgba(9,13,11,.9));padding:12px 13px}
+.gn{display:block;font-family:var(--serif);font-size:15.5px;color:#b6e0c3}
+.gg{display:block;margin-top:2px;font-size:11px;letter-spacing:.1em;color:rgba(159,213,176,.6);
+  font-family:var(--serif)}
+.gangs p{margin:7px 0 0;font-size:13px;line-height:1.9;color:#dfe8e0}
+
 /* 지난 기록 알림 */
 .lastbox{margin-top:16px;border:1px solid rgba(201,162,74,.3);border-left:2px solid var(--geum);
   background:rgba(18,11,11,.8);padding:12px 14px}
@@ -589,6 +646,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     <div class="veil"></div>
   </div>
   <p class="hint center" style="margin-top:10px">자리를 눌러 보세요. 서 있는 것이 비켜주면 풀이가 열립니다.</p>
+  <div id="boardHead"></div>
   <div class="gungs" id="gungs"></div>
   <div id="boardTail"></div>
 </section>
@@ -817,19 +875,53 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 <section class="screen" id="s-cross" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">교차</div></div>
   <p class="kick">얼굴과 사주를 맞대어</p>
-  <h2 class="t">이 대목은<br>아직 짓는 중입니다.</h2>
+  <h2 class="t">언제 태어나셨는지<br>여쭙겠습니다.</h2>
   <div class="say">
     <div class="por"><img src="img/seer-mirror.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
-      <p>…죄송해요. 여기는 아직 문을 못 열었습니다.</p>
-      <p>열리면 자네 <em id="crossFace"></em>에 사주를 맞대어, 어느 궁이 맞고 어느 궁이 어긋나는지 낱낱이 짚어드릴 거예요.</p>
+      <p>얼굴은 <em id="crossFace"></em>이라고 봤습니다. 거기에 자네 사주를 맞대 볼게요.</p>
+      <p>…시는 모르셔도 됩니다. 아시면 더 정확하고요.</p>
     </div>
   </div>
-  <div class="scroll">
-    <div class="srow"><span class="sk">맞으면</span><span class="sv">그릇과 때가 같이 왔다는 뜻입니다. 그 자리는 확정으로 밀어도 됩니다.</span></div>
-    <div class="srow"><span class="sk">어긋나면</span><span class="sv">그릇은 큰데 때가 안 왔거나, 때는 왔는데 그릇이 못 받는 겁니다. 왜 아무리 해도 안 풀렸는지가 여기서 나옵니다.</span></div>
-    <div class="srow"><span class="sk">겹치면</span><span class="sv">얼굴에서도 사주에서도 같은 백귀가 나오는 때가 있습니다. 그건 그냥 넘길 일이 아니에요.</span></div>
+  <div class="fields">
+    <div class="field">
+      <label>태어난 날 (양력)</label>
+      <div class="drow">
+        <input type="number" id="bY" inputmode="numeric" min="1920" max="2026" placeholder="1990" aria-label="년">
+        <span>년</span>
+        <input type="number" id="bM" inputmode="numeric" min="1" max="12" placeholder="6" aria-label="월">
+        <span>월</span>
+        <input type="number" id="bD" inputmode="numeric" min="1" max="31" placeholder="15" aria-label="일">
+        <span>일</span>
+      </div>
+      <p class="hint" style="margin:9px 0 0">음력으로 아시면 달력에서 양력으로 바꿔 넣어 주세요.</p>
+    </div>
+    <div class="field">
+      <label>태어난 때</label>
+      <div class="drow">
+        <input type="number" id="bH" inputmode="numeric" min="0" max="23" placeholder="10" aria-label="시">
+        <span>시</span>
+        <input type="number" id="bMi" inputmode="numeric" min="0" max="59" placeholder="0" aria-label="분">
+        <span>분</span>
+      </div>
+      <label style="margin:10px 0 0"><input type="checkbox" id="noTime"> 때는 모릅니다</label>
+      <p class="hint" style="margin:8px 0 0">전국 일괄 30분을 당겨 셉니다. 야자시는 일주를 그날 그대로 두고 시주만 다음 날로 봅니다.</p>
+    </div>
   </div>
+  <div class="price">
+    <div class="s">얼굴과 사주를 맞대어 보는 종합</div>
+    <div class="b">9,900원</div>
+    <div class="n">대면으로 사주·관상을 함께 보면 5만 원 선입니다</div>
+  </div>
+  <button class="btn hot" id="crossGo">9,900원 · 맞대어 보겠습니다</button>
+  <button class="btn ghost" data-go="s-end">맺음으로 돌아가겠습니다</button>
+</section>
+
+<section class="screen" id="s-crossout" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">교차</div></div>
+  <p class="kick">얼굴과 사주</p>
+  <h2 class="t" id="coTitle"></h2>
+  <div id="coBody"></div>
   <button class="btn ghost" data-go="s-end">맺음으로 돌아가겠습니다</button>
 </section>
 
@@ -839,6 +931,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 <script src="js/baekgwi.js"></script>
 <script src="js/gungsang.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/saju.js"></script>
+<script src="js/cross.js"></script>
 <script src="js/sound.js"></script>
 <script>
 "use strict";
@@ -1307,6 +1401,16 @@ function buildBoard(){
   $("boardTitle").innerHTML = S.paid
     ? `열두 자리가 모두 열렸습니다.<br><span style="color:var(--geum-hot)">막힌 곳이 ${R.blocked}, 트인 곳이 ${R.opened}</span>`
     : "얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…";
+  /* 가진 것을 먼저 — 트인 자리는 흉이 아니라 자네 몫입니다 */
+  const gang = R.jari.filter(j=>j.lv===0).slice(0,4);
+  $("boardHead").innerHTML = (S.paid && gang.length)
+    ? `<p class="kick" style="margin-top:20px">먼저, 자네가 가진 것</p>`+
+      `<div class="gangs">`+gang.map(j=>
+        `<div><span class="gn">${GANG[j.g.k][0]}</span>`+
+        `<span class="gg">${j.g.n} · ${j.g.bu}</span>`+
+        `<p>${GANG[j.g.k][1]}</p></div>`).join("")+`</div>`+
+      `<p class="kick" style="margin-top:22px">그리고 막힌 데</p>`
+    : "";
   $("boardTail").innerHTML = S.paid
     ? `<button class="btn" id="toCure">법사와 흥정을 보겠습니다</button>`
     : `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-mirror.webp" alt=""></div>`+
@@ -1560,7 +1664,98 @@ function buildEnd(){
 }
 
 /* ── 10. 맺음 ─────────────────────────────── */
-$("crossBtn").addEventListener("click",()=>go("s-cross"));
+$("crossBtn").addEventListener("click",()=>{
+  $("crossFace").textContent = OH[R.hyeong].nm + " · " + GISAEK[R.gisaek].ja + "색";
+  go("s-cross");
+});
+$("noTime").addEventListener("change",e=>{
+  const off=e.target.checked;
+  ["bH","bMi"].forEach(id=>{ $(id).disabled=off; if(off) $(id).value=""; });
+});
+
+/* ── 교차 ─────────────────────────────────── */
+async function runCross(){
+  const y=+$("bY").value, m=+$("bM").value, d=+$("bD").value;
+  const noT=$("noTime").checked;
+  const h=noT?12:(+$("bH").value||0), mi=noT?0:(+$("bMi").value||0);
+  if(!(y>=1920&&y<=2026) || !(m>=1&&m<=12) || !(d>=1&&d<=31)){
+    toast("태어난 날을 다시 봐주세요"); return;
+  }
+  const t=new Date(y,m-1,d);
+  if(t.getFullYear()!==y||t.getMonth()!==m-1||t.getDate()!==d){ toast("없는 날짜입니다"); return; }
+  if(!noT && (h<0||h>23||mi<0||mi>59)){ toast("태어난 때를 다시 봐주세요"); return; }
+
+  const b=$("crossGo"); b.disabled=true; const old=b.textContent; b.textContent="맞대어 보는 중…";
+  let ok=false;
+  try{ ok=await openCheckout(); }catch(e){ ok=false; }
+  if(!ok){ b.disabled=false; b.textContent=old; toast("결제가 끝나지 않았습니다"); return; }
+
+  try{
+    const P=fourPillars(y,m,d,h,mi,{hasTime:!noT});
+    const C=crossJudge(R,P);
+    buildCross(C,P);
+    go("s-crossout");
+  }catch(e){ toast("셈하지 못했습니다"); }
+  b.disabled=false; b.textContent=old;
+}
+$("crossGo").addEventListener("click",runCross);
+
+const KEY=["겹","그","때","둘","반"];
+const KEYNM={ "겹":"겹침", "그":"그릇만", "때":"때만", "둘":"둘 다 빔", "반":"반반" };
+function buildCross(C,P){
+  const S4=C.saju;
+  $("coTitle").innerHTML = C.겹침
+    ? `얼굴에서도 사주에서도<br><span style="color:#e08a76">같은 것이 나왔습니다.</span>`
+    : `얼굴은 그릇,<br><span style="color:var(--geum-hot)">사주는 때입니다.</span>`;
+
+  let html = "";
+
+  /* 겹침 — 그냥 넘길 일이 아닙니다 */
+  if(C.겹침){
+    html += `<div class="alertbox"><p class="al">잠깐.</p>`+
+      `<p>자네 얼굴 ${R.boss.g.n}을 막고 선 것이 <b>${bgName(R.boss.bg)}</b>인데, `+
+      `사주에서 가장 빈 자리인 ${C.weak.gungN}에서도 같은 것이 나왔습니다.</p>`+
+      `<p>이런 건 흔치 않습니다. 얼굴과 사주가 같은 이름을 부른 거예요. `+
+      `올해 자네가 가장 조심하셔야 할 자리가 거기입니다.</p></div>`;
+  }
+
+  /* 사주 네 기둥 */
+  html += `<p class="kick" style="margin-top:22px">자네 사주</p>`+
+    `<div class="pillars">`+
+    [["년주",S4.year],["월주",S4.month],["일주",S4.day],["시주",S4.hour]].map(([k,v])=>
+      `<div><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join("")+
+    `</div>`+
+    `<p class="hint center" style="margin-top:9px">`+
+    `일간은 <b style="color:var(--geum-hot);font-weight:400">${S4.ilgan}</b>, `+
+    `${S4.ilganOh}의 기운입니다. ${S4.ddi}띠고요.</p>`;
+
+  /* 그릇과 일간의 맞물림 */
+  html += `<div class="scroll" style="margin-top:16px">`+
+    `<div class="srow bind"><span class="sk">맞물림</span><span class="sv">`+
+    `얼굴은 ${OH[R.hyeong].nm}, 사주의 일간은 ${S4.ilganOh}입니다. <b>${C.hap}</b><br>${C.hapMal}</span></div>`+
+    `<div class="srow when"><span class="sk">올해</span><span class="sv">`+
+    `${C.seun.year}년은 <b class="go">${C.seun.text}</b>, 자네에게는 ${C.seun.god}의 해입니다. `+
+    `<b>${C.seun.title}</b><br>${C.seun.body}</span></div></div>`;
+
+  /* 종합운 네 자리 */
+  html += `<p class="kick" style="margin-top:24px">종합운 네 자리</p>`;
+  C.rows.forEach(r=>{
+    html += `<div class="crow k-${r.key}">`+
+      `<div class="ch"><span class="cn">${r.n}</span><span class="ck">${KEYNM[r.key]}</span></div>`+
+      `<p class="ct">${r.title}</p>`+
+      `<p class="cb">${r.body}</p>`+
+      `<div class="cmeter"><span>얼굴 ${r.gungN}</span>`+
+      `<i class="m${r.faceLv}"></i><i class="m${r.faceLv}"></i><i class="m${r.faceLv}"></i>`.slice(0, r.faceLv===0?999:999)+
+      `<span class="cs">${["트임","반반","막힘"][r.faceLv]}</span></div>`+
+      `<div class="cmeter"><span>사주 ${r.saju}</span><span class="cs">${["없음","약함","보통","강함"][r.sajuPow]}</span></div>`+
+      `<div class="cact"><b>이렇게 하세요</b> ${r.act}</div>`+
+      `</div>`;
+  });
+
+  html += `<p class="foot">얼굴은 마의상법·유장상법의 십이궁으로, 사주는 입춘과 절입으로 가른 네 기둥으로 셈했습니다.<br>`+
+    `생년월일은 이 기기 안에서만 쓰이고 저장되지 않습니다.</p>`;
+  $("coBody").innerHTML = html;
+}
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 배경음 — 처음에는 꺼져 있고, 눌러야 켜집니다 */
