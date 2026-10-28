@@ -133,8 +133,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .mirror .frame{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
   filter:drop-shadow(0 10px 30px rgba(0,0,0,.75))}
 .mirror::after{content:"";position:absolute;inset:-1px;z-index:4;pointer-events:none;
-  background:radial-gradient(circle at 50% 46%,transparent 56%,rgba(10,5,7,.35) 82%,var(--mook) 100%)}
-.hole{position:absolute;left:49.92%;top:45.06%;width:63.48%;height:55.34%;
+  background:radial-gradient(circle at 49.91% 45.09%,transparent 54%,rgba(10,5,7,.3) 80%,var(--mook) 100%)}
+.hole{position:absolute;left:49.91%;top:45.09%;width:63.09%;height:54.91%;
   transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;background:#070406;z-index:1;touch-action:none}
 .hole .ph{position:absolute;left:50%;top:50%;transform-origin:center;will-change:transform;
   max-width:none;user-select:none;-webkit-user-drag:none}
@@ -143,14 +143,16 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
   background:radial-gradient(circle at 50% 42%,rgba(90,60,30,.35),rgba(7,4,6,.9) 70%)}
 .hole .empty .ico{font-family:var(--serif);font-size:30px;color:var(--geum-dim)}
 .guide{position:absolute;inset:0;z-index:2;pointer-events:none}
-.guide ellipse{fill:none;stroke:rgba(255,244,228,.72);stroke-width:1.3;stroke-dasharray:4 6;
-  filter:drop-shadow(0 0 3px rgba(0,0,0,.9))}
-.guide.ok ellipse{stroke:#f3dca6;stroke-dasharray:none;stroke-width:1.8;
+.guide .face{fill:none;stroke:rgba(255,246,232,.82);stroke-width:1.1;
+  filter:drop-shadow(0 0 3px rgba(0,0,0,.95))}
+.guide .rim{fill:none;stroke:rgba(201,162,74,.26);stroke-width:.7}
+.guide .tick line{stroke:rgba(255,246,232,.5);stroke-width:.9;stroke-linecap:round}
+.guide .dim{fill:rgba(6,3,4,.46);transition:fill .5s}
+.guide.ok .dim{fill:rgba(6,3,4,.12)}
+.guide.ok .face{stroke:#f3dca6;stroke-width:1.5;
   filter:drop-shadow(0 0 9px rgba(243,220,166,.95))}
-.guide .dim{fill:rgba(6,3,4,.5);transition:fill .5s}
-.guide.ok .dim{fill:rgba(6,3,4,.16)}
-.guide line{stroke:rgba(236,224,210,.2);stroke-width:.7;stroke-dasharray:3 6}
-.guide.ok line{stroke:rgba(243,220,166,.5)}
+.guide.ok .rim{stroke:rgba(243,220,166,.5)}
+.guide.ok .tick line{stroke:rgba(243,220,166,.85)}
 .zoom{display:flex;align-items:center;gap:10px;margin:14px 2px 0}
 .zoom span{font-size:11px;letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
 .zoom input{flex:1;accent-color:var(--geum)}
@@ -343,10 +345,17 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
       <svg class="guide" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M19,50 A31,42 0 1,0 81,50 A31,42 0 1,0 19,50 Z"></path>
-        <ellipse cx="50" cy="50" rx="31" ry="42"></ellipse>
-        <line x1="50" y1="8" x2="50" y2="92"></line>
-        <line x1="19" y1="50" x2="81" y2="50"></line>
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M17,50 A33,41 0 1,0 83,50 A33,41 0 1,0 17,50 Z"></path>
+        <ellipse class="rim" cx="50" cy="50" rx="48.6" ry="48.6"></ellipse>
+        <ellipse class="face" cx="50" cy="50" rx="33" ry="41"></ellipse>
+        <g class="tick">
+          <line x1="50" y1="2.2" x2="50" y2="7.4"></line>
+          <line x1="50" y1="92.6" x2="50" y2="97.8"></line>
+          <line x1="2.2" y1="50" x2="7.4" y2="50"></line>
+          <line x1="92.6" y1="50" x2="97.8" y2="50"></line>
+          <line x1="46.6" y1="50" x2="53.4" y2="50"></line>
+          <line x1="50" y1="46.6" x2="50" y2="53.4"></line>
+        </g>
       </svg>
     </div>
     <img class="frame" src="img/bronze.png" alt="청동경">
@@ -894,7 +903,7 @@ function mountFace(wrapId){
   return fw;
 }
 /* 얼굴 틀 안 좌표 → 원 안 백분율 */
-const FX=19, FY=8, FW=62, FH=84;
+const FX=17, FY=9, FW=66, FH=82;
 const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
 
 /* ── 3. 읽기 ──────────────────────────────── */
