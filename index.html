@@ -165,10 +165,15 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
   border-radius:50%;overflow:hidden;border:1px solid rgba(201,162,74,.4);
   box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 40px rgba(0,0,0,.6)}
 .facewrap .ph{position:absolute;left:50%;top:50%;transform-origin:center;max-width:none}
-.facewrap .veil{position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,transparent 40%,rgba(7,4,6,.55) 100%)}
+.facewrap .veil{position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 46%,transparent 34%,rgba(7,4,6,.42) 72%,rgba(5,3,4,.88) 100%);
+  box-shadow:inset 0 0 0 1px rgba(201,162,74,.32),inset 0 0 28px rgba(0,0,0,.8)}
 .pt{position:absolute;width:24px;height:24px;transform:translate(-50%,-50%);z-index:4;border:0;padding:0}
 .pt i{position:absolute;inset:9px;border-radius:50%;background:rgba(232,195,119,.9);
   box-shadow:0 0 12px rgba(232,195,119,.9);animation:blip 2.4s ease-in-out infinite}
+.pt.lvl0 i{background:#9fd5b0;box-shadow:0 0 12px rgba(159,213,176,.85)}
+.pt.lvl1 i{background:#e8c377;box-shadow:0 0 12px rgba(232,195,119,.8)}
+.pt.lvl2 i{background:#d8604c;box-shadow:0 0 14px rgba(216,96,76,.9)}
 .pt.locked i{inset:7px;background:rgba(10,5,7,.2);border:1.2px solid rgba(220,86,66,.95);
   box-shadow:0 0 7px rgba(192,54,42,.6);animation:blip 3.2s ease-in-out infinite}
 .pt.open i{inset:8.5px;background:rgba(245,232,208,.95);border:0;
@@ -185,11 +190,50 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .tapmark::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
 .tapmark::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
 
+/* 판정 요약 */
+.verdict{margin-top:16px;border:1px solid rgba(201,162,74,.3);
+  background:linear-gradient(180deg,rgba(24,15,13,.92),rgba(12,7,9,.94))}
+.vrow{display:flex;gap:12px;padding:11px 13px;border-bottom:1px solid rgba(201,162,74,.14)}
+.vrow:last-child{border-bottom:0}
+.vrow.bind{background:rgba(70,22,16,.28)}
+.vk{flex:none;width:46px;font-family:var(--serif);font-size:11.5px;letter-spacing:.14em;
+  color:var(--geum-dim);padding-top:3px}
+.vv{flex:1;min-width:0;font-family:var(--serif);font-size:15.5px;color:#f2e6d2;line-height:1.5}
+.vv em{display:block;margin-top:4px;font-style:normal;font-family:var(--sans);
+  font-size:12.5px;line-height:1.75;color:var(--jae-dim)}
+
+/* 등급 빛깔 */
+.g0{color:#9fd5b0}.g1{color:#e8c377}.g2{color:#d8604c}
+.st.g0{border-color:rgba(159,213,176,.5);color:#9fd5b0}
+.st.g1{border-color:rgba(232,195,119,.5);color:#e8c377}
+.st.g2{border-color:rgba(216,96,76,.55);color:#d8604c}
+.gung .th.lv0{border-color:rgba(159,213,176,.45)}
+.gung .th.lv1{border-color:rgba(232,195,119,.4)}
+.gung .th.lv2{border-color:rgba(216,96,76,.5)}
+
+/* 풀이 안의 백귀 */
+.bgrow{display:flex;gap:11px;align-items:flex-start;margin:8px 0 10px;
+  border:1px solid rgba(201,162,74,.22);background:rgba(8,5,6,.6);padding:9px}
+.bgrow img{width:104px;height:62px;flex:none;object-fit:cover;object-position:50% 42%;
+  border:1px solid rgba(201,162,74,.34);filter:sepia(.2) saturate(1.2) brightness(1.16) contrast(1.05)}
+.bgrow span{flex:1;min-width:0;font-size:12.5px;line-height:1.8;color:var(--jae-dim)}
+.bgrow b{color:#efe2cd;font-weight:400;font-family:var(--serif);font-size:14px}
+.bosswarn{color:#e08a76;border-left:2px solid rgba(192,54,42,.6);padding-left:9px}
+.bosscard{max-width:180px;margin:14px auto 0}
+.bossline{margin:8px 0 0;text-align:center;font-size:12.5px;color:var(--jae-dim);line-height:1.8}
+.card.boss{border-color:rgba(216,96,76,.75);box-shadow:0 0 24px rgba(192,54,42,.3)}
+
+/* 훑는 선 */
+.scanline{position:absolute;left:0;right:0;height:2px;z-index:5;top:0;
+  background:linear-gradient(90deg,transparent,#e8c377,transparent);
+  box-shadow:0 0 18px rgba(232,195,119,.9)}
+
 /* 백귀 패 */
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:4px}
 .card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
   box-shadow:0 10px 26px rgba(0,0,0,.6);transition:transform .18s,border-color .2s}
-.card img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.card img{width:100%;aspect-ratio:5/3;object-fit:cover;
+  filter:sepia(.18) saturate(1.18) brightness(1.14) contrast(1.04)}
 .card .nm{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;text-align:center;
   font-family:var(--serif);font-size:12px;color:#f0e2c9;background:linear-gradient(180deg,transparent,rgba(5,3,4,.95))}
 .card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
@@ -205,8 +249,9 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .gungs{display:grid;gap:8px;margin-top:4px}
 .gung{display:flex;gap:11px;align-items:center;border:1px solid var(--line);
   background:linear-gradient(180deg,rgba(22,12,14,.9),rgba(12,7,9,.92));padding:9px 11px;width:100%;text-align:left}
-.gung .th{width:42px;height:56px;flex:none;overflow:hidden;border:1px solid rgba(201,162,74,.3);position:relative;background:#0a0506}
-.gung .th img{width:100%;height:100%;object-fit:cover}
+.gung .th{width:62px;height:46px;flex:none;overflow:hidden;border:1px solid rgba(201,162,74,.3);position:relative;background:#0a0506}
+.gung .th img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
+  filter:sepia(.22) saturate(1.2) brightness(1.18) contrast(1.05)}
 .gung .th.lock img{filter:grayscale(.75) brightness(.38)}
 .gung .th .lk{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);
   font-size:17px;color:#c4493a;text-shadow:0 0 10px rgba(192,54,42,.8)}
@@ -255,11 +300,19 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 .tang{position:relative;width:min(94vw,460px);margin:6px auto 0;aspect-ratio:1536/1024}
 .tang .bg{border:1px solid rgba(201,162,74,.3);box-shadow:0 16px 46px rgba(0,0,0,.72)}
 .tang .bg{position:absolute;inset:0;width:100%;height:100%}
-.tang .slot{position:absolute;overflow:hidden;border-radius:2px;opacity:0;transform:scale(.6);
-  box-shadow:0 0 12px rgba(232,195,119,.5)}
-.tang .slot img{width:100%;height:100%;object-fit:cover}
+.tang .slot{position:absolute;overflow:hidden;border-radius:3px;opacity:0;transform:scale(.6);
+  box-shadow:inset 0 0 0 1.5px rgba(214,170,86,.85),
+             inset 0 0 10px rgba(0,0,0,.75),
+             0 0 10px rgba(232,195,119,.35)}
+.tang .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
+  filter:sepia(.28) saturate(1.18) brightness(1.1) contrast(1.06)}
+.tang .slot::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 38%,rgba(255,196,110,.16),transparent 62%),
+             linear-gradient(180deg,rgba(90,40,12,.1),rgba(24,8,4,.42))}
 .tang .slot.on{opacity:1;transform:none;transition:opacity .5s,transform .5s}
-.tang .slot.boss{box-shadow:0 0 0 2px rgba(255,110,80,.95),0 0 22px rgba(255,84,54,.9),0 0 44px rgba(192,54,42,.6)}
+.tang .slot.boss{box-shadow:inset 0 0 0 2px rgba(255,138,96,.95),
+  inset 0 0 12px rgba(80,10,4,.6),0 0 20px rgba(255,84,54,.85),0 0 40px rgba(192,54,42,.5)}
+.tang .slot.boss img{filter:sepia(.2) saturate(1.3) brightness(1.14) contrast(1.1)}
 
 .foot{margin-top:26px;padding-top:14px;border-top:1px solid rgba(201,162,74,.14);
   font-size:10.5px;line-height:1.8;color:rgba(163,148,134,.5);text-align:center}
@@ -386,6 +439,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
     <div class="veil"></div>
   </div>
   <div class="order" id="readOrder" style="min-height:62px"></div>
+  <div id="readOut"></div>
+  <button class="btn" id="readGo" hidden>지난 일을 짚어 보겠습니다</button>
 </section>
 
 <!-- 4. 적중 -->
@@ -545,164 +600,25 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(19px,5.4vw,23px);
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="js/baekgwi.js"></script>
+<script src="js/gungsang.js"></script>
+<script src="js/engine.js"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 const S={sex:null,age:34,url:null,natW:0,natH:0,x:0,y:0,scale:1.2,
          yun:null,boss:null,opened:new Set(),paid:false,picked:null,mark:null};
 
-/* ── 십이궁: 자리·부위·문지기 ───────────────────────── */
-const GUNG=[
- {k:"명",  n:"명궁",  h:"命宮", bu:"인당(印堂)",   d:"타고난 기세와 올해의 숨길",
-  x:50,y:33, g:{nm:"어둑시니",hj:"",art:"img/baekgwi/061.webp"},
-  dx:"인당이 좁고 세로로 그늘이 져 있습니다. 숨 쉴 틈이 없는 얼굴이에요.",
-  hd:"어둑시니는 밝은 데서는 안 보여요. 자네가 혼자 있을 때, 결정을 앞두고 눈을 감을 때 거기 서 있습니다. 그래서 결정을 자꾸 미루게 되는 거예요.",
-  ac:"미간을 덮지 마세요. 앞머리로 가리면 그늘이 두 겹이 됩니다."},
- {k:"관록",n:"관록궁",h:"官祿宮",bu:"중정(中正)",  d:"직장·사업·윗사람",
-  x:50,y:23, g:{nm:"관재귀",hj:"官災鬼",art:"img/baekgwi/095.webp"},
-  dx:"중정이 평평하지 않고 가운데가 눌려 있습니다. 윗사람 자리가 비어 있다는 뜻이에요.",
-  hd:"관재귀는 문서와 말이 어긋난 자리에 붙습니다. 자네가 잘못해서가 아니라, 자네 이름이 남의 일에 적혀 있어서예요.",
-  ac:"올해 안에 도장 찍을 일이 있으면 하루만 미루고 다시 읽으세요."},
- {k:"복덕",n:"복덕궁",h:"福德宮",bu:"천창(天倉)",  d:"마음의 여유와 복",
-  x:33,y:24, g:{nm:"심마",hj:"心魔",art:"img/baekgwi/071.webp"},
-  dx:"천창이 꺼져 있습니다. 머리맡에 둘 것이 없는 얼굴이에요.",
-  hd:"심마는 바깥에서 오지 않아요. 자네가 밤에 되감는 그 장면에서 자랍니다. 복이 없는 게 아니라 들어올 자리가 없는 겁니다.",
-  ac:"자기 전에 되감지 마세요. 되감을 거면 아침에 하세요."},
- {k:"천이",n:"천이궁",h:"遷移宮",bu:"역마(驛馬)",  d:"이동·이사·출타",
-  x:67,y:24, g:{nm:"야행귀",hj:"夜行鬼",art:"img/baekgwi/075.webp"},
-  dx:"역마 자리가 번들거리고 가장자리가 들떠 있습니다. 몸이 한곳에 못 있는 상이에요.",
-  hd:"야행귀는 밤에만 움직입니다. 자네가 늦은 시간에 내린 결정마다 자리를 옮기게 된 적이 있을 거예요.",
-  ac:"큰 이동은 해 지고 나서 정하지 마세요."},
- {k:"부모",n:"부모궁",h:"父母宮",bu:"일월각(日月角)",d:"부모·윗대의 내력",
-  x:41,y:18, g:{nm:"접동새귀",hj:"",art:"img/baekgwi/030.webp"},
-  dx:"일각과 월각의 높이가 다릅니다. 한쪽이 먼저 기운 자리예요.",
-  hd:"접동새귀는 못다 한 말이 남은 자리에 와서 웁니다. 윗대에서 끊긴 말이 자네한테 내려와 있어요.",
-  ac:"올해 안에 한 번은 찾아가 뵙는 게 좋습니다. 말은 안 해도 됩니다."},
- {k:"형제",n:"형제궁",h:"兄弟宮",bu:"눈썹(眉)",   d:"형제·동료·동업",
-  x:35,y:37, g:{nm:"이간귀",hj:"離間鬼",art:"img/baekgwi/091.webp"},
-  dx:"눈썹 꼬리가 흩어지고 숱이 끊겨 있습니다. 옆자리가 성글다는 뜻이에요.",
-  hd:"이간귀는 둘 사이에 서서 양쪽에 다른 말을 합니다. 자네가 오해받은 그 일, 자네 입에서 나간 말이 아니었어요.",
-  ac:"눈썹 꼬리를 끊지 말고 길게 그리세요. 끊긴 데를 메워야 합니다."},
- {k:"전택",n:"전택궁",h:"田宅宮",bu:"눈두덩(田宅)",d:"집·부동산·머물 자리",
-  x:62,y:37, g:{nm:"업구렁이",hj:"業구렁이",art:"img/baekgwi/005.webp"},
-  dx:"눈두덩이 얇고 꺼져 있습니다. 집이 자네를 못 붙잡는 상이에요.",
-  hd:"업구렁이는 집을 지키던 것이에요. 그게 나갔다는 건, 집에 모아둔 것이 새고 있다는 뜻입니다.",
-  ac:"이사는 올해 안에 끝내든지 내후년까지 미루세요. 중간이 제일 나쁩니다."},
- {k:"처첩",n:"처첩궁",h:"妻妾宮",bu:"어미(魚尾)",  d:"배우자·연애",
-  x:70,y:44, g:{nm:"변심귀",hj:"變心鬼",art:"img/baekgwi/027.webp"},
-  dx:"어미에 가는 금이 여럿 갈라져 있습니다. 한 사람에게 오래 못 머문 자리예요.",
-  hd:"변심귀는 마음을 빼앗는 게 아니라 자꾸 옮겨 놓습니다. 식은 게 아니라 옮겨진 거예요. 자네 쪽도, 그 사람 쪽도요.",
-  ac:"어미 쪽을 환하게 두세요. 옆머리로 덮으면 금이 더 갈라집니다."},
- {k:"질액",n:"질액궁",h:"疾厄宮",bu:"산근(山根)",  d:"건강·고비",
-  x:50,y:42, g:{nm:"역귀",hj:"疫鬼",art:"img/baekgwi/049.webp"},
-  dx:"산근이 낮고 가로로 끊겨 있습니다. 마흔 고개에서 한 번 쉬어야 하는 상이에요.",
-  hd:"역귀는 약한 자리를 먼저 찾습니다. 자네가 이미 아는 그 자리, 매번 거기부터 탈이 났을 거예요.",
-  ac:"올해는 미루던 검사를 하나만 받으세요. 하나면 됩니다."},
- {k:"남녀",n:"남녀궁",h:"男女宮",bu:"와잠(臥蠶)",  d:"자녀·아랫사람",
-  x:40,y:48, g:{nm:"동녀귀",hj:"童女鬼",art:"img/baekgwi/032.webp"},
-  dx:"와잠이 부었다 꺼졌다 합니다. 기다리는 일이 있는 자리예요.",
-  hd:"동녀귀는 떼를 씁니다. 울지도 않고 그냥 옆에 앉아 있어요. 자네가 자꾸 미루는 그 일을 보고 있는 겁니다.",
-  ac:"와잠 밑을 눌러서 가리지 마세요. 가리면 기다림이 길어집니다."},
- {k:"재백",n:"재백궁",h:"財帛宮",bu:"준두(準頭)",  d:"재물·수입",
-  x:50,y:56, g:{nm:"불가사리",hj:"不可殺",art:"img/baekgwi/001.webp"},
-  dx:"준두는 둥근데 콧방울이 들려 있습니다. 벌기는 하는데 담기지 않는 상이에요.",
-  hd:"불가사리는 쇠를 먹고 큽니다. 자네가 번 돈 냄새를 맡고 붙어서, 들어오는 족족 씹어 삼킵니다. 그래서 액수가 아니라 남는 게 없는 거예요.",
-  ac:"들어온 날 바로 한 번 나누세요. 묵히면 다 먹힙니다."},
- {k:"노복",n:"노복궁",h:"奴僕宮",bu:"지고(地庫)",  d:"아랫사람·말년의 사람",
-  x:35,y:71, g:{nm:"배신귀",hj:"背信鬼",art:"img/baekgwi/100.webp"},
-  dx:"턱 옆 지고가 패여 있습니다. 밑에 사람이 오래 안 남는 자리예요.",
-  hd:"배신귀는 등을 돌리게 합니다. 떠난 사람이 나빠서가 아니에요. 자네가 등을 보일 때를 저것이 기다립니다.",
-  ac:"올해는 아랫사람한테 돈 얘기를 먼저 꺼내지 마세요."}
-];
-const PICK3=[
- {nm:"구미호",hj:"九尾狐",art:"img/baekgwi/021.webp"},
- {nm:"두억시니",hj:"",art:"img/baekgwi/041.webp"},
- {nm:"백호귀",hj:"白虎鬼",art:"img/baekgwi/056.webp"}
-];
-const PICKSAY={
- "구미호":"…홀리는 쪽을 고르셨네요. 자네가 제일 무서워하는 건 사람한테 속는 일이군요.",
- "두억시니":"…짓누르는 쪽이군요. 자네는 일이 몰려오는 걸 제일 겁내시는 거예요.",
- "백호귀":"…한 번에 앗아가는 쪽이네요. 자네는 갑자기 잃는 걸 제일 두려워하시는군요."
-};
-
-/* 유년운기부위 */
-const YUN={15:["화성","관록"],16:["천중","부모"],17:["일각","부모"],18:["월각","부모"],
- 19:["천정","관록"],20:["보각","관록"],21:["사공","관록"],22:["변성","천이"],23:["변성","천이"],
- 24:["중정","관록"],25:["중정","관록"],26:["구릉","천이"],27:["총묘","천이"],28:["인당","명"],
- 29:["산림","복덕"],30:["산림","복덕"],31:["능운","형제"],32:["자기","형제"],33:["번하","형제"],
- 34:["채하","형제"],35:["태양","전택"],36:["태음","전택"],37:["중양","전택"],38:["중음","전택"],
- 39:["소양","처첩"],40:["소음","처첩"],41:["산근","질액"],42:["정사","질액"],43:["광전","질액"],
- 44:["연상","질액"],45:["수상","질액"],46:["관골","노복"],47:["관골","노복"],48:["준두","재백"],
- 49:["난대","재백"],50:["정위","재백"],51:["인중","남녀"],52:["선고","남녀"],53:["선고","남녀"],
- 54:["식창","재백"],55:["녹창","재백"],56:["법령","관록"],57:["법령","관록"],58:["호이","노복"],
- 59:["호이","노복"],60:["수성","남녀"],61:["승장","노복"],62:["지고","노복"],63:["지고","노복"],
- 64:["피지","노복"],65:["아압","노복"],66:["금루","전택"],67:["금루","전택"],68:["귀래","전택"],
- 69:["귀래","전택"],70:["송당","복덕"],71:["지각","노복"],72:["지각","노복"],73:["노복","노복"],
- 74:["시골","노복"],75:["시골","노복"]};
-function yunOf(age,sex){
-  if(age<=14){const s=sex==="여"?"오른쪽":"왼쪽";return{bu:s+" 귀",g:"명",ear:true};}
-  const y=YUN[Math.min(75,age)]||["지각","노복"];return{bu:y[0],g:y[1]};
-}
-const HITAGE=[19,22,25,28,31,35,38,41,44,48,51,56,60,64];
-const HITSAY={
- "명":"그 무렵에 <em>혼자 정한 일</em>이 하나 있었을 거예요. 아무한테도 안 물어보고요.",
- "관록":"그때 <em>자리가 한 번 바뀌었죠.</em> 자네가 원해서 바뀐 건 아니었을 거예요.",
- "복덕":"그 해에 <em>마음을 한 번 접으셨어요.</em> 접은 걸 아무도 몰랐을 거고요.",
- "천이":"그 무렵에 <em>사는 곳이나 다니는 길이 바뀌었습니다.</em> 급하게요.",
- "부모":"그 해에 <em>윗대 쪽에서 일이 하나 있었어요.</em> 자네가 떠안았을 거예요.",
- "형제":"그때 <em>옆에 있던 사람 하나가 떨어져 나갔습니다.</em> 말다툼은 없었을 거예요.",
- "전택":"그 무렵 <em>집 문제로 한 번 크게 움직였어요.</em> 셈이 틀어졌을 거고요.",
- "처첩":"그 해에 <em>사람 하나가 들어오거나 나갔습니다.</em> 둘 중 하나는 분명해요.",
- "질액":"그때 <em>몸이 한 번 내려앉았어요.</em> 큰 병은 아니었지만 오래 끌었을 겁니다.",
- "남녀":"그 무렵에 <em>기다리던 일이 한 번 어긋났어요.</em> 아직도 기다리고 계시고요.",
- "재백":"그 해에 <em>돈이 한 번 크게 나갔습니다.</em> 자네 손으로 내보낸 돈이었을 거예요.",
- "노복":"그때 <em>믿던 사람한테 등을 보였어요.</em> 아니면 등을 보였다고 들으셨거나요."
-};
-/* 자국 짚기 */
-const MARKSAY={
- "명":"인당의 자국은 <em>막히는 자국</em>입니다. 결정이 늘 하루씩 늦어지셨을 거예요.",
- "관록":"중정의 자국은 <em>윗사람 자국</em>이에요. 공을 가로채인 적이 있으시죠.",
- "복덕":"천창의 자국은 <em>잠이 얕아지는 자국</em>입니다. 새벽에 깨신 지 오래됐을 거예요.",
- "천이":"역마의 자국은 <em>떠도는 자국</em>이에요. 한곳에 삼 년을 못 채우셨을 겁니다.",
- "부모":"일월각의 자국은 <em>내려받은 자국</em>입니다. 윗대 중 한 분과 같은 자리에 있을 거예요.",
- "형제":"눈썹의 자국은 <em>갈라지는 자국</em>이에요. 동업 얘기가 나왔다가 엎어진 적이 있으시죠.",
- "전택":"눈두덩의 자국은 <em>새는 자국</em>입니다. 집에 들인 돈이 돌아오지 않았어요.",
- "처첩":"어미의 자국은 <em>옮기는 자국</em>이에요. 마음이 한 번 크게 건너간 적이 있습니다.",
- "질액":"산근의 자국은 <em>끊기는 자국</em>입니다. 거기가 약한 걸 자네도 이미 아시죠.",
- "남녀":"와잠의 자국은 <em>기다리는 자국</em>이에요. 아직 안 온 소식이 있습니다.",
- "재백":"준두와 콧방울의 자국은 <em>새는 자국</em>입니다. 이게 제일 흔하고, 제일 아픕니다.",
- "노복":"지고의 자국은 <em>떠나보내는 자국</em>이에요. 사람이 오래 안 남습니다."
-};
-/* 점자리 처방 */
-const MOLE=[
- {x:60,y:51,t:"왼 눈 밑 와잠 아래",why:"기다리는 일을 끊어 주는 자리"},
- {x:42,y:57,t:"오른 콧방울 옆",why:"새는 재물을 막는 자리"},
- {x:53,y:66,t:"인중 왼쪽",why:"뒤를 이어 주는 자리"}
-];
-/* 색 */
-const COLORS={
- "목":[["쪽빛","#2a4a6b","겉옷과 가방"],["먹빛","#1d1a1a","신발과 시계"],["다홍","#b9372c","지갑"]],
- "화":[["치자","#c8a02e","지갑과 열쇠고리"],["황토","#8d6a3a","겉옷"],["쪽빛","#2a4a6b","침구"]],
- "토":[["다홍","#b9372c","지갑"],["백자","#ddd6c7","윗옷"],["먹빛","#1d1a1a","가방"]],
- "금":[["먹빛","#1d1a1a","겉옷"],["쪽빛","#2a4a6b","지갑"],["치자","#c8a02e","현관"]],
- "수":[["백자","#ddd6c7","윗옷"],["치자","#c8a02e","지갑"],["다홍","#b9372c","차와 열쇠"]]
-};
-const OHAENG=["목","화","토","금","수"];
-const OHJA={"목":"木","화":"火","토":"土","금":"金","수":"水"};
-const HAIR={
- "목":["이마를 드러내세요","앞머리를 내리면 관록궁이 덮입니다. 가르마는 왼쪽으로 타시고요."],
- "화":["옆을 눌러 주세요","윗머리를 세우면 기운이 위로만 뻗습니다. 옆을 붙여 가라앉히세요."],
- "토":["턱선을 드러내세요","목을 덮는 길이는 지고를 가립니다. 귀 밑에서 끝나는 게 좋아요."],
- "금":["가르마를 오른쪽으로","왼쪽 가르마는 일각을 더 높여 한쪽으로 기웁니다."],
- "수":["앞머리를 짧게","눈썹을 덮으면 형제궁이 끊긴 채로 굳습니다. 눈썹 위에서 끊으세요."]
-};
-/* 탱화 열두 칸 (512x398 기준 → 비율) */
+/* ── 탱화 열두 칸 (1536x1024 기준) ───────────── */
 const RAW=[[692,94,150,139],[866,143,147,139],[997,269,149,138],[1036,424,148,139],
            [992,579,147,141],[866,698,147,143],[692,740,150,137],[521,698,145,141],
            [396,579,146,139],[350,424,149,138],[390,269,148,137],[521,143,146,137]];
 const PAD=3;
 const SLOT=RAW.map(s=>[s[0]-PAD,s[1]-PAD,s[2]+PAD*2,s[3]+PAD*2]);
 const TW=1536,TH=1024;
+
+/* 판정 결과가 여기 담깁니다 */
+let R=null, RX=null;
 
 /* ── 화면 전환 ─────────────────────────────── */
 function go(id){
@@ -735,11 +651,7 @@ function refreshAsk(){
     $("yunHint").innerHTML=`올해 운은 <b style="color:var(--geum-hot);font-weight:400">${y.bu}</b> 자리에 걸립니다.`;
   }else $("yunHint").textContent="";
 }
-$("askGo").addEventListener("click",()=>{
-  S.yun=yunOf(S.age,S.sex);
-  S.boss=GUNG.find(g=>g.k===S.yun.g)||GUNG[0];
-  go("s-mirror");
-});
+$("askGo").addEventListener("click",()=>{ S.yun=yunOf(S.age,S.sex); go("s-mirror"); });
 
 /* ── 2. 거울 ──────────────────────────────── */
 const hole=$("hole"), phM=$("phMirror"), vid=$("vid");
@@ -856,6 +768,23 @@ function unlock(){ $("guide").classList.remove("ok"); }
 /* 자세 확인 의식 */
 const ORDERS=["…고개를 아주 조금만 들어주세요.","…빛을 마주 보셔야 해요. 그늘이 반쪽만 져 있어서요.","…네. 그대로요. 움직이지 마세요."];
 $("shot").addEventListener("click",()=>{ if(S.url) runOrders(); });
+/* 거울에 비친 그대로를 재서 판정까지 끝냅니다 */
+function measureNow(){
+  try{
+    const r=hole.getBoundingClientRect();
+    const src=(stream && !vid.hidden) ? vid : phM;
+    const c=captureMirror(src,S,r.width,r.height);
+    const m=c && readMetrics(c);
+    if(!m) throw new Error("못 읽음");
+    R=divine(m,S.age,S.sex);
+    return true;
+  }catch(e){
+    $("order").innerHTML="얼굴을 다 읽지 못했습니다. 밝은 데서 한 번만 다시 찍어 주세요.";
+    $("guide").classList.remove("ok");
+    $("shot").hidden=false; $("redo").hidden=false; $("zoomRow").hidden=false;
+    return false;
+  }
+}
 function runOrders(){
   $("shot").hidden=true; $("redo").hidden=true; $("getrow").hidden=true;
   $("zoomRow").hidden=true; $("shotLive").hidden=true;
@@ -869,7 +798,7 @@ function runOrders(){
       g.classList.add("ok");
       chime();
       ord.innerHTML="<b>되었습니다.</b>";
-      setTimeout(()=>{ flash(); setTimeout(startRead,520); },700);
+      setTimeout(()=>{ flash(); setTimeout(()=>{ if(measureNow()) startRead(); },520); },700);
     }
   })();
 }
@@ -911,56 +840,85 @@ function startRead(){
   go("s-read");
   const fw=mountFace("faceRead");
   fw.querySelectorAll(".pt,.scanline").forEach(n=>n.remove());
+  $("readOut").innerHTML=""; $("readGo").hidden=true;
+
   const line=document.createElement("div");
   line.className="scanline";
-  line.style.cssText="position:absolute;left:0;right:0;height:2px;z-index:5;background:linear-gradient(90deg,transparent,#e8c377,transparent);box-shadow:0 0 18px rgba(232,195,119,.9);top:0";
   fw.appendChild(line);
-  const t0=performance.now(), dur=2200;
+  const t0=performance.now(), dur=2300;
   (function anim(t){
     const k=Math.min(1,(t-t0)/dur);
     line.style.top=(k*100)+"%";
     if(k<1) requestAnimationFrame(anim); else line.remove();
   })(performance.now());
 
-  const ord=$("readOrder"); ord.innerHTML="";
-  GUNG.forEach((g,i)=>{
+  const ord=$("readOrder");
+  const steps=[
+    "삼정(三停)의 두께를 봅니다…",
+    "오악(五岳)이 고른지 봅니다…",
+    "얼굴에 도는 기색(氣色)을 봅니다…",
+    "열두 자리를 하나씩 짚습니다…"
+  ];
+  steps.forEach((t,i)=>setTimeout(()=>{ord.innerHTML=`<span style="font-size:13.5px;color:var(--jae-dim)">${t}</span>`;},300+i*560));
+
+  R.jari.forEach((j,i)=>{
     setTimeout(()=>{
       const d=document.createElement("div");
-      d.className="pt"; d.style.left=px(g.x)+"%"; d.style.top=py(g.y)+"%";
+      d.className="pt lvl"+j.lv;
+      d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
       d.innerHTML="<i></i>";
       fw.appendChild(d);
-      ord.innerHTML=`<span style="font-size:13px;color:var(--jae-dim)">${g.n} · ${g.bu} … 짚었습니다</span>`;
-    },260+i*180);
+    },700+i*150);
   });
-  setTimeout(()=>{
-    ord.innerHTML=`<b>열두 자리를 다 짚었습니다.</b>`;
-    setTimeout(showHit,900);
-  },260+GUNG.length*180+500);
+
+  setTimeout(()=>{ ord.innerHTML=`<b>다 보았습니다.</b>`; showReadOut(); },700+R.jari.length*150+600);
 }
+
+function showReadOut(){
+  const oh=OH[R.hyeong], gi=GISAEK[R.gisaek], sj=SAMJEONG[R.samjeong];
+  const gyeol = R.gyeol
+    ? `<p>그리고 ${R.gyeol} 일월각이 조금 낮습니다. 양쪽에서 받은 것이 고르지 않다는 뜻이에요.</p>` : "";
+  $("readOut").innerHTML=
+   `<div class="verdict">
+      <div class="vrow"><span class="vk">형상</span>
+        <span class="vv">${oh.nm}<em>${oh.sul}</em></span></div>
+      <div class="vrow"><span class="vk">기색</span>
+        <span class="vv">${gi.ja}색 — ${R.gisaek}기<em>${gi.mal}</em></span></div>
+      <div class="vrow"><span class="vk">삼정</span>
+        <span class="vv">${sj.nm} 두터움<em>${sj.gi}에 무게가 실린 얼굴입니다</em></span></div>
+      <div class="vrow bind"><span class="vk">맞물림</span>
+        <span class="vv">${R.gyo.dan}<em>${R.gyo.mal}</em></span></div>
+    </div>`+
+   `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
+    <div class="txt"><div class="nm">원안법사</div>
+      <p>${oh.seong}</p>${gyeol}
+      <p>열두 자리 중에 <em>${R.blocked}곳이 막혔고 ${R.opened}곳이 트였습니다.</em> 어디가 막혔는지는 이따가요…</p>
+    </div></div>`;
+  $("readGo").hidden=false;
+}
+$("readGo").addEventListener("click",()=>{ showHit(); });
 
 /* ── 4. 적중 ──────────────────────────────── */
 function showHit(){
   go("s-hit");
-  const cands=HITAGE.filter(a=>a<=S.age-1);
-  const hitAge=cands.length?cands[cands.length-1]:Math.max(15,S.age-2);
-  const y=yunOf(hitAge,S.sex);
-  const gu=GUNG.find(g=>g.k===y.g)||GUNG[0];
-  S.hit={age:hitAge,bu:y.bu,gung:gu};
-  $("hitTitle").innerHTML=`${num(hitAge)} 살,<br>${y.bu} 자리를 지날 때요…`;
+  const y=R.hitYun, gu=GUNG.find(g=>g.k===y.g)||GUNG[0];
+  $("hitTitle").innerHTML=`${num(R.hitAge)} 살,<br>${y.bu} 자리를 지날 때요…`;
   $("hitSay").innerHTML=
-    `<p>얼굴은 나이마다 자리가 정해져 있어요. ${num(hitAge)} 살은 <em>${y.bu}</em>, ${gu.n}에 걸립니다.</p>`+
-    `<p>${HITSAY[y.g]}</p>`+
+    `<p>얼굴은 나이마다 자리가 정해져 있습니다. ${num(R.hitAge)} 살은 <em>${y.bu}</em>, ${gu.n}에 걸려요.</p>`+
+    `<p>${JINAN[y.g]}</p>`+
     `<p>…맞으면, 하나만 더 여쭐게요.</p>`;
   const fw=mountFace("faceHit");
   fw.querySelectorAll(".pt,.tapmark").forEach(n=>n.remove());
   const d=document.createElement("div");
-  d.className="pt sel"; d.style.left=px(gu.x)+"%"; d.style.top=py(gu.y)+"%"; d.innerHTML="<i></i>";
+  d.className="pt sel lvl1"; d.style.left=px(gu.x)+"%"; d.style.top=py(gu.y)+"%"; d.innerHTML="<i></i>";
   fw.appendChild(d);
+  $("markHint").hidden=false; $("markSkip").hidden=false; $("hitGo").hidden=true;
+  $("markOut").innerHTML=""; S.mark=null;
   fw.onclick=onMark;
 }
 function num(n){
   const a=["","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"];
-  const b=["","열","스물","서른","마흔","쉰","예순","일흔"];
+  const b=["","열","스물","서른","마흔","쉰","예순","일흔","여든","아흔"];
   return (b[Math.floor(n/10)]||"")+(a[n%10]||"");
 }
 function onMark(e){
@@ -977,13 +935,15 @@ function onMark(e){
   const m=document.createElement("div");
   m.className="tapmark"; m.style.left=cx+"%"; m.style.top=cy+"%";
   fw.appendChild(m);
+  const ji=R.jari.find(j=>j.g.k===best.k);
   $("markHint").hidden=true;
   $("markOut").innerHTML=
     `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
     `<div class="txt"><div class="nm">원안법사</div>`+
-    `<p>거기는 <em>${best.bu}</em>, ${best.n}이에요.</p>`+
-    `<p>${MARKSAY[best.k]}</p>`+
-    `<p>…자국은 그냥 생기지 않아요. 누가 손을 댄 자리예요.</p></div></div>`;
+    `<p>거기는 <em>${best.bu}</em>, ${best.n}입니다.</p>`+
+    `<p>${JAGUK[best.k]}</p>`+
+    `<p>${ji.lv===2?"그 자리는 지금도 막혀 있습니다. 자국은 그냥 생기지 않아요. 누가 손을 댄 자리예요."
+                   :"다행히 그 자리는 아직 트여 있습니다. 자국만 남은 거예요."}</p></div></div>`;
   $("markSkip").hidden=true; $("hitGo").hidden=false;
   fw.onclick=null;
 }
@@ -992,110 +952,120 @@ $("markSkip").addEventListener("click",()=>{
   $("markOut").innerHTML=
     `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
     `<div class="txt"><div class="nm">원안법사</div>`+
-    `<p>…없으면 다행이에요. 아직 손을 안 댄 거니까요.</p></div></div>`;
+    `<p>…없으면 다행입니다. 아직 손을 안 댄 거니까요.</p></div></div>`;
 });
 $("hitGo").addEventListener("click",()=>{ go("s-pick"); buildPick(); });
 
 /* ── 5. 고르기 ────────────────────────────── */
+function bgCard(i,cls){
+  const c=BG[i];
+  return `<div class="card${cls||""}"><img src="img/baekgwi/${c[2]}.webp" alt="${c[0]}">`+
+         `<div class="nm">${c[0]}</div></div>`;
+}
 function buildPick(){
   const w=$("pick3"); w.innerHTML="";
   PICK3.forEach(c=>{
+    const g=BG[c.i];
     const b=document.createElement("button");
     b.className="card"; b.setAttribute("aria-pressed","false");
-    b.innerHTML=`<img src="${c.art}" alt="${c.nm}"><div class="nm">${c.nm}</div>`;
+    b.innerHTML=`<img src="img/baekgwi/${g[2]}.webp" alt="${g[0]}"><div class="nm">${g[0]}</div>`;
     b.addEventListener("click",()=>choose(c,b));
     w.appendChild(b);
   });
-  $("pickOut").innerHTML=""; $("pickGo").hidden=true;
+  $("pickOut").innerHTML=""; $("pickGo").hidden=true; S.picked=null;
 }
 function choose(c,btn){
   if(S.picked)return;
-  S.picked=c.nm;
+  S.picked=c.i;
   [...$("pick3").children].forEach(n=>{
     n.setAttribute("aria-pressed",String(n===btn));
     if(n!==btn)n.classList.add("dim");
   });
-  const boss=S.boss;
+  const b=R.boss, bg=BG[b.bg];
   $("pickOut").innerHTML=
    `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-deal.webp" alt=""></div>`+
    `<div class="txt"><div class="nm">원안법사</div>`+
-   `<p>${PICKSAY[c.nm]}</p>`+
-   `<p>…그런데요. 그건 자네가 <em>무서워하는 얼굴</em>이지, 자네 앞에 서 있는 건 아니에요.</p>`+
-   `<p>올해 자네 ${S.yun.bu} 자리를 막고 선 건 <em>${boss.g.nm}</em>입니다. ${boss.n}에 서 있어요.</p></div></div>`+
-   `<div class="cards3" style="grid-template-columns:1fr;max-width:170px;margin:12px auto 0">`+
-   `<div class="card" style="border-color:rgba(192,54,42,.7)"><img src="${boss.g.art}" alt="${boss.g.nm}">`+
-   `<div class="nm">${boss.g.nm}${boss.g.hj?" "+boss.g.hj:""}</div></div></div>`;
+   `<p>${c.q}</p>`+
+   `<p>…그런데요. 그건 자네가 <em>무서워하는 얼굴</em>이지, 자네 앞에 서 있는 건 아닙니다.</p>`+
+   `<p>올해 자네 ${R.yun.bu} 자리를 막고 선 건 <em>${bg[0]}${bg[1]?" "+bg[1]:""}</em>입니다. ${b.g.n}에 서 있어요.</p></div></div>`+
+   `<div class="bosscard">${bgCard(b.bg," boss")}`+
+   `<p class="bossline">${bg[3]}</p></div>`;
   $("pickGo").hidden=false;
 }
 $("pickGo").addEventListener("click",()=>{ go("s-board"); buildBoard(); });
 
 /* ── 6. 열두 자리 ─────────────────────────── */
+const LVNM=["트임","반반","막힘"];
+function isOpen(j){ return S.paid || j.g.k===R.jari[0].g.k; }
 function buildBoard(){
   const fw=mountFace("faceBoard");
   fw.querySelectorAll(".pt,.mole").forEach(n=>n.remove());
-  GUNG.forEach(g=>{
+  R.jari.forEach(j=>{
     const d=document.createElement("button");
-    d.className="pt"+(isOpen(g)?" open":" locked");
-    d.style.left=px(g.x)+"%"; d.style.top=py(g.y)+"%";
-    d.innerHTML="<i></i>"; d.dataset.k=g.k;
-    d.setAttribute("aria-label",g.n);
-    d.addEventListener("click",()=>tapGung(g));
+    d.className="pt "+(isOpen(j)?"lvl"+j.lv:"locked");
+    d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
+    d.innerHTML="<i></i>"; d.dataset.k=j.g.k;
+    d.setAttribute("aria-label",j.g.n);
+    d.addEventListener("click",()=>tapGung(j));
     fw.appendChild(d);
   });
   renderGungs();
   $("boardTitle").innerHTML = S.paid
-    ? "열두 자리가 모두 열렸습니다.<br>하나씩 보셔도 돼요…"
+    ? `열두 자리가 모두 열렸습니다.<br><span style="color:var(--geum-hot)">막힌 곳이 ${R.blocked}, 트인 곳이 ${R.opened}</span>`
     : "얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…";
   $("boardTail").innerHTML = S.paid
     ? `<button class="btn" id="toCure">법사와 흥정을 보겠습니다</button>`
     : `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-mirror.webp" alt=""></div>`+
       `<div class="txt"><div class="nm">원안법사</div>`+
-      `<p>…${GUNG[0].n}은 제가 그냥 열어드렸어요. 맞는지 보셔야 하니까요.</p>`+
-      `<p>나머지 열한 자리는… 저것들이 안 비켜줘서요. 제가 말을 좀 섞어야 해요.</p></div></div>`+
+      `<p>…${R.jari[0].g.n}은 제가 그냥 열어드렸어요. 맞는지 보셔야 하니까요.</p>`+
+      `<p>나머지 열한 자리는… 저것들이 안 비켜줘서요. 제가 말을 좀 섞어야 합니다.</p></div></div>`+
       `<button class="btn hot" data-go="s-pay">막힌 열한 자리를 열겠습니다</button>`;
   const tc=$("toCure"); if(tc) tc.addEventListener("click",()=>{ go("s-cure"); buildCure(); });
   $("boardTail").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 }
-function isOpen(g){ return S.paid || g.k===GUNG[0].k; }
 function renderGungs(){
   const w=$("gungs"); w.innerHTML="";
-  GUNG.forEach(g=>{
-    const open=isOpen(g), boss=g.k===S.boss.k;
+  R.jari.forEach(j=>{
+    const open=isOpen(j), boss=j.g.k===R.boss.g.k, bg=BG[j.bg];
     const row=document.createElement("div");
     row.innerHTML=
-      `<button class="gung${open?" opened":""}${boss&&open?" boss":""}" data-k="${g.k}">`+
-      `<span class="th${open?"":" lock"}"><img src="${g.g.art}" alt="">${open?"":'<span class="lk">封</span>'}</span>`+
-      `<span class="mid"><span class="nm2">${g.n}<small>${g.bu}</small></span>`+
-      `<span class="sub${open?"":" blur"}">${open?g.dx:"자리를 막고 선 것이 아직 비키지 않았습니다"}</span></span>`+
-      `<span class="st">${open?(boss?"우두머리":"열림"):"封"}</span></button>`+
+      `<button class="gung${open?" opened":""}${boss&&open?" boss":""}" data-k="${j.g.k}">`+
+      `<span class="th${open?" lv"+j.lv:" lock"}"><img src="img/baekgwi/${bg[2]}.webp" alt="">${open?"":'<span class="lk">封</span>'}</span>`+
+      `<span class="mid"><span class="nm2">${j.g.n}<small>${j.g.bu}</small></span>`+
+      `<span class="sub${open?"":" blur"}">${open?j.g.lv[j.lv].dx:"자리를 막고 선 것이 아직 비키지 않았습니다"}</span></span>`+
+      `<span class="st${open?" g"+j.lv:""}">${open?(boss?"우두머리":LVNM[j.lv]):"封"}</span></button>`+
       `<div class="panel" hidden></div>`;
     const btn=row.firstElementChild, panel=row.lastElementChild;
     btn.addEventListener("click",()=>{
-      if(!isOpen(g)){ go("s-pay"); return; }
+      if(!isOpen(j)){ go("s-pay"); return; }
       const on=!panel.hidden;
       w.querySelectorAll(".panel").forEach(p=>p.hidden=true);
-      if(!on){ panel.hidden=false; panel.innerHTML=panelHTML(g); }
-      markSel(g.k, !on);
+      if(!on){ panel.hidden=false; panel.innerHTML=panelHTML(j); }
+      markSel(j.g.k, !on);
     });
     w.appendChild(row);
   });
 }
-function panelHTML(g){
-  const boss=g.k===S.boss.k;
-  return `<p class="tagline">${g.h} · ${g.d}</p>`+
-   `<h4>자리</h4><p>${g.dx}</p>`+
-   `<h4>막고 선 것 — ${g.g.nm}${g.g.hj?" "+g.g.hj:""}</h4><p>${g.hd}</p>`+
-   (boss?`<p style="color:#d98272">…올해 운이 걸린 자리가 바로 여기예요. 이것이 우두머리입니다.</p>`:"")+
-   `<div class="cure"><h4 style="margin:0 0 4px">이렇게 하세요</h4><p style="margin:0">${g.ac}</p></div>`;
+function panelHTML(j){
+  const g=j.g, t=g.lv[j.lv], bg=BG[j.bg], boss=g.k===R.boss.g.k, se=SEOM[j.lv];
+  return `<p class="tagline">${g.h} · ${g.d} · <span class="g${j.lv}">${LVNM[j.lv]}</span></p>`+
+   `<h4>자리</h4><p>${t.dx}</p><p>${t.rd}</p>`+
+   `<h4>${se.st} — ${bg[0]}${bg[1]?" "+bg[1]:""}</h4>`+
+   `<div class="bgrow"><img src="img/baekgwi/${bg[2]}.webp" alt="${bg[0]}">`+
+   `<span><b>${bg[3]}</b><br>${se.mal}</span></div>`+
+   `<p>${bg[4]}</p>`+
+   (boss?`<p class="bosswarn">올해 운이 걸린 자리가 바로 여기입니다. 이것이 우두머리예요.</p>`:"")+
+   `<div class="cure"><h4 style="margin:0 0 4px">이렇게 하세요</h4>`+
+   `<p style="margin:0">${t.ac}</p><p style="margin:6px 0 0">${bg[5]}</p></div>`;
 }
 function markSel(k,on){
   document.querySelectorAll("#faceBoard .pt").forEach(p=>{
     p.classList.toggle("sel", on && p.dataset.k===k);
   });
 }
-function tapGung(g){
-  if(!isOpen(g)){ go("s-pay"); return; }
-  const btn=$("gungs").querySelector(`.gung[data-k="${g.k}"]`);
+function tapGung(j){
+  if(!isOpen(j)){ go("s-pay"); return; }
+  const btn=$("gungs").querySelector(`.gung[data-k="${j.g.k}"]`);
   if(btn){ btn.click(); btn.scrollIntoView({behavior:"smooth",block:"center"}); }
 }
 
@@ -1117,42 +1087,43 @@ $("payBtn").addEventListener("click",()=>{
 });
 
 /* ── 8. 처방 ──────────────────────────────── */
-function ohaeng(){ return OHAENG[(S.age+(S.sex==="여"?3:0))%5]; }
 function buildCure(){
-  const b=S.boss, oh=ohaeng();
-  $("cureTitle").innerHTML=`${b.g.nm}하고<br>말을 좀 섞었습니다…`;
+  RX=prescribe(R);
+  const b=R.boss, bg=BG[b.bg];
+  $("cureTitle").innerHTML=`${bg[0]}하고<br>말을 좀 섞었습니다…`;
   $("cureSay").innerHTML=
-    `<p>물러가는 대가로 뭘 원하느냐고 물었어요. 세 가지를 말하더군요.</p>`+
+    `<p>물러가는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요.</p>`+
     `<p>…저는 전해드릴 뿐이에요. 지키실지는 자네가 정하세요.</p>`;
   const fw=mountFace("faceCure");
   fw.querySelectorAll(".mole,.pt").forEach(n=>n.remove());
-  MOLE.forEach(m=>{
+  RX.jeom.forEach(m=>{
     const d=document.createElement("div");
     d.className="mole"; d.style.left=px(m.x)+"%"; d.style.top=py(m.y)+"%";
     fw.appendChild(d);
   });
   $("moleSlide").value=0; setMoles(0);
-  $("moleOut").innerHTML=MOLE.map(m=>
+  $("moleOut").innerHTML=RX.jeom.map(m=>
     `<div class="colrow" style="border-color:rgba(192,54,42,.3)">`+
     `<span class="chip molechip"></span>`+
-    `<span><span class="cn">${m.t}</span><br><span class="cd">${m.why}</span></span></div>`).join("")+
+    `<span><span class="cn">${m.t}</span><br><span class="cd">${m.w}</span></span></div>`).join("")+
     `<p class="hint" style="margin-top:8px">먹이나 화장으로 한 달만 찍어 보세요. 빼는 건 나중 일입니다.</p>`;
-  const cs=COLORS[oh];
+
   $("colors").innerHTML=
-    `<div class="colrow"><span class="chip" style="background:${cs[0][1]}"></span>`+
-    `<span><span class="cn">${cs[0][0]}</span><br><span class="cd">${cs[0][2]}에 쓰세요</span></span></div>`+
-    `<div class="colrow"><span class="chip" style="background:${cs[1][1]}"></span>`+
-    `<span><span class="cn">${cs[1][0]}</span><br><span class="cd">${cs[1][2]}에 쓰세요</span></span></div>`+
-    `<div class="colrow bad"><span class="chip" style="background:${cs[2][1]}"></span>`+
-    `<span><span class="cn">${cs[2][0]}</span><br><span class="cd">${cs[2][2]}에는 올해 쓰지 마세요</span></span></div>`;
-  const h=HAIR[oh];
-  $("hairOut").innerHTML=`<h4>${h[0]}</h4><p style="margin:0">${h[1]}</p>`+
-    `<p class="tagline" style="margin-top:8px">얼굴은 ${oh}형(${OHJA[oh]}形)으로 봅니다</p>`;
+    RX.gil.map(c=>
+      `<div class="colrow"><span class="chip" style="background:${c[1]}"></span>`+
+      `<span><span class="cn">${c[0]}</span><br><span class="cd">${c[2]}에 쓰세요</span></span></div>`).join("")+
+    `<div class="colrow bad"><span class="chip" style="background:${RX.hyung[1]}"></span>`+
+    `<span><span class="cn">${RX.hyung[0]}</span><br><span class="cd">${RX.hyung[2]}</span></span></div>`+
+    (R.gyo.dan==="극(剋)"
+      ? `<p class="hint" style="margin-top:8px">지금 도는 ${R.gisaek}기가 자네 ${RX.oh.nm}을 누르고 있어서, 그 색만은 올해 피하셔야 합니다.</p>`
+      : "");
+
+  $("hairOut").innerHTML=`<h4>${RX.mori[0]}</h4><p style="margin:0">${RX.mori[1]}</p>`+
+    `<p class="tagline" style="margin-top:8px">얼굴은 ${RX.oh.nm}으로 봅니다 · 삼정은 ${SAMJEONG[R.samjeong].nm}이 두텁습니다</p>`;
 }
 function setMoles(v){
   document.querySelectorAll("#faceCure .mole").forEach((m,i)=>{
-    const th=i*25;
-    m.classList.toggle("on", v>th);
+    m.classList.toggle("on", v>i*25);
   });
 }
 $("moleSlide").addEventListener("input",e=>setMoles(+e.target.value));
@@ -1162,13 +1133,14 @@ $("cureGo").addEventListener("click",()=>{ go("s-tanghwa"); buildTang(); });
 function buildTang(){
   const t=$("tang");
   t.querySelectorAll(".slot").forEach(n=>n.remove());
-  GUNG.forEach((g,i)=>{
+  $("tang").hidden=false; $("tangOut").innerHTML=""; $("saveTang").hidden=false;
+  R.jari.forEach((j,i)=>{
     const s=SLOT[i], d=document.createElement("div");
-    d.className="slot"+(g.k===S.boss.k?" boss":"");
+    d.className="slot"+(j.g.k===R.boss.g.k?" boss":"");
     d.style.left=(s[0]/TW*100)+"%"; d.style.top=(s[1]/TH*100)+"%";
     d.style.width=(s[2]/TW*100)+"%"; d.style.height=(s[3]/TH*100)+"%";
-    d.innerHTML=`<img src="${g.g.art}" alt="${g.g.nm}">`;
-    d.title=g.n+" · "+g.g.nm;
+    d.innerHTML=`<img src="img/baekgwi/${BG[j.bg][2]}.webp" alt="${BG[j.bg][0]}">`;
+    d.title=j.g.n+" · "+BG[j.bg][0];
     t.appendChild(d);
     setTimeout(()=>d.classList.add("on"),180+i*110);
   });
@@ -1192,16 +1164,24 @@ $("saveTang").addEventListener("click",async()=>{
   x.fillStyle="#0a0507"; x.fillRect(0,0,1536,1024);
   const bg=await load("img/tanghwa.png");
   if(bg)x.drawImage(bg,0,0,1536,1024);
-  for(let i=0;i<GUNG.length;i++){
-    const s2=SLOT[i], im=await load(GUNG[i].g.art);
+  for(let i=0;i<R.jari.length;i++){
+    const s2=SLOT[i], im=await load("img/baekgwi/"+BG[R.jari[i].bg][2]+".webp");
     if(!im)continue;
     const X=s2[0],Y=s2[1],W=s2[2],H=s2[3];
     const k=Math.max(W/im.width,H/im.height);
     const w=im.width*k,h=im.height*k;
     x.save();x.beginPath();x.rect(X,Y,W,H);x.clip();
-    x.drawImage(im,X+(W-w)/2,Y+(H-h)/2,w,h);
+    try{ x.filter="sepia(0.28) saturate(1.18) brightness(1.12) contrast(1.06)"; }catch(e){}
+    x.drawImage(im,X+(W-w)/2,Y+(H-h)*0.42,w,h);
+    try{ x.filter="none"; }catch(e){}
+    const warm=x.createLinearGradient(0,Y,0,Y+H);
+    warm.addColorStop(0,"rgba(120,56,16,.12)"); warm.addColorStop(1,"rgba(24,8,4,.42)");
+    x.fillStyle=warm; x.fillRect(X,Y,W,H);
     x.restore();
-    if(GUNG[i].k===S.boss.k){x.strokeStyle="rgba(255,110,80,.95)";x.lineWidth=5;x.strokeRect(X+3,Y+3,W-6,H-6);}
+    const boss=R.jari[i].g.k===R.boss.g.k;
+    x.strokeStyle=boss?"rgba(255,138,96,.95)":"rgba(214,170,86,.85)";
+    x.lineWidth=boss?4:2.5;
+    x.strokeRect(X+x.lineWidth/2,Y+x.lineWidth/2,W-x.lineWidth,H-x.lineWidth);
   }
   let url;
   try{ url=c.toDataURL("image/png"); }catch(e){ url=null; }
