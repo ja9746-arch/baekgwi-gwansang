@@ -59,15 +59,17 @@ img{max-width:100%;display:block}
   background:linear-gradient(90deg,transparent,rgba(201,162,74,.35) 18%,rgba(201,162,74,.35) 82%,transparent)}
 .top .brand{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--geum-dim)}
 .top .step{font-size:10px;letter-spacing:.16em;color:rgba(236,224,210,.26)}
-.snd{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));
-  right:max(14px,env(safe-area-inset-right,0px));z-index:72;
-  width:42px;height:42px;display:grid;place-items:center;border-radius:50%;
-  border:1px solid rgba(201,162,74,.34);background:rgba(10,5,7,.88);
-  backdrop-filter:blur(3px);box-shadow:0 6px 18px rgba(0,0,0,.55);
-  color:rgba(201,162,74,.78);font-size:17px;line-height:1}
-.snd[aria-pressed="true"]{color:#f3dca6;border-color:rgba(243,220,166,.6);
-  box-shadow:0 0 12px rgba(201,162,74,.3)}
-.snd .off{position:absolute;width:20px;height:1.2px;background:currentColor;
+.top .snd{position:relative;flex:0 0 auto;margin-left:auto;
+  width:28px;height:28px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid rgba(201,162,74,.26);background:transparent;
+  color:rgba(201,162,74,.66);font-size:13px;line-height:1;cursor:pointer}
+.top .snd + .step{margin-left:12px}
+.hero .snd{position:absolute;z-index:3;top:max(12px,env(safe-area-inset-top,0px));
+  right:14px;background:rgba(10,5,7,.55);backdrop-filter:blur(3px);
+  border-color:rgba(201,162,74,.4);color:rgba(230,205,160,.85)}
+.top .brand{margin-right:auto}
+.snd[aria-pressed="true"]{color:#f3dca6;border-color:rgba(243,220,166,.55)}
+.snd .off{position:absolute;width:14px;height:1.1px;background:currentColor;
   transform:rotate(-40deg);opacity:.85}
 .snd[aria-pressed="true"] .off{display:none}
 
@@ -139,8 +141,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .hero .cap .b{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:.04em;margin-top:4px;
   background:linear-gradient(180deg,#f6e3b6,#c9a24a 58%,#8a6f33);-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
-.intro-body{padding:12px 20px 0}
-.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:13px 0 16px}
+.intro-body{padding:0 20px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:13px 0 10px}
 .tags span{font-family:var(--serif);font-size:11.5px;letter-spacing:.08em;color:#d6c6ae;
   border:1px solid rgba(201,162,74,.4);padding:5px 10px;background:rgba(10,5,7,.55);
   backdrop-filter:blur(2px);text-shadow:0 1px 6px #000}
@@ -175,7 +177,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .hole .empty .ico{font-family:var(--serif);font-size:30px;color:var(--geum-dim)}
 .guide{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
 .guide.idle .tick,.guide.idle .dim{opacity:0}
-.guide.idle .face{opacity:.4}
+.guide.idle .face,.guide.idle .rim{opacity:0}
 .guide .face{fill:none;stroke:rgba(255,246,232,.82);stroke-width:1.1;
   filter:drop-shadow(0 0 3px rgba(0,0,0,.95))}
 .guide .rim{fill:none;stroke:rgba(201,162,74,.26);stroke-width:.7}
@@ -186,6 +188,9 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   filter:drop-shadow(0 0 9px rgba(243,220,166,.95))}
 .guide.ok .rim{stroke:rgba(243,220,166,.5)}
 .guide.ok .tick line{stroke:rgba(243,220,166,.85)}
+.guide.set .face{stroke:#e8c87a;stroke-width:1.4;filter:drop-shadow(0 0 4px rgba(232,200,122,.5))}
+.guide.set .dim{fill:rgba(6,3,4,.24)}
+.guide.set .tick line{stroke:rgba(232,200,122,.8)}
 .zoom{display:flex;align-items:center;gap:10px;margin:14px 2px 0}
 .zoom span{font-size:11px;letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
 .zoom input{flex:1;accent-color:var(--geum)}
@@ -356,7 +361,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .bgrow{display:flex;gap:11px;align-items:flex-start;margin:8px 0 10px;
   border:1px solid rgba(201,162,74,.22);background:rgba(8,5,6,.6);padding:9px}
 .bgrow img{width:104px;height:62px;flex:none;object-fit:cover;object-position:50% 42%;
-  border:1px solid rgba(201,162,74,.34);filter:sepia(.2) saturate(1.2) brightness(1.16) contrast(1.05)}
+  border:1px solid rgba(201,162,74,.34);filter:sepia(.12) saturate(1.3) brightness(1.56) contrast(1.1)}
 .bgrow span{flex:1;min-width:0;font-size:12.5px;line-height:1.8;color:var(--jae-dim)}
 .bgrow b{color:#efe2cd;font-weight:400;font-family:var(--serif);font-size:14px}
 .pre{color:var(--jae-dim)}
@@ -377,7 +382,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
   box-shadow:0 10px 26px rgba(0,0,0,.6);transition:transform .18s,border-color .2s}
 .card img{width:100%;aspect-ratio:5/3;object-fit:cover;
-  filter:sepia(.18) saturate(1.18) brightness(1.14) contrast(1.04)}
+  filter:sepia(.12) saturate(1.3) brightness(1.54) contrast(1.1)}
 .card .nm{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;text-align:center;
   font-family:var(--serif);font-size:12px;color:#f0e2c9;background:linear-gradient(180deg,transparent,rgba(5,3,4,.95))}
 .card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
@@ -395,8 +400,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   background:linear-gradient(180deg,rgba(22,12,14,.9),rgba(12,7,9,.92));padding:9px 11px;width:100%;text-align:left}
 .gung .th{width:62px;height:46px;flex:none;overflow:hidden;border:1px solid rgba(201,162,74,.3);position:relative;background:#0a0506}
 .gung .th img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
-  filter:sepia(.22) saturate(1.2) brightness(1.18) contrast(1.05)}
-.gung .th.lock img{filter:grayscale(.75) brightness(.38)}
+  filter:sepia(.12) saturate(1.3) brightness(1.58) contrast(1.1)}
+.gung .th.lock img{filter:grayscale(.8) brightness(.42)}
 .gung .th .lk{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);
   font-size:17px;color:#c4493a;text-shadow:0 0 10px rgba(192,54,42,.8)}
 .gung .mid{flex:1;min-width:0}
@@ -452,18 +457,29 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .tang .bg{border:1px solid rgba(201,162,74,.3);box-shadow:0 16px 46px rgba(0,0,0,.72)}
 .tang .bg{position:absolute;inset:0;width:100%;height:100%}
 .tang .slot{position:absolute;overflow:hidden;border-radius:3px;opacity:0;transform:scale(.6);
-  box-shadow:inset 0 0 0 1.5px rgba(214,170,86,.85),
-             inset 0 0 10px rgba(0,0,0,.75),
-             0 0 10px rgba(232,195,119,.35)}
-.tang .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
-  filter:sepia(.28) saturate(1.18) brightness(1.1) contrast(1.06)}
+  background:#1a1210;
+  box-shadow:inset 0 0 0 1.5px rgba(232,190,104,.95),
+             inset 0 0 8px rgba(0,0,0,.4),
+             0 0 12px rgba(232,195,119,.45)}
+.tang .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 40%;
+  filter:sepia(.14) saturate(1.34) brightness(1.72) contrast(1.14)}
 .tang .slot::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 38%,rgba(255,196,110,.16),transparent 62%),
-             linear-gradient(180deg,rgba(90,40,12,.1),rgba(24,8,4,.42))}
+  background:radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.2),transparent 66%)}
 .tang .slot.on{opacity:1;transform:none;transition:opacity .5s,transform .5s}
-.tang .slot.boss{box-shadow:inset 0 0 0 2px rgba(255,138,96,.95),
-  inset 0 0 12px rgba(80,10,4,.6),0 0 20px rgba(255,84,54,.85),0 0 40px rgba(192,54,42,.5)}
-.tang .slot.boss img{filter:sepia(.2) saturate(1.3) brightness(1.14) contrast(1.1)}
+.tang .slot.boss{box-shadow:inset 0 0 0 2.5px rgba(255,214,150,1),
+  0 0 0 2px rgba(255,74,44,.9),0 0 26px rgba(255,84,54,.95),0 0 52px rgba(255,54,32,.7);
+  animation:bossglow 2.2s ease-in-out infinite}
+.tang .slot.boss img{filter:sepia(.06) saturate(1.5) brightness(1.9) contrast(1.16)}
+.tang .slot.boss::after{background:
+  radial-gradient(ellipse at 50% 38%,rgba(255,226,170,.26),transparent 64%),
+  linear-gradient(180deg,rgba(255,70,40,.16),rgba(190,24,14,.24))}
+@keyframes bossglow{
+  0%,100%{box-shadow:inset 0 0 0 2.5px rgba(255,214,150,1),0 0 0 2px rgba(255,74,44,.9),
+          0 0 18px rgba(255,84,54,.8),0 0 36px rgba(255,54,32,.5)}
+  50%    {box-shadow:inset 0 0 0 2.5px rgba(255,236,196,1),0 0 0 3px rgba(255,96,56,1),
+          0 0 32px rgba(255,104,64,1),0 0 66px rgba(255,54,32,.85)}
+}
+@media (prefers-reduced-motion:reduce){ .tang .slot.boss{animation:none} }
 
 .foot{margin-top:26px;padding-top:14px;border-top:1px solid rgba(201,162,74,.14);
   font-size:10.5px;line-height:1.8;color:rgba(163,148,134,.5);text-align:center}
@@ -475,8 +491,6 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 </head>
 <body>
 
-<button class="snd" id="sndBtn" aria-label="배경음" aria-pressed="false">
-  <span class="ic">♪</span><span class="off"></span></button>
 <div id="stage">
 
 <!-- 0. 들어가기 -->
@@ -572,7 +586,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     </div>
     <img class="frame" src="img/bronze.png" alt="청동경">
   </div>
-  <div class="order" id="order">거울에 비추거나 사진을 올리면 법사가 자세를 잡아줍니다.</div>
+  <div class="order" id="order">비추거나 올리시면, 법사가 자세를 잡아드려요.</div>
   <div class="zoom" id="zoomRow" hidden>
     <span>작게</span><input type="range" id="zoom" min="100" max="260" value="112" aria-label="크기"><span>크게</span>
   </div>
@@ -584,7 +598,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   <button class="btn" id="shotLive" hidden>이대로 찍겠습니다</button>
   <button class="btn" id="shot" hidden>자세를 다 잡았습니다</button>
   <label class="btn ghost" for="filePick" id="redo" hidden>다른 사진으로 바꾸기</label>
-  <p class="hint center" id="mirrorHint" style="margin-top:12px">사진은 올리는 즉시 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
+  <p class="hint center" id="mirrorHint" style="margin-top:12px">사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
 </section>
 
 <!-- 3. 읽기 -->
@@ -614,7 +628,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     <div class="veil"></div>
   </div>
   <p class="hint center" style="margin-top:12px" id="markHint">
-    …얼굴에 점이나 흉, 패인 자리가 있으면<br>사진 위에서 그 자리를 한 번 짚어주세요.
+    …얼굴에 점이나 흉, 파인 자리가 있으면<br>사진 위에서 그 자리를 한 번 짚어주세요.
   </p>
   <div id="markOut"></div>
   <button class="btn" id="hitGo" hidden>다음으로 넘어가겠습니다</button>
@@ -674,12 +688,12 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   </div>
   <div class="price">
     <div class="s">복 채</div>
-    <div class="b"><del>5,900원</del>3,990원</div>
-    <div class="n" id="payTimer">봉인 안내가 뜬 뒤 10분 안에만 이 값입니다</div>
+    <div class="b" id="payPrice"><del>5,900원</del>3,990원</div>
+    <div class="n" id="payTimer">여는 날 기념값입니다. 한 번 열면 이 기기에서 계속 보실 수 있어요.</div>
   </div>
   <button class="btn hot" id="payBtn">3,990원 내고 열두 자리 열기</button>
   <button class="btn ghost" data-go="s-board">조금 더 보고 정하겠습니다</button>
-  <p class="foot">데모판입니다. 실제 결제는 일어나지 않습니다.</p>
+  <p class="foot demonote" hidden>아직 결제가 연결되지 않았습니다. 값은 빠지지 않습니다.</p>
 </section>
 
 <!-- 8. 처방 -->
@@ -715,7 +729,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 <section class="screen" id="s-tanghwa" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">6 / 6</div></div>
   <p class="kick">맺음 · 백귀도</p>
-  <h2 class="t">열두 칸이<br>손님 얼굴로 채워졌어요.</h2>
+  <h2 class="t">열두 칸이<br>손님의 자리로 채워졌어요.</h2>
   <div class="tang" id="tang">
     <img class="bg" src="img/tanghwa.png" alt="백귀도">
   </div>
@@ -756,7 +770,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   <div class="price">
     <div class="s">얼굴과 사주를 맞대어 보는 종합</div>
     <div class="b">9,900원</div>
-    <div class="n">대면으로 사주·관상을 함께 보면 5만 원 선입니다</div>
+    <div class="n">대면으로 사주·관상을 함께 보면 보통 수만 원대입니다</div>
   </div>
   <button class="btn hot" id="crossBtn">생년월일을 적겠습니다</button>
   <button class="btn ghost" id="again">처음부터 다시 보겠습니다</button>
@@ -912,10 +926,11 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   <div class="price">
     <div class="s">얼굴과 사주를 맞대어 보는 종합</div>
     <div class="b">9,900원</div>
-    <div class="n">대면으로 사주·관상을 함께 보면 5만 원 선입니다</div>
+    <div class="n">대면으로 사주·관상을 함께 보면 보통 수만 원대입니다</div>
   </div>
   <button class="btn hot" id="crossGo">9,900원 · 맞대어 보겠습니다</button>
   <button class="btn ghost" data-go="s-end">맺음으로 돌아가겠습니다</button>
+  <p class="foot demonote" hidden>아직 결제가 연결되지 않았습니다. 값은 빠지지 않습니다.</p>
 </section>
 
 <section class="screen" id="s-crossout" hidden>
@@ -961,7 +976,6 @@ function show(id){
   el.style.animation="none"; void el.offsetWidth; el.style.animation="";
   window.scrollTo({top:0,behavior:"instant"});
   requestAnimationFrame(relayoutAll);
-  if(id==="s-pay" && !S.paid) startTimer();
 }
 function go(id){
   show(id);
@@ -1005,7 +1019,7 @@ let stream=null;
 
 function onFile(e){
   const f=e.target.files && e.target.files[0]; if(!f)return;
-  stopLive();
+  ritual=false; stopLive();
   if(S.url) URL.revokeObjectURL(S.url);
   S.url=URL.createObjectURL(f);
   const im=new Image();
@@ -1018,6 +1032,7 @@ function onFile(e){
     $("getrow").hidden=true; $("redo").hidden=false; $("shot").hidden=false;
     autoFit(im);
     layout(phM,hole);
+    checkFit();
   };
   im.onerror=()=>{ $("order").innerHTML="사진을 읽지 못했습니다. 다른 장으로 해보세요."; };
   im.src=S.url;
@@ -1042,15 +1057,17 @@ $("live").addEventListener("click",async()=>{
     S.x=0;S.y=0;S.scale=1.12;
     $("holeEmpty").hidden=true; $("guide").classList.remove("idle"); $("getrow").hidden=true;
     $("zoomRow").hidden=false; $("zoom").value=110; $("shotLive").hidden=false;
-    $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
-    layout(vid,hole);
+    $("order").innerHTML="길잡이 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
+    S.fitOK=false; S.face=null; ritual=false;
+    layout(vid,hole); watchFit(true);
   }catch(err){
-    b.hidden=true;
-    $("order").innerHTML="이 화면에서는 거울을 켤 수 없습니다. 위의 <b>셀카 찍기</b>로 해주세요.";
+    b.hidden=true; $("pickLbl").className="btn";
+    $("order").innerHTML="이 화면에서는 거울을 켤 수 없습니다. 아래 <b>사진첩에서 고르기</b>로 해주세요.";
   }
   b.disabled=false; b.textContent="거울에 바로 비추기";
 });
 function stopLive(){
+  watchFit(false);
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   vid.hidden=true; vid.srcObject=null; $("shotLive").hidden=true;
 }
@@ -1077,13 +1094,13 @@ function autoFit(srcEl){
   const r=hole.getBoundingClientRect();
   let f=null;
   try{ f = findFace(srcEl, S.natW, S.natH); }catch(e){}
+  S.face = f;
   const fit = f && r.width ? fitFace(f, S.natW, S.natH, r.width, r.height) : null;
   if(fit){
     S.scale=fit.scale; S.x=fit.x; S.y=fit.y;
-    $("order").innerHTML="얼굴을 <b>저절로 맞춰</b> 두었습니다. 어긋나면 끌어서 고치세요.";
+    S.fitOK=true;
   }else{
-    S.scale=1.12; S.x=0; S.y=0;
-    $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 끌어서 옮기고, 아래로 크기를 맞추면 됩니다.";
+    S.scale=1.12; S.x=0; S.y=0; S.fitOK=false;
   }
   $("zoom").value=Math.round(Math.max(100,Math.min(260,S.scale*100)));
   return !!fit;
@@ -1102,6 +1119,43 @@ function layout(img,box){
   img.style.width=w+"px"; img.style.height=h+"px";
   img.style.transform=`translate(calc(-50% + ${S.x*r.width/100}px), calc(-50% + ${S.y*r.height/100}px))`;
 }
+/* 길잡이 안에 얼굴이 들어앉았는지 봅니다 */
+let ritual=false;
+function checkFit(){
+  const g=$("guide");
+  if(!g) return;
+  if(ritual || (!S.url && !stream) || !S.face){ g.classList.remove("set"); return; }
+  const r=hole.getBoundingClientRect();
+  if(!r.width || !S.natW) return;
+  const cover=Math.max(r.width/S.natW, r.height/S.natH)*S.scale;
+  const dw=S.natW*cover, dh=S.natH*cover;
+  const cx=r.width/2  + S.x*r.width/100  + (S.face.cx-0.5)*dw;
+  const cy=r.height/2 + S.y*r.height/100 + (S.face.cy-0.5)*dh;
+  const fh=S.face.h*dh;
+  const gx=(FX+FW/2)/100*r.width, gy=(FY+FH/2)/100*r.height, gh=FH/100*r.height;
+  const set = Math.abs(cx-gx)/r.width  < 0.075 &&
+              Math.abs(cy-gy)/r.height < 0.075 &&
+              fh/gh > 0.74 && fh/gh < 1.32;
+  g.classList.toggle("set", set);
+  const o=$("order");
+  if(!o) return;
+  o.innerHTML = set
+    ? "…네, <b>그 자리예요.</b> 그대로 아래를 눌러주세요."
+    : (S.fitOK ? "얼굴을 <b>저절로 맞춰</b> 두었습니다. 어긋나면 끌어서 고치세요."
+               : "길잡이 안에 <b>얼굴을 채워</b> 주세요. 끌어서 옮기고, 아래로 크기를 맞추면 됩니다.");
+}
+/* 거울에 비추는 동안에는 얼굴을 다시 찾아 가며 봅니다 */
+let fitTick=null;
+function watchFit(on){
+  clearInterval(fitTick); fitTick=null;
+  if(!on) return;
+  fitTick=setInterval(()=>{
+    if(!stream || vid.hidden) return;
+    try{ S.face = findFace(vid, S.natW, S.natH) || S.face; }catch(e){}
+    checkFit();
+  }, 650);
+}
+
 function relayoutAll(){
   layout(stream?vid:phM,hole);
   document.querySelectorAll(".facewrap").forEach(fw=>{
@@ -1125,7 +1179,7 @@ hole.addEventListener("pointermove",e=>{
   layout(stream?vid:phM,hole); unlock();
 });
 ["pointerup","pointercancel"].forEach(ev=>hole.addEventListener(ev,()=>{drag=null;}));
-function unlock(){ $("guide").classList.remove("ok"); }
+function unlock(){ $("guide").classList.remove("ok"); checkFit(); }
 
 /* 자세 확인 의식 */
 const ORDERS=["…고개를 아주 조금만 들어주세요.","…빛을 마주 보셔야 해요. 그늘이 반쪽만 져 있어서요.","…네. 그대로요. 움직이지 마세요."];
@@ -1141,6 +1195,7 @@ function measureNow(){
     R=divine(m,S.age,S.sex);
     return true;
   }catch(e){
+    ritual=false;
     $("order").innerHTML="…얼굴이 잘 안 보입니다.<br>밝은 데서, 정면으로 한 번만 다시 찍어 주세요.";
     $("guide").classList.remove("ok");
     $("shot").hidden=false; $("redo").hidden=false; $("zoomRow").hidden=false;
@@ -1148,6 +1203,8 @@ function measureNow(){
   }
 }
 function runOrders(){
+  ritual=true; watchFit(false);
+  $("guide").classList.remove("set");
   $("shot").hidden=true; $("redo").hidden=true; $("getrow").hidden=true;
   $("zoomRow").hidden=true; $("shotLive").hidden=true;
   const g=$("guide"), ord=$("order");
@@ -1245,7 +1302,7 @@ function showReadOut(){
       <div class="vrow"><span class="vk">형상</span>
         <span class="vv">${oh.nm}<em>${oh.sul}</em></span></div>
       <div class="vrow"><span class="vk">기색</span>
-        <span class="vv">${gi.ja}색 — ${R.gisaek}기<em>${gi.mal}</em></span></div>
+        <span class="vv">${R.gisaek}기(${gi.ja}氣)<em>${gi.mal}</em></span></div>
       <div class="vrow"><span class="vk">삼정</span>
         <span class="vv">${sj.nm} 두터움<em>${sj.gi}에 무게가 실린 얼굴입니다</em></span></div>
       <div class="vrow bind"><span class="vk">맞물림</span>
@@ -1268,12 +1325,12 @@ function compareHTML(c){
   const mv = a => a.map(x=>`<b>${x.n}</b> ${LVNM[x.from]}→${LVNM[x.to]}`).join(", ");
   let head;
   if(c.bossMoved) head = `지난번 우두머리는 ${c.prevBoss.n}에 있었는데, 이번엔 ${R.boss.g.n}으로 옮겨 갔습니다.`;
-  else if(c.bossGone) head = `${R.boss.g.n}을 쥔 것이 바뀌었습니다. ${bgName(c.prevBoss.bg)}가 물러나고 ${bgName(R.boss.bg)}가 섰어요.`;
-  else head = `우두머리는 그대로입니다. ${R.boss.g.n}의 ${bgName(R.boss.bg)}가 아직 버티고 있어요.`;
+  else if(c.bossGone) head = `${R.boss.g.n}을 쥔 것이 바뀌었습니다. ${JO(bgName(c.prevBoss.bg),"이","가")} 물러나고 ${JO(bgName(R.boss.bg),"이","가")} 섰어요.`;
+  else head = `우두머리는 그대로입니다. ${R.boss.g.n}의 ${JO(bgName(R.boss.bg),"이","가")} 아직 버티고 있어요.`;
   return `<div class="scroll" style="margin-top:14px">`+
    `<div class="srow"><span class="sk">지난번</span><span class="sv">`+
-     `${nal} 보셨네요. 그때는 ${OH[c.prevHyeong].nm}에 ${GISAEK[c.prevGisaek].ja}색이었습니다.`+
-     (c.gisaekMoved?` 기색이 ${GISAEK[R.gisaek].ja}색으로 바뀌었어요.`:` 기색은 그대로고요.`)+
+     `${nal} 보셨네요. 그때는 ${OH[c.prevHyeong].nm}에 ${c.prevGisaek}기였습니다.`+
+     (c.gisaekMoved?` 기색이 ${R.gisaek}기로 바뀌었어요.`:` 기색은 그대로고요.`)+
      `<br>${head}</span></div>`+
    (c.better.length?`<div class="srow"><span class="sk" style="color:#9fd5b0">트인 데</span><span class="sv">${mv(c.better)}</span></div>`:"")+
    (c.worse.length?`<div class="srow bad"><span class="sk" style="color:#d8604c">막힌 데</span><span class="sv">${mv(c.worse)}</span></div>`:"")+
@@ -1377,8 +1434,8 @@ function choose(c,btn){
    `<p>${c.q}</p>`+
    `<p>…그런데요. 그건 <em>무서워하는 얼굴</em>이지, 손님 앞에 서 있는 건 아닙니다.</p>`+
    `<p>${[
-     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 선 <em>${bgName(b.bg)}</em>가 지금은 비켜서 있어요.`,
-     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 <em>${bgName(b.bg)}</em>가 서성이고 있어요.`,
+     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 선 <em>${bgName(b.bg)}</em>${batchim(bgName(b.bg))?"이":"가"} 지금은 비켜서 있어요.`,
+     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 <em>${bgName(b.bg)}</em>${batchim(bgName(b.bg))?"이":"가"} 서성이고 있어요.`,
      `올해 손님의 운이 걸린 <em>${R.yun.bu}</em> 자리를 막고 선 건 <em>${bgName(b.bg)}</em>입니다. ${b.g.n}에 버티고 있어요.`
    ][b.lv]}</p>`+
    (b.lv<2 && worst() ? `<p>…그보다 급한 건 <em>${worst().g.n}</em>입니다. 거기가 아주 막혀 있어요.</p>` : "")+
@@ -1391,6 +1448,16 @@ $("pickGo").addEventListener("click",()=>{ go("s-board"); buildBoard(); });
 
 /* ── 6. 열두 자리 ─────────────────────────── */
 const LVNM=["트임","반반","막힘"];
+/* 받침을 보고 조사를 고릅니다. 뒤에 한자가 붙어도 한글 소리로 봅니다. */
+function batchim(s){
+  for(let i=s.length-1;i>=0;i--){
+    const c=s.charCodeAt(i);
+    if(c>=0xAC00 && c<=0xD7A3) return ((c-0xAC00)%28)!==0;
+  }
+  return false;
+}
+const JO=(t,a,b)=>t+(batchim(t)?a:b);      /* JO(이름,"이","가") */
+
 /* 이름 뒤 한자는 온전한 한자일 때만 붙입니다 */
 function bgName(i){
   const c=BG[i];
@@ -1482,7 +1549,7 @@ function panelHTML(j){
       "올해 운이 걸린 자리가 바로 여기입니다. 이것이 우두머리예요."][j.lv]}</p>`:"")+
    `<div class="cure"><h4 style="margin:0 0 4px">자리를 고치려면</h4>`+
    `<p style="margin:0">${t.ac}</p>`+
-   `<h4 style="margin:11px 0 4px">${bgName(j.bg).split(" ")[0]}를 물리려면</h4>`+
+   `<h4 style="margin:11px 0 4px">${JO(bgName(j.bg).split(" ")[0],"을","를")} 물리려면</h4>`+
    `<p style="margin:0">${bg[5]}</p></div>`;
 }
 function markSel(k,on){
@@ -1497,33 +1564,42 @@ function tapGung(j){
 }
 
 /* ── 7. 값 ────────────────────────────────── */
-let payLeft=600, payTick;
-function startTimer(){
-  clearInterval(payTick);
-  payTick=setInterval(()=>{
-    payLeft--;
-    if(payLeft<=0){clearInterval(payTick);$("payTimer").textContent="할인 시간이 지났습니다 (데모라 값은 그대로 둡니다)";return;}
-    const m=String(Math.floor(payLeft/60)).padStart(2,"0"), s=String(payLeft%60).padStart(2,"0");
-    $("payTimer").innerHTML=`이 값은 <b style="color:var(--geum-hot);font-weight:400">${m}:${s}</b> 뒤에 5,900원으로 돌아갑니다`;
-  },1000);
-}
+
 /* ── 결제 ───────────────────────────────────
    실제 결제대행사는 여기 한 군데만 갈아 끼우면 됩니다.
    openCheckout() 이 성공하면 true, 취소·실패면 false 를 돌려주면
    나머지는 그대로 돕니다. */
 const DEMO_CHECKOUT = true;      /* 연동 전까지는 참 */
+/* list 는 기념값이 끝난 뒤 실제로 받을 값이어야 합니다.
+   그럴 뜻이 없으면 null 로 두세요 — 줄 그은 값이 사라집니다.
+   받지 않을 값을 줄 그어 두면 거짓 할인이 됩니다. */
 const PRICE = { now: 3990, list: 5900, name: "백귀관상 · 열두 자리 개봉" };
+const PRICE_CROSS = { now: 9900, list: null, name: "백귀관상 · 얼굴과 사주 교차" };
+
+/* 값 표시를 PRICE 에 맞춥니다 */
+(function paintPrice(){
+  const won=v=>v.toLocaleString("ko-KR")+"원";
+  const el=$("payPrice");
+  if(el) el.innerHTML=(PRICE.list?`<del>${won(PRICE.list)}</del>`:"")+won(PRICE.now);
+  const btn=$("payBtn");
+  if(btn) btn.textContent=`${won(PRICE.now)} 내고 열두 자리 열기`;
+  if(!PRICE.list){
+    const t=$("payTimer");
+    if(t) t.textContent="한 번 열면 이 기기에서 계속 보실 수 있어요.";
+  }
+  if(DEMO_CHECKOUT) document.querySelectorAll(".demonote").forEach(n=>n.hidden=false);
+})();
 
 async function openCheckout(){
   if(DEMO_CHECKOUT) return true;
   /* 예) 결제창 띄우고 승인 결과를 기다립니다
-     const ok = await PG.request({ amount: payLeft>0?PRICE.now:PRICE.list,
+     const ok = await PG.request({ amount: PRICE.now,
                                    name: PRICE.name, orderId: makeOrderId() });
      return ok; */
   return false;
 }
 function unlockAll(){
-  S.paid=true; clearInterval(payTick);
+  S.paid=true;
   go("s-board"); buildBoard();
 }
 $("payBtn").addEventListener("click",async()=>{
@@ -1547,7 +1623,11 @@ function buildCure(){
   const b=R.boss, bg=BG[b.bg];
   $("cureTitle").innerHTML=`${bg[0]}하고<br>말을 좀 섞었습니다…`;
   $("cureSay").innerHTML=
-    `<p>물러가는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요.</p>`+
+    `<p>${[
+       "다시 들어서지 않는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요.",
+       "자리를 뜨는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요.",
+       "물러가는 대가로 뭘 원하느냐고 물었습니다. 세 가지를 말하더군요."
+     ][b.lv]}</p>`+
     `<p>…저는 전해드릴 뿐이에요. 지키실지는 손님이 정하세요.</p>`;
   const fw=mountFace("faceCure");
   fw.querySelectorAll(".mole,.pt").forEach(n=>n.remove());
@@ -1618,6 +1698,7 @@ $("saveTang").addEventListener("click",async()=>{
     }catch(e){}
     return await new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});
   };
+  const boss0=i=>R.jari[i].g.k===R.boss.g.k;
   x.fillStyle="#0a0507"; x.fillRect(0,0,1536,1024);
   const bg=await load("img/tanghwa.png");
   if(bg)x.drawImage(bg,0,0,1536,1024);
@@ -1628,16 +1709,23 @@ $("saveTang").addEventListener("click",async()=>{
     const k=Math.max(W/im.width,H/im.height);
     const w=im.width*k,h=im.height*k;
     x.save();x.beginPath();x.rect(X,Y,W,H);x.clip();
-    try{ x.filter="sepia(0.28) saturate(1.18) brightness(1.12) contrast(1.06)"; }catch(e){}
+    try{ x.filter = boss0(i) ? "sepia(0.06) saturate(1.5) brightness(1.9) contrast(1.16)"
+                        : "sepia(0.14) saturate(1.34) brightness(1.72) contrast(1.14)"; }catch(e){}
     x.drawImage(im,X+(W-w)/2,Y+(H-h)*0.42,w,h);
     try{ x.filter="none"; }catch(e){}
-    const warm=x.createLinearGradient(0,Y,0,Y+H);
-    warm.addColorStop(0,"rgba(120,56,16,.12)"); warm.addColorStop(1,"rgba(24,8,4,.42)");
-    x.fillStyle=warm; x.fillRect(X,Y,W,H);
+    if(boss0(i)){
+      const red=x.createLinearGradient(0,Y,0,Y+H);
+      red.addColorStop(0,"rgba(255,70,40,.16)"); red.addColorStop(1,"rgba(190,24,14,.24)");
+      x.fillStyle=red; x.fillRect(X,Y,W,H);
+    }
     x.restore();
-    const boss=R.jari[i].g.k===R.boss.g.k;
-    x.strokeStyle=boss?"rgba(255,138,96,.95)":"rgba(214,170,86,.85)";
-    x.lineWidth=boss?4:2.5;
+    const boss=boss0(i);
+    if(boss){
+      x.strokeStyle="rgba(255,96,56,.95)"; x.lineWidth=9;
+      x.strokeRect(X-3,Y-3,W+6,H+6);
+    }
+    x.strokeStyle=boss?"rgba(255,226,180,1)":"rgba(232,190,104,.95)";
+    x.lineWidth=boss?5:2.5;
     x.strokeRect(X+x.lineWidth/2,Y+x.lineWidth/2,W-x.lineWidth,H-x.lineWidth);
   }
   let url;
@@ -1674,7 +1762,7 @@ function buildEnd(){
   $("endSay").innerHTML=
     `<p>${E.verdictMore}</p>`+
     `<p>${E.boss}</p>`+
-    `<p>손님 그릇은 <em>${oh.nm}</em>이고, 올해 도는 기운은 <em>${GISAEK[R.gisaek].ja}색</em>입니다. 둘의 맞물림이 <em>${R.gyo.dan}</em>이에요.</p>`+
+    `<p>손님 그릇은 <em>${oh.nm}</em>이고, 올해 도는 기운은 <em>${R.gisaek}기(${GISAEK[R.gisaek].ja}氣)</em>입니다. 둘의 맞물림이 <em>${R.gyo.dan}</em>이에요.</p>`+
     `<p>열두 자리 중 트인 데가 ${E.openN}, 막힌 데가 ${E.blockN}입니다.</p>`;
 
   const go3=E.go.map(WOL).join("과 "), stop2=E.stop.map(WOL).join("과 ");
@@ -1686,13 +1774,13 @@ function buildEnd(){
    `<div class="srow when"><span class="sk">시 기</span><span class="sv">`+
      `<b class="go">${go3}</b>에 움직이세요. ${E.dow}의 달이라 손님 ${oh.nm}을 생합니다.<br>`+
      `<b class="stop">${stop2}</b>은 멈추세요. ${E.nur}의 달이라 손님을 누릅니다.</span></div>`;
-  $("crossFace").textContent=oh.nm+" · "+GISAEK[R.gisaek].ja+"색";
+  $("crossFace").textContent=oh.nm+" · "+R.gisaek+"기";
 }
 
 /* ── 10. 맺음 ─────────────────────────────── */
 $("crossBtn").addEventListener("click",()=>{
   S.ageWarned=false;
-  $("crossFace").textContent = OH[R.hyeong].nm + " · " + GISAEK[R.gisaek].ja + "색";
+  $("crossFace").textContent = OH[R.hyeong].nm + " · " + R.gisaek + "기";
   go("s-cross");
 });
 $("noTime").addEventListener("change",e=>{
@@ -1705,7 +1793,7 @@ async function runCross(){
   const y=+$("bY").value, m=+$("bM").value, d=+$("bD").value;
   const noT=$("noTime").checked;
   const h=noT?12:(+$("bH").value||0), mi=noT?0:(+$("bMi").value||0);
-  if(!(y>=1920&&y<=2026) || !(m>=1&&m<=12) || !(d>=1&&d<=31)){
+  if(!(y>=1900&&y<=new Date().getFullYear()) || !(m>=1&&m<=12) || !(d>=1&&d<=31)){
     toast("태어난 날을 다시 봐주세요"); return;
   }
   const t=new Date(y,m-1,d);
@@ -1798,14 +1886,31 @@ $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 배경음 — 처음에는 꺼져 있고, 눌러야 켜집니다 */
 (function(){
-  const b=$("sndBtn"); if(!b) return;
-  try{ if(localStorage.getItem("baekgwi-snd")==="1"){ /* 소리는 손이 닿아야 켜집니다 */ } }catch(e){}
-  b.addEventListener("click",()=>{
+  const made=[];
+  document.querySelectorAll(".top").forEach(t=>{
+    const b=document.createElement("button");
+    b.className="snd"; b.type="button";
+    b.setAttribute("aria-label","배경음"); b.setAttribute("aria-pressed","false");
+    b.innerHTML='<span class="ic">\u266a</span><span class="off"></span>';
+    const step=t.querySelector(".step");
+    step ? t.insertBefore(b,step) : t.appendChild(b);
+    made.push(b);
+  });
+  /* 들어가기 화면에는 머리띠가 없어 그림 귀퉁이에 둡니다 */
+  document.querySelectorAll("#s-intro .hero").forEach(h=>{
+    const b=document.createElement("button");
+    b.className="snd"; b.type="button";
+    b.setAttribute("aria-label","배경음"); b.setAttribute("aria-pressed","false");
+    b.innerHTML='<span class="ic">\u266a</span><span class="off"></span>';
+    h.appendChild(b); made.push(b);
+  });
+  if(!made.length) return;
+  made.forEach(b=>b.addEventListener("click",()=>{
     const on=Sound.toggle();
-    b.setAttribute("aria-pressed",String(on));
+    made.forEach(x=>x.setAttribute("aria-pressed",String(on)));
     try{ localStorage.setItem("baekgwi-snd", on?"1":"0"); }catch(e){}
     toast(on?"소리를 켰습니다":"소리를 껐습니다");
-  });
+  }));
   document.addEventListener("visibilitychange",()=>{ if(document.hidden) Sound.stop(); });
 })();
 

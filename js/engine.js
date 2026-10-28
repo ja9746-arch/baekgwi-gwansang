@@ -364,17 +364,24 @@ function summarize(R){
   /* 한 줄 판정 — 맞물림과 우두머리로 */
   const bg = BG[R.boss.bg];
   const bgNm = bg[0] + (/^[\u4e00-\u9fff]+$/.test(bg[1]||"") ? " "+bg[1] : "");
+  /* 받침이 있으면 "이", 없으면 "가" */
+  const bgLast = bg[0].charCodeAt(bg[0].length-1);
+  const bgJo = (bgLast>=0xAC00 && bgLast<=0xD7A3 && (bgLast-0xAC00)%28!==0) ? "이" : "가";
   const dan = {
     "생(生)":    { s:"밀어도 되는 해",   d:"기운이 손님 그릇을 받칩니다. 하려던 것을 하세요." },
     "겹침":      { s:"한쪽으로 몰리는 해", d:"그릇과 기운이 같은 갈래라 색이 짙어집니다. 크게 되거나 크게 상합니다." },
     "설(洩)":    { s:"새는 해",         d:"쓰는 데가 많아 모이지 않습니다. 벌이보다 새는 자리를 먼저 막으세요." },
     "극(剋)":    { s:"눌리는 해",       d:"재주가 있어도 올해는 안 펴집니다. 손님 탓이 아니에요. 버티는 것이 이기는 겁니다." },
-    "반극(反剋)":{ s:"밀면 되는 해",     d:"밀어붙이면 되기는 합니다. 다만 뒤가 상해요. 한 번에 다 가지려 하지 마세요." }
+    "반극(反剋)":{ s:"밀면 되지만 뒤가 상하는 해", d:"밀어붙이면 되기는 합니다. 다만 뒤가 상해요. 한 번에 다 가지려 하지 마세요." }
   }[R.gyo.dan] || { s:"", d:"" };
 
   return {
     verdict: dan.s, verdictMore: dan.d,
-    boss: `${R.yun.bu}에 ${bgNm}가 섰습니다. ${R.boss.g.n}이 올해를 쥡니다.`,
+    boss: [
+      `${R.yun.bu}에 선 ${bgNm}${bgJo} 지금은 비켜서 있습니다. 그래도 ${R.boss.g.n}이 올해를 쥡니다.`,
+      `${R.yun.bu}에서 ${bgNm}${bgJo} 서성입니다. ${R.boss.g.n}이 올해를 쥡니다.`,
+      `${R.yun.bu}를 ${bgNm}${bgJo} 막고 섰습니다. ${R.boss.g.n}이 올해를 쥡니다.`
+    ][R.boss.lv],
     todo, avoid,
     go, stop, dow, nur,
     openN: open.length, blockN: block.length
