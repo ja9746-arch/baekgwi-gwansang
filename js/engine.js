@@ -288,3 +288,48 @@ function prescribe(R){
 
   return { jeom, gil, hyung, mori, oh, gi };
 }
+
+/* ── 11. 총평 ─────────────────────────────────────
+   올해 한 줄 판정, 할 일 셋, 피할 것 둘, 그리고 시기. */
+function summarize(R){
+  const oh  = R.hyeong;
+  const dow = OH_SAENG_ME[oh];           /* 나를 생해 주는 오행 */
+  const nur = OH_GEUK_ME[oh];            /* 나를 누르는 오행 */
+  const go  = (OH_WOL[dow]||[]).slice(0,2);
+  const stop= (OH_WOL[nur]||[]).slice(0,2);
+
+  /* 트인 자리에서 할 일을, 막힌 자리에서 피할 것을 */
+  const open   = R.jari.filter(j=>j.lv===0);
+  const block  = R.jari.filter(j=>j.lv===2);
+  const mid    = R.jari.filter(j=>j.lv===1);
+
+  const todoSrc = (open.length>=3 ? open : open.concat(mid)).slice(0,3);
+  const todo = todoSrc.map(j=>({ n:j.g.n, t:j.g.lv[j.lv].ac }));
+  while(todo.length<3 && R.jari.length){
+    const j=R.jari[todo.length];
+    if(!todo.some(x=>x.n===j.g.n)) todo.push({ n:j.g.n, t:j.g.lv[j.lv].ac });
+    else break;
+  }
+
+  const avoidSrc = (block.length>=2 ? block : block.concat(mid)).slice(0,2);
+  const avoid = avoidSrc.map(j=>({ n:j.g.n, t:PIHAL[j.g.k] }));
+
+  /* 한 줄 판정 — 맞물림과 우두머리로 */
+  const bg = BG[R.boss.bg];
+  const bgNm = bg[0] + (/^[\u4e00-\u9fff]+$/.test(bg[1]||"") ? " "+bg[1] : "");
+  const dan = {
+    "생(生)":    { s:"밀어도 되는 해",   d:"기운이 자네 그릇을 받칩니다. 하려던 것을 하세요." },
+    "겹침":      { s:"한쪽으로 몰리는 해", d:"그릇과 기운이 같은 갈래라 색이 짙어집니다. 크게 되거나 크게 상합니다." },
+    "설(洩)":    { s:"새는 해",         d:"쓰는 데가 많아 모이지 않습니다. 벌이보다 새는 자리를 먼저 막으세요." },
+    "극(剋)":    { s:"눌리는 해",       d:"재주가 있어도 올해는 안 펴집니다. 자네 탓이 아니에요. 버티는 것이 이기는 겁니다." },
+    "반극(反剋)":{ s:"밀면 되는 해",     d:"밀어붙이면 되기는 합니다. 다만 뒤가 상해요. 한 번에 다 가지려 하지 마세요." }
+  }[R.gyo.dan] || { s:"", d:"" };
+
+  return {
+    verdict: dan.s, verdictMore: dan.d,
+    boss: `${R.yun.bu}에 ${bgNm}가 섰습니다. ${R.boss.g.n}이 올해를 쥡니다.`,
+    todo, avoid,
+    go, stop, dow, nur,
+    openN: open.length, blockN: block.length
+  };
+}
