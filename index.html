@@ -70,9 +70,6 @@ img{max-width:100%;display:block}
 .snd .off{position:absolute;width:20px;height:1.2px;background:currentColor;
   transform:rotate(-40deg);opacity:.85}
 .snd[aria-pressed="true"] .off{display:none}
-.demo{position:absolute;top:max(8px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:70;
-  font-size:9.5px;letter-spacing:.24em;color:rgba(201,162,74,.5);
-  border:1px solid rgba(201,162,74,.25);padding:2px 10px;border-radius:2px;background:rgba(10,5,7,.7)}
 
 h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   line-height:1.8;margin:0 0 2px;letter-spacing:-.018em;text-shadow:0 2px 16px #000;
@@ -167,7 +164,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .mirror .frame{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
   filter:drop-shadow(0 10px 30px rgba(0,0,0,.75))}
 .mirror::after{content:"";position:absolute;inset:-1px;z-index:4;pointer-events:none;
-  background:radial-gradient(circle at 49.91% 45.09%,transparent 54%,rgba(10,5,7,.3) 80%,var(--mook) 100%)}
+  background:radial-gradient(ellipse 74% 70% at 49.91% 45.09%,transparent 72%,rgba(10,5,7,.2) 92%,rgba(10,5,7,.5) 100%)}
 .hole{position:absolute;left:49.91%;top:45.09%;width:63.09%;height:54.91%;
   transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;background:#070406;z-index:1;touch-action:none}
 .hole .ph{position:absolute;left:50%;top:50%;transform-origin:center;will-change:transform;
@@ -176,7 +173,9 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   color:var(--jae-dim);font-size:12.5px;text-align:center;padding:0 24px;
   background:radial-gradient(circle at 50% 42%,rgba(90,60,30,.35),rgba(7,4,6,.9) 70%)}
 .hole .empty .ico{font-family:var(--serif);font-size:30px;color:var(--geum-dim)}
-.guide{position:absolute;inset:0;z-index:2;pointer-events:none}
+.guide{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
+.guide.idle .tick,.guide.idle .dim{opacity:0}
+.guide.idle .face{opacity:.4}
 .guide .face{fill:none;stroke:rgba(255,246,232,.82);stroke-width:1.1;
   filter:drop-shadow(0 0 3px rgba(0,0,0,.95))}
 .guide .rim{fill:none;stroke:rgba(201,162,74,.26);stroke-width:.7}
@@ -476,7 +475,6 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 </head>
 <body>
 
-<div class="demo">데 모 판</div>
 <button class="snd" id="sndBtn" aria-label="배경음" aria-pressed="false">
   <span class="ic">♪</span><span class="off"></span></button>
 <div id="stage">
@@ -558,32 +556,30 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
       </div>
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
-      <svg class="guide" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M17,50 A33,41 0 1,0 83,50 A33,41 0 1,0 17,50 Z"></path>
-        <ellipse class="rim" cx="50" cy="50" rx="48.6" ry="48.6"></ellipse>
-        <ellipse class="face" cx="50" cy="50" rx="33" ry="41"></ellipse>
+      <svg class="guide idle" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M20,48 A30,37 0 1,0 80,48 A30,37 0 1,0 20,48 Z"></path>
+        <ellipse class="rim" cx="50" cy="50" rx="47" ry="47"></ellipse>
+        <ellipse class="face" cx="50" cy="48" rx="30" ry="37"></ellipse>
         <g class="tick">
-          <line x1="50" y1="2.2" x2="50" y2="7.4"></line>
-          <line x1="50" y1="92.6" x2="50" y2="97.8"></line>
-          <line x1="2.2" y1="50" x2="7.4" y2="50"></line>
-          <line x1="92.6" y1="50" x2="97.8" y2="50"></line>
-          <line x1="46.6" y1="50" x2="53.4" y2="50"></line>
-          <line x1="50" y1="46.6" x2="50" y2="53.4"></line>
+          <line x1="50" y1="5.5" x2="50" y2="10"></line>
+          <line x1="50" y1="86" x2="50" y2="90.5"></line>
+          <line x1="5.5" y1="48" x2="10" y2="48"></line>
+          <line x1="90" y1="48" x2="94.5" y2="48"></line>
+          <line x1="46.8" y1="48" x2="53.2" y2="48"></line>
+          <line x1="50" y1="44.8" x2="50" y2="51.2"></line>
         </g>
       </svg>
     </div>
     <img class="frame" src="img/bronze.png" alt="청동경">
   </div>
-  <div class="order" id="order">사진을 올리면 법사가 자세를 잡아줍니다.</div>
+  <div class="order" id="order">거울에 비추거나 사진을 올리면 법사가 자세를 잡아줍니다.</div>
   <div class="zoom" id="zoomRow" hidden>
     <span>작게</span><input type="range" id="zoom" min="100" max="260" value="112" aria-label="크기"><span>크게</span>
   </div>
-  <input type="file" id="fileCam" accept="image/*" capture="user" hidden>
   <input type="file" id="filePick" accept="image/*" hidden>
   <div id="getrow">
-    <label class="btn" for="fileCam">셀카 찍기</label>
-    <label class="btn ghost" for="filePick">사진첩에서 고르기</label>
-    <button class="btn ghost" id="live" hidden>거울에 바로 비추기</button>
+    <button class="btn" id="live" hidden>거울에 바로 비추기</button>
+    <label class="btn ghost" for="filePick" id="pickLbl">사진첩에서 고르기</label>
   </div>
   <button class="btn" id="shotLive" hidden>이대로 찍겠습니다</button>
   <button class="btn" id="shot" hidden>자세를 다 잡았습니다</button>
@@ -1017,7 +1013,7 @@ function onFile(e){
     S.natW=im.naturalWidth; S.natH=im.naturalHeight;
     S.x=0;S.y=0;S.scale=1.12;
     phM.src=S.url; phM.hidden=false;
-    $("holeEmpty").hidden=true;
+    $("holeEmpty").hidden=true; $("guide").classList.remove("idle");
     $("zoomRow").hidden=false;
     $("getrow").hidden=true; $("redo").hidden=false; $("shot").hidden=false;
     autoFit(im);
@@ -1026,15 +1022,15 @@ function onFile(e){
   im.onerror=()=>{ $("order").innerHTML="사진을 읽지 못했습니다. 다른 장으로 해보세요."; };
   im.src=S.url;
 }
-$("fileCam").addEventListener("change",onFile);
 $("filePick").addEventListener("change",onFile);
 
 const BOXED = (function(){ try{ return window.self!==window.top; }catch(e){ return true; } })();
-if(!BOXED && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) $("live").hidden=false;
+const CAMOK=!BOXED && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+if(CAMOK) $("live").hidden=false; else $("pickLbl").className="btn";
 if(BOXED){
   const n=document.createElement("p");
   n.className="hint center"; n.style.marginTop="12px";
-  n.innerHTML="지금 보시는 틀 안에서는 <b style='color:#d98272;font-weight:400'>카메라가 막혀 있습니다.</b><br>셀카를 쓰시려면 사진첩에서 골라 주시거나,<br>따로 올린 주소에서 열어 주세요.";
+  n.innerHTML="지금 보시는 틀 안에서는 <b style='color:#d98272;font-weight:400'>거울을 켤 수 없습니다.</b><br>사진첩에서 한 장 골라 주시거나,<br>따로 올린 주소에서 열어 주세요.";
   $("getrow").appendChild(n);
 }
 $("live").addEventListener("click",async()=>{
@@ -1044,7 +1040,7 @@ $("live").addEventListener("click",async()=>{
     vid.srcObject=stream; vid.hidden=false; await vid.play();
     S.natW=vid.videoWidth||720; S.natH=vid.videoHeight||1280;
     S.x=0;S.y=0;S.scale=1.12;
-    $("holeEmpty").hidden=true; $("getrow").hidden=true;
+    $("holeEmpty").hidden=true; $("guide").classList.remove("idle"); $("getrow").hidden=true;
     $("zoomRow").hidden=false; $("zoom").value=110; $("shotLive").hidden=false;
     $("order").innerHTML="점선 안에 <b>얼굴을 채워</b> 주세요. 다 맞으면 아래를 누르시고요.";
     layout(vid,hole);
@@ -1198,7 +1194,7 @@ function mountFace(wrapId){
   return fw;
 }
 /* 얼굴 틀 안 좌표 → 원 안 백분율 */
-const FX=17, FY=9, FW=66, FH=82;
+const FX=20, FY=11, FW=60, FH=74;
 const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
 
 /* ── 3. 읽기 ──────────────────────────────── */
@@ -1362,6 +1358,11 @@ function buildPick(){
   });
   $("pickOut").innerHTML=""; $("pickGo").hidden=true; S.picked=null;
 }
+/* 가장 막힌 자리 — 우두머리가 비켜섰을 때 대신 짚습니다 */
+function worst(){
+  const bl=R.jari.filter(j=>j.lv===2 && j.g.k!==R.boss.g.k);
+  return bl.length ? bl[0] : null;
+}
 function choose(c,btn){
   if(S.picked)return;
   S.picked=c.i;
@@ -1375,9 +1376,15 @@ function choose(c,btn){
    `<div class="txt"><div class="nm">원안법사</div>`+
    `<p>${c.q}</p>`+
    `<p>…그런데요. 그건 <em>무서워하는 얼굴</em>이지, 손님 앞에 서 있는 건 아닙니다.</p>`+
-   `<p>올해 손님 ${R.yun.bu} 자리를 막고 선 건 <em>${bgName(b.bg)}</em>입니다. ${b.g.n}에 서 있어요.</p></div></div>`+
-   `<div class="bosscard">${bgCard(b.bg," boss")}`+
-   `<p class="bossline">${bg[3]}</p></div>`;
+   `<p>${[
+     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 선 <em>${bgName(b.bg)}</em>가 지금은 비켜서 있어요.`,
+     `올해 손님의 운은 <em>${R.yun.bu}</em>, ${b.g.n}에 걸립니다. 거기 <em>${bgName(b.bg)}</em>가 서성이고 있어요.`,
+     `올해 손님의 운이 걸린 <em>${R.yun.bu}</em> 자리를 막고 선 건 <em>${bgName(b.bg)}</em>입니다. ${b.g.n}에 버티고 있어요.`
+   ][b.lv]}</p>`+
+   (b.lv<2 && worst() ? `<p>…그보다 급한 건 <em>${worst().g.n}</em>입니다. 거기가 아주 막혀 있어요.</p>` : "")+
+   `</div></div>`+
+   `<div class="bosscard">${bgCard((b.lv<2&&worst())?worst().bg:b.bg," boss")}`+
+   `<p class="bossline">${BG[(b.lv<2&&worst())?worst().bg:b.bg][3]}</p></div>`;
   $("pickGo").hidden=false;
 }
 $("pickGo").addEventListener("click",()=>{ go("s-board"); buildBoard(); });
@@ -1468,10 +1475,15 @@ function panelHTML(j){
    `<span><b>${bg[3]}</b><br>${se.mal}</span></div>`+
    `<p>${se.pre?`<span class="pre">${se.pre}</span> `:""}${bg[4]}</p>`+
    `<h4>때</h4><p>${SI[g.k][j.lv]}</p>`+
-   (j.lv===2?`<p class="byline">${GI_JARI[R.gisaek]}</p>`:"")+
-   (boss?`<p class="bosswarn">올해 운이 걸린 자리가 바로 여기입니다. 이것이 우두머리예요.</p>`:"")+
-   `<div class="cure"><h4 style="margin:0 0 4px">이렇게 하세요</h4>`+
-   `<p style="margin:0">${t.ac}</p><p style="margin:6px 0 0">${bg[5]}</p></div>`;
+   (j.lv===2 && boss?`<p class="byline">${GI_JARI[R.gisaek]}</p>`:"")+
+   (boss?`<p class="bosswarn">${[
+      "올해 운이 걸린 자리가 여기인데, 다행히 비켜서 있습니다. 이 자리만은 지키세요.",
+      "올해 운이 걸린 자리가 여기입니다. 아직 손을 안 댔으니 지금이 고칠 때예요.",
+      "올해 운이 걸린 자리가 바로 여기입니다. 이것이 우두머리예요."][j.lv]}</p>`:"")+
+   `<div class="cure"><h4 style="margin:0 0 4px">자리를 고치려면</h4>`+
+   `<p style="margin:0">${t.ac}</p>`+
+   `<h4 style="margin:11px 0 4px">${bgName(j.bg).split(" ")[0]}를 물리려면</h4>`+
+   `<p style="margin:0">${bg[5]}</p></div>`;
 }
 function markSel(k,on){
   document.querySelectorAll("#faceBoard .pt").forEach(p=>{

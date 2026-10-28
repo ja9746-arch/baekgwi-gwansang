@@ -16,7 +16,7 @@
      유년운기 → 올해를 쥔 자리와 그 자리의 우두머리 */
 
 /* 얼굴 틀 — 거울면 안에서 길잡이 타원이 차지하는 자리 (백분율) */
-const FACE = { x:17, y:9, w:66, h:82 };
+const FACE = { x:20, y:11, w:60, h:74 };
 
 /* ── 1. 거울에 비친 그대로를 화폭에 옮긴다 ───────────── */
 function captureMirror(srcEl, st, holeW, holeH){
@@ -338,8 +338,11 @@ function summarize(R){
 
   /* 할 일은 고쳐야 할 데에서 나옵니다. 우두머리를 맨 앞에 두고,
      막힌 자리, 반반, 그래도 모자라면 트인 자리 순으로 셋을 고릅니다. */
-  const order = [R.boss].concat(
-    block.filter(j=>j!==R.boss), mid.filter(j=>j!==R.boss), open.filter(j=>j!==R.boss));
+  /* 우두머리가 막혔거나 서성이면 맨 앞에, 비켜섰으면 막힌 자리 뒤에 둡니다 */
+  const rest = [block, mid, open].map(a=>a.filter(j=>j!==R.boss));
+  const order = (R.boss.lv>=1)
+    ? [R.boss].concat(rest[0], rest[1], rest[2])
+    : rest[0].concat([R.boss], rest[1], rest[2]);
   const todo = [];
   for(const j of order){
     if(todo.length>=3) break;
