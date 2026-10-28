@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="백귀관상 — 원안법사">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap">
 <style>
 :root{
   color-scheme:dark;
@@ -41,12 +41,13 @@
   --geum:#c9a24a; --geum-hot:#e8c377; --geum-dim:#9b7e3c;
   --jae:#ece0d2; --jae-dim:#a39486;
   --line:rgba(201,162,74,.26);
-  --serif:"Gowun Batang","Apple SD Gothic Neo",serif;
-  --sans:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+  /* 백귀사주와 같은 글씨 — 궁서체, 없으면 송명 */
+  --serif:Gungsuh,GungsuhChe,"궁서체","궁서","Song Myung",Batang,serif;
+  --sans:Gungsuh,GungsuhChe,"궁서체","궁서","Song Myung",Batang,serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{background:var(--mook);color:var(--jae);font-family:var(--sans);font-weight:300;
+body{background:var(--mook);color:var(--jae);font-family:var(--sans);font-weight:400;
   line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none}
 img{max-width:100%;display:block}
@@ -1618,7 +1619,7 @@ function bgCard(i,cls){
 }
 function buildPick(){
   const w=$("pick3"); w.innerHTML="";
-  PICK3.forEach(c=>{
+  R.pick3.forEach(c=>{
     const g=BG[c.i];
     const b=document.createElement("button");
     b.className="card"; b.setAttribute("aria-pressed","false");

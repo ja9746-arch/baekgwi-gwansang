@@ -47,74 +47,79 @@ function readMetrics(canvas, sex){
 
   const lum = (i)=> (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114);
   const inFace = (x,y)=>{ const a=(x-cx)/rx, b=(y-cy)/ry; return a*a+b*b <= 1; };
+  const X0=Math.max(0,Math.floor(fx)), X1=Math.min(CW,Math.ceil(fx+fw));
+  const Y0=Math.max(0,Math.floor(fy)), Y1=Math.min(CH,Math.ceil(fy+fh));
 
-  /* 얼굴 전체 */
-  let n=0, sumL=0, sumL2=0, sumR=0, sumG=0, sumB=0;
-  /* 삼정 */
+  /* 1) 타원 안을 한 번 훑어 조명색을 가늠합니다 */
+  let aN=0,aR=0,aG=0,aB=0;
+  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
+    if(!inFace(x,y)) continue;
+    const i=(y*CW+x)*4; aN++; aR+=px[i]; aG+=px[i+1]; aB+=px[i+2];
+  }
+  if(aN<400) return null;
+  aR/=aN; aG/=aN; aB/=aN;
+  const avg0=(aR+aG+aB)/3;
+  const nd=v=>Math.max(.88,Math.min(1.14,1+(avg0/Math.max(v,1)-1)*0.55));
+  const wR=nd(aR), wG=nd(aG), wB=nd(aB);
+  /* 살빛인가 — 얼굴 찾을 때와 같은 잣대입니다 */
+  const isSkin=(i)=>{
+    const r=Math.min(255,px[i]*wR), g=Math.min(255,px[i+1]*wG), b=Math.min(255,px[i+2]*wB);
+    const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+    return r>52 && g>30 && b>14 && (mx-mn)>11 &&
+           r>=g && g>=b-16 && (r-g)>5 && (r-b)>10 && mx<253;
+  };
+
+  /* 2) 살빛만 셉니다 — 뒷배경과 머리카락은 기색이 아닙니다 */
+  let n=0,sumL=0,sumL2=0,sumR=0,sumG=0,sumB=0;
   const band=[{n:0,s:0},{n:0,s:0},{n:0,s:0}];
-  /* 좌우 */
-  let ln=0, ls=0, rn=0, rs=0;
-  /* 살빛 자리 — 윤곽을 재는 데 씁니다 */
+  let ln=0,ls=0,rn=0,rs=0;
   const rowMin=new Array(CH).fill(1e9), rowMax=new Array(CH).fill(-1);
-
-  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
-    if(y<0||y>=CH) continue;
-    for(let x=Math.floor(fx); x<Math.ceil(fx+fw); x++){
-      if(x<0||x>=CW) continue;
+  let hi=[];
+  function gather(skinOnly){
+    n=0;sumL=0;sumL2=0;sumR=0;sumG=0;sumB=0;
+    for(let k=0;k<3;k++){ band[k].n=0; band[k].s=0; }
+    ln=ls=rn=rs=0; hi=[];
+    rowMin.fill(1e9); rowMax.fill(-1);
+    for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
       if(!inFace(x,y)) continue;
-      const i=(y*CW+x)*4, L=lum(i);
+      const i=(y*CW+x)*4;
+      if(skinOnly && !isSkin(i)) continue;
+      const L=lum(i);
       n++; sumL+=L; sumL2+=L*L; sumR+=px[i]; sumG+=px[i+1]; sumB+=px[i+2];
-      const t=(y-fy)/fh;
-      const bi = t<0.34 ? 0 : (t<0.67 ? 1 : 2);
+      const t=(y-fy)/fh, bi = t<0.34 ? 0 : (t<0.67 ? 1 : 2);
       band[bi].n++; band[bi].s+=L;
       if(x<cx){ ln++; ls+=L; } else { rn++; rs+=L; }
+      if(x<rowMin[y]) rowMin[y]=x;
+      if(x>rowMax[y]) rowMax[y]=x;
+      hi.push(L,px[i],px[i+1],px[i+2]);
     }
   }
-  if(n<400) return null;
+  gather(true);
+  /* 살빛이 너무 적으면 타원 전체로 물러섭니다 */
+  if(n < aN*0.12) gather(false);
+  if(n<300) return null;
 
   const meanL = sumL/n;
   const sd = Math.sqrt(Math.max(0, sumL2/n - meanL*meanL));
   let mR = sumR/n, mG = sumG/n, mB = sumB/n;
 
-  /* 빛 보정 — 얼굴에서 가장 밝은 자리는 조명색에 가깝습니다.
-     그 색으로 나누어, 노란 전등 아래서 찍어도 기색이 흔들리지 않게 합니다. */
-  const hi = [];
-  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
-    if(y<0||y>=CH) continue;
-    for(let x=Math.floor(fx); x<Math.ceil(fx+fw); x++){
-      if(x<0||x>=CW||!inFace(x,y)) continue;
-      const i=(y*CW+x)*4;
-      hi.push([lum(i), px[i], px[i+1], px[i+2]]);
-    }
+  /* 빛 보정 — 흰 것이 비칠 때만 합니다.
+     살빛을 살빛으로 나누면 기색이 통째로 날아갑니다. 흰 자리가 없으면 그냥 둡니다. */
+  let wN=0,wRs=0,wGs=0,wBs=0;
+  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
+    if(!inFace(x,y)) continue;
+    const i=(y*CW+x)*4, r=px[i], g=px[i+1], b=px[i+2];
+    const mx2=Math.max(r,g,b), mn2=Math.min(r,g,b);
+    if(mx2>186 && mx2<252 && (mx2-mn2)/mx2 < 0.11){ wN++; wRs+=r; wGs+=g; wBs+=b; }
   }
-  hi.sort((a,b)=>b[0]-a[0]);
-  const take = Math.max(12, Math.round(hi.length*0.03));
-  let iR=0,iG=0,iB=0;
-  for(let k=0;k<take;k++){ iR+=hi[k][1]; iG+=hi[k][2]; iB+=hi[k][3]; }
-  iR/=take; iG/=take; iB/=take;
-  const iL = (iR+iG+iB)/3;
-  if(iL > 24){
-    const kR = iL/Math.max(iR,1), kG = iL/Math.max(iG,1), kB = iL/Math.max(iB,1);
-    const lim = v => Math.max(0.72, Math.min(1.38, v));
-    mR = Math.min(255, mR*lim(kR));
-    mG = Math.min(255, mG*lim(kG));
-    mB = Math.min(255, mB*lim(kB));
+  if(wN > aN*0.004){
+    const wRm=wRs/wN, wGm=wGs/wN, wBm=wBs/wN, wL=(wRm+wGm+wBm)/3;
+    const lim = v => Math.max(0.86, Math.min(1.18, v));
+    mR = Math.min(255, mR*lim(wL/Math.max(wRm,1)));
+    mG = Math.min(255, mG*lim(wL/Math.max(wGm,1)));
+    mB = Math.min(255, mB*lim(wL/Math.max(wBm,1)));
   }
 
-  /* 살빛 자리를 추려 윤곽을 잡는다 */
-  const loL = meanL*0.72, hiL = meanL*1.45;
-  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
-    if(y<0||y>=CH) continue;
-    for(let x=Math.floor(fx); x<Math.ceil(fx+fw); x++){
-      if(x<0||x>=CW) continue;
-      if(!inFace(x,y)) continue;
-      const i=(y*CW+x)*4, L=lum(i);
-      if(L>loL && L<hiL && px[i]>=px[i+2]){
-        if(x<rowMin[y]) rowMin[y]=x;
-        if(x>rowMax[y]) rowMax[y]=x;
-      }
-    }
-  }
   function widthAt(t0,t1){
     let w=0,c=0;
     for(let y=Math.floor(fy+fh*t0); y<Math.ceil(fy+fh*t1); y++){
@@ -187,13 +192,18 @@ function pickGisaek(m){
   const mx = Math.max(R,G,B), mn = Math.min(R,G,B);
   const chae  = (mx - mn) / Math.max(mx,1);
   const geuneul = (Math.max.apply(null,m.sam) - Math.min.apply(null,m.sam)) / Math.max(L,1);
-  if (chae < 0.12)      return geuneul > 0.42 ? "흑" : "백";
-  if (geuneul > 0.48)   return "흑";
-  if (B >= G - 4)       return "청";
-  const ddeum = (R - G) / Math.max(R - B, 1);   /* 붉은 쪽인가 누런 쪽인가 */
-  if (ddeum > 0.60)     return "적";
-  if (ddeum < 0.52)     return "황";
-  return (chae > 0.28) ? "적" : "황";
+  /* 어둡거나 그늘이 한쪽에만 지면 흑기 */
+  if (L < 72 || geuneul > 0.46) return "흑";
+  /* 핏기가 거의 없으면 백기 */
+  if (chae < 0.13) return "백";
+  /* 보통 살빛은 누런빛이 푸른빛보다 한참 앞섭니다.
+     그 차가 좁아지면 푸른 기가 도는 것입니다. */
+  const puleun = (G - B) / Math.max(R - G, 1);
+  if (puleun < 0.35) return "청";
+  /* 붉은 쪽인가 누런 쪽인가 */
+  const ddeum = (R - G) / Math.max(R - B, 1);
+  if (ddeum > 0.70 || (chae > 0.42 && ddeum > 0.64)) return "적";
+  return "황";
 }
 
 /* ── 5. 삼정을 가린다 ─────────────────────────────── */
@@ -211,11 +221,18 @@ function gradeAll(m){
   const v = ks.map(k => m.gung[k].L - m.gung[k].sd*0.42);
   const mu = v.reduce((a,b)=>a+b,0)/v.length;
   const sd = Math.sqrt(v.reduce((a,b)=>a+(b-mu)*(b-mu),0)/v.length) || 1;
+  const z = v.map(x=>(x-mu)/sd);
   const out = {};
-  ks.forEach((k,i)=>{
-    const z = (v[i]-mu)/sd;
-    out[k] = z > 0.62 ? 0 : (z < -0.62 ? 2 : 1);
-  });
+  ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); });
+  /* 어느 얼굴에도 가진 것과 고칠 것이 함께 있어야 풀이가 섭니다.
+     고르게 뭉친 얼굴이면 높은 차례·낮은 차례로 조금 벌려 줍니다. */
+  const order = ks.map((k,i)=>({k, z:z[i]})).sort((a,b)=>b.z-a.z);
+  let open = ks.filter(k=>out[k]===0).length;
+  for(let i=0; open<3 && i<order.length; i++)
+    if(out[order[i].k]!==0){ out[order[i].k]=0; open++; }
+  let block = ks.filter(k=>out[k]===2).length;
+  for(let i=order.length-1; block<2 && i>=0; i--)
+    if(out[order[i].k]===1){ out[order[i].k]=2; block++; }
   return out;
 }
 
@@ -271,7 +288,9 @@ function divine(m, age, sex){
 
   /* 열두 자리 — 그 얼굴 안에서 서로 견주어 가립니다.
      무서워하는 얼굴로 보여준 셋은 실제로 서지 않습니다. 말이 어긋나니까요. */
-  const 보류 = PICK3.map(x=>x.i);
+  /* 오늘 보여 줄 무서워하는 얼굴 석 장 */
+  const pick3 = PICK_POOL.map((th,ti)=>({ i: pickFrom(th.pool, seed, 907+ti*53), q: th.q }));
+  const 보류 = pick3.map(x=>x.i);
   const lvAll = gradeAll(m);
   const jari = GUNG.map((G, i) => {
     const lv = lvAll[G.k];
@@ -293,7 +312,7 @@ function divine(m, age, sex){
   const blocked = jari.filter(j=>j.lv===2).length;
   const opened  = jari.filter(j=>j.lv===0).length;
 
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex,
+  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, pick3,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }
 
@@ -490,10 +509,11 @@ function findFace(srcEl, natW, natH){
     for(let x=0;x<W;x++) if(lab[y*W+x]===best){ if(x<lx)lx=x; if(x>rx)rx=x; }
   if(rx<=lx) return null;
 
-  /* 머리카락과 이마 윗부분을 조금 얹어 얼굴 틀에 맞춥니다 */
+  /* 얼굴 틀은 이마 위부터 턱 끝까지입니다.
+     머리카락을 얹으면 열두 자리가 통째로 위로 밀려 엉뚱한 데를 읽습니다. */
   const fh0 = yEnd - y0 + 1;
-  const top = Math.max(0, y0 - fh0*0.16);
-  const bot = Math.min(H-1, yEnd + fh0*0.04);
+  const top = Math.max(0, y0 - fh0*0.03);
+  const bot = Math.min(H-1, yEnd + fh0*0.03);
 
   return {
     cx: ((lx+rx)/2) / W,

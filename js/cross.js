@@ -110,7 +110,7 @@ function crossJudge(R, P){
   const wGungK = GRP_GUNG[weakGrp];
   const wJari  = R.jari.find(x=>x.g.k===wGungK);
   const sajuSeed = SMOD(P.year.s*7 + P.month.b*13 + P.day.s*31 + P.day.b*17 + me*5, 2147483647);
-  const pool = wJari ? wJari.g.pool.filter(x=>PICK3.every(p=>p.i!==x)) : [];
+  const pool = wJari ? wJari.g.pool.filter(x=>R.pick3.every(p=>p.i!==x)) : [];
   const sajuBg = pool.length ? pickFrom(pool, sajuSeed, 3) : null;
   const 겹침 = (sajuBg!==null && R.boss.bg===sajuBg);
 
