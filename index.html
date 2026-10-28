@@ -4,7 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0507">
+<meta name="description" content="원안법사가 얼굴에 새겨진 기운을 읽습니다. 삼정과 십이궁, 유년운기부위로 타고난 그릇과 올해의 흐름을 살핍니다.">
 <title>백귀관상 — 원안법사</title>
+<link rel="icon" href="img/title.png">
+<link rel="apple-touch-icon" href="img/hero.webp">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="백귀관상">
+<meta property="og:title" content="백귀관상 — 원안법사">
+<meta property="og:description" content="얼굴을 한 번 비춰주세요. 백귀는 거울에 비친 것으로만 드러납니다.">
+<meta property="og:url" content="https://baekgwi-gwansang.vercel.app/">
+<meta property="og:image" content="https://baekgwi-gwansang.vercel.app/img/hero.webp">
+<meta property="og:image:width" content="1100">
+<meta property="og:image:height" content="1100">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@200;300;400;500&display=swap">
 <style>
@@ -201,6 +213,24 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .tapmark::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
 .tapmark::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
 
+/* 안내 문서 */
+.doc{margin-top:4px;border:1px solid rgba(201,162,74,.26);
+  background:linear-gradient(180deg,rgba(22,14,13,.92),rgba(11,7,8,.95));
+  padding:16px 16px 18px}
+.doc h3{font-family:var(--serif);font-size:15px;color:var(--geum-hot);
+  margin:20px 0 8px;display:flex;align-items:center;gap:8px}
+.doc h3:first-child{margin-top:0}
+.doc h3::before{content:"";width:10px;height:1px;background:var(--geum-dim);flex:none}
+.doc p{margin:0 0 9px;font-size:13px;line-height:1.95;color:#ded2c0}
+.doc ul{margin:0 0 9px;padding-left:1.1em}
+.doc li{font-size:13px;line-height:1.95;color:#ded2c0;margin-bottom:6px}
+.doc b{color:#f3e7d2;font-weight:400}
+.doc .warn{margin-top:12px;border-left:2px solid var(--jusa);padding-left:10px;color:#d9b9a8}
+.footlinks{margin:10px 0 0;text-align:center;font-size:11.5px;color:rgba(163,148,134,.4)}
+.footlinks span{margin:0 7px}
+.flink{font-family:var(--serif);font-size:11.5px;letter-spacing:.06em;
+  color:rgba(201,162,74,.72);text-decoration:underline;text-underline-offset:3px;padding:6px 2px}
+
 /* 족자 — 맺음과 교차에 쓰는 두루마리 */
 .scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);
   background:linear-gradient(180deg,rgba(26,16,14,.94),rgba(13,8,9,.96));
@@ -389,7 +419,13 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
       </div>
     </div>
     <button class="btn" data-go="s-ask">거울 앞에 서겠습니다</button>
-    <p class="foot">역사·설화를 바탕으로 재구성한 디지털 점찰 콘텐츠입니다.<br>사진은 이 기기 안에서만 쓰이고 어디에도 저장되지 않습니다.</p>
+    <p class="foot">역사·설화를 바탕으로 재구성한 디지털 점찰 콘텐츠입니다.<br>
+      올리신 사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
+    <p class="footlinks">
+      <button class="flink" data-go="s-legal">이용안내 · 환불</button><span>·</span>
+      <button class="flink" data-go="s-privacy">개인정보</button><span>·</span>
+      <button class="flink" data-go="s-biz">사업자 정보</button>
+    </p>
   </div>
 </section>
 
@@ -644,6 +680,117 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   <button class="btn ghost" id="again">처음부터 다시 보겠습니다</button>
 </section>
 
+<section class="screen" id="s-legal" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">안내</div></div>
+  <p class="kick">이용안내 · 환불</p>
+  <div class="doc">
+    <h3>어떤 서비스인가</h3>
+    <p>백귀관상은 올리신 얼굴 사진을 바탕으로 마의상법·유장상법의 십이궁(十二宮), 삼정(三停),
+       오행형상(五行形相), 기색(氣色), 유년운기부위(流年運氣部位)를 대입해 풀이를 보여 드리는
+       디지털 콘텐츠입니다.</p>
+    <p>역사와 설화를 바탕으로 재구성한 읽을거리이며, 미래의 사건이나 초자연적 존재를
+       객관적으로 확정하지 않습니다. 의료·법률·투자 판단의 근거로 쓰지 마십시오.</p>
+
+    <h3>복채(결제)</h3>
+    <ul>
+      <li>무료로 명궁(命宮) 한 자리까지 보여 드립니다. 나머지 열한 자리와 처방은
+          3,990원에 열립니다.</li>
+      <li>봉인 안내가 처음 뜬 때부터 10분 안에 여시면 할인가 3,990원이 적용되고,
+          10분이 지나면 정가 5,900원이 적용됩니다.</li>
+      <li>단건 결제이며 자동 갱신이나 정기 결제는 없습니다.</li>
+      <li>결제는 결제대행사를 통해 처리되며, 본 서비스는 카드번호 등 결제수단 정보를
+          보관하지 않습니다.</li>
+    </ul>
+
+    <h3>환불</h3>
+    <ul>
+      <li>결제 즉시 디지털 콘텐츠가 제공되므로, <b>봉인을 해제해 풀이를 열람하신 뒤에는
+          환불이 어렵습니다.</b> (전자상거래법 제17조 제2항 제5호)</li>
+      <li>결제 전 명궁 한 자리를 무료로 먼저 보여 드리는 것으로 시험 사용을 갈음합니다.
+          (같은 법 제17조 제6항)</li>
+      <li>결제했으나 <b>풀이를 열람하지 않은 경우</b>, 결제일로부터 7일 이내 전액
+          환불해 드립니다.</li>
+      <li>오류·중복결제·미제공 등 서비스 쪽 사유일 때는 열람 여부와 관계없이 전액
+          환불합니다.</li>
+      <li>환불 요청은 아래 문의처로 결제일시와 결제수단을 적어 보내 주십시오.
+          영업일 기준 3일 안에 처리합니다.</li>
+    </ul>
+
+    <h3>얼굴 사진</h3>
+    <ul>
+      <li>올리신 사진은 <b>이용자의 기기 안에서만</b> 처리됩니다. 서버로 전송되지 않고,
+          저장되지 않으며, 창을 닫으면 사라집니다.</li>
+      <li>따라서 본 서비스는 얼굴 사진을 수집하거나 보관하지 않습니다.</li>
+      <li>본인이 아닌 사람의 사진, 특히 만 14세 미만 아동의 사진은 올리지 마십시오.</li>
+    </ul>
+
+    <h3>문의</h3>
+    <p>ja9746@naver.com · 1866-0423</p>
+  </div>
+  <button class="btn ghost" data-go="s-intro">돌아가겠습니다</button>
+</section>
+
+<section class="screen" id="s-privacy" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">안내</div></div>
+  <p class="kick">개인정보처리방침</p>
+  <div class="doc">
+    <h3>1. 얼굴 사진을 수집하지 않습니다</h3>
+    <p>백귀관상은 이용자가 올린 얼굴 사진을 서버로 전송하지 않습니다. 사진 판독은 전부
+       이용자의 기기(브라우저) 안에서 이루어지며, 판독이 끝난 뒤에도 사진은 기기를
+       벗어나지 않습니다. 창을 닫으면 사진과 판독 결과는 모두 사라집니다.</p>
+    <p>그러므로 회사는 얼굴 사진, 얼굴에서 뽑은 수치, 그에 따른 풀이 내용을
+       보관하지 않습니다.</p>
+
+    <h3>2. 처리하는 개인정보와 목적</h3>
+    <ul>
+      <li><b>나이·성별</b>: 유년운기부위를 셈하는 데에만 쓰이며, 기기 안에서만
+          처리되고 저장되지 않습니다.</li>
+      <li><b>결제 정보</b>(결제일시, 금액, 주문번호, 승인번호): 결제 확인과 환불 처리.
+          카드번호 등 결제수단 정보는 결제대행사가 처리하며 회사는 보관하지 않습니다.</li>
+      <li><b>문의 내역</b>: 문의에 답하기 위해 보내 주신 이메일 주소와 내용.</li>
+      <li><b>접속 기록</b>: 서비스 운영과 오류 확인을 위한 최소한의 기록.</li>
+    </ul>
+
+    <h3>3. 보유 기간</h3>
+    <ul>
+      <li>대금 결제 및 재화 공급에 관한 기록: 5년 (전자상거래법)</li>
+      <li>소비자 불만 또는 분쟁 처리에 관한 기록: 3년 (전자상거래법)</li>
+      <li>문의 내역: 처리 완료 후 1년</li>
+      <li>보유 기간이 지난 정보는 지체 없이 파기합니다.</li>
+    </ul>
+
+    <h3>4. 처리 위탁</h3>
+    <ul>
+      <li>결제대행사: 결제 처리 (결제 연동 시 업체명을 이곳에 적습니다)</li>
+      <li>호스팅: 서비스 운영을 위한 서버 제공</li>
+    </ul>
+
+    <h3>5. 이용자의 권리</h3>
+    <p>이용자는 자신의 개인정보에 대해 열람·정정·삭제·처리정지를 요구할 수 있습니다.
+       아래 문의처로 연락 주시면 지체 없이 처리합니다.</p>
+
+    <h3>6. 개인정보 보호책임자</h3>
+    <p>온미라이프 · ja9746@naver.com · 1866-0423</p>
+  </div>
+  <button class="btn ghost" data-go="s-intro">돌아가겠습니다</button>
+</section>
+
+<section class="screen" id="s-biz" hidden>
+  <div class="top"><div class="brand">백귀관상</div><div class="step">안내</div></div>
+  <p class="kick">사업자 정보</p>
+  <div class="doc">
+    <ul>
+      <li>상호: 온미라이프</li>
+      <li>고객센터: 1866-0423</li>
+      <li>이메일: ja9746@naver.com</li>
+      <li>대표자 · 사업자등록번호 · 주소 · 통신판매업 신고번호: 준비 중</li>
+    </ul>
+    <p class="warn">통신판매업 신고와 결제 연동을 마친 뒤 이 자리를 채웁니다.
+       그 전까지는 실제 결제가 일어나지 않습니다.</p>
+  </div>
+  <button class="btn ghost" data-go="s-intro">돌아가겠습니다</button>
+</section>
+
 <section class="screen" id="s-cross" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">교차</div></div>
   <p class="kick">얼굴과 사주를 맞대어</p>
@@ -687,14 +834,28 @@ const TW=1536,TH=1024;
 let R=null, RX=null;
 
 /* ── 화면 전환 ─────────────────────────────── */
-function go(id){
+let backing=false;
+function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.hidden=true);
-  const el=$(id); el.hidden=false;
+  const el=$(id); if(!el) return;
+  el.hidden=false;
   el.style.animation="none"; void el.offsetWidth; el.style.animation="";
   window.scrollTo({top:0,behavior:"instant"});
   requestAnimationFrame(relayoutAll);
   if(id==="s-pay" && !S.paid) startTimer();
 }
+function go(id){
+  show(id);
+  if(!backing){ try{ history.pushState({scr:id},"",location.pathname+location.search); }catch(e){} }
+}
+/* 판정이 있어야만 열리는 화면들 — 새로고침 뒤 뒤로가기로 들어오면 처음으로 */
+const NEEDS_R=["s-read","s-hit","s-pick","s-board","s-pay","s-cure","s-tanghwa","s-end","s-cross"];
+window.addEventListener("popstate",ev=>{
+  let id=(ev.state&&ev.state.scr)||"s-intro";
+  if(NEEDS_R.indexOf(id)>=0 && !R) id="s-intro";
+  backing=true; show(id); backing=false;
+});
+try{ history.replaceState({scr:"s-intro"},"",location.pathname+location.search); }catch(e){}
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("on");
@@ -841,11 +1002,11 @@ function measureNow(){
     const src=(stream && !vid.hidden) ? vid : phM;
     const c=captureMirror(src,S,r.width,r.height);
     const m=c && readMetrics(c);
-    if(!m) throw new Error("못 읽음");
+    if(!m || !m.ok) throw new Error("못 읽음");
     R=divine(m,S.age,S.sex);
     return true;
   }catch(e){
-    $("order").innerHTML="얼굴을 다 읽지 못했습니다. 밝은 데서 한 번만 다시 찍어 주세요.";
+    $("order").innerHTML="…얼굴이 잘 안 보입니다.<br>밝은 데서, 정면으로 한 번만 다시 찍어 주세요.";
     $("guide").classList.remove("ok");
     $("shot").hidden=false; $("redo").hidden=false; $("zoomRow").hidden=false;
     return false;
@@ -1204,7 +1365,8 @@ $("cureGo").addEventListener("click",()=>{ go("s-tanghwa"); buildTang(); });
 function buildTang(){
   const t=$("tang");
   t.querySelectorAll(".slot").forEach(n=>n.remove());
-  $("tang").hidden=false; $("tangOut").innerHTML=""; $("saveTang").hidden=false;
+  $("tang").hidden=false; $("tangOut").innerHTML="";
+  const sb=$("saveTang"); sb.hidden=false; sb.disabled=false; sb.textContent="한 장으로 합치기";
   R.jari.forEach((j,i)=>{
     const s=SLOT[i], d=document.createElement("div");
     d.className="slot"+(j.g.k===R.boss.g.k?" boss":"");

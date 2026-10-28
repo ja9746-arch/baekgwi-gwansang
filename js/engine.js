@@ -121,8 +121,13 @@ function readMetrics(canvas){
                    : { L:meanL, sd:sd };
   }
 
+  /* 얼굴이 맞는지 — 결이 거의 없거나 너무 어둡고 너무 밝으면 못 읽습니다 */
+  let rows=0;
+  for(let y=0;y<CH;y++) if(rowMax[y]>=0) rows++;
+  const ok = sd >= 10 && meanL > 16 && meanL < 243 && rows >= fh*0.35;
+
   return {
-    meanL, sd, mR, mG, mB,
+    ok, meanL, sd, mR, mG, mB,
     sam: band.map(b=> b.n ? b.s/b.n : meanL),
     left: ln?ls/ln:meanL, right: rn?rs/rn:meanL,
     ratio: wMax/Math.max(faceH,1),      /* 가로세로비 */
@@ -234,11 +239,14 @@ function divine(m, age, sex){
   const gyeol = Math.abs(tilt) < 0.035 ? null
               : (tilt > 0 ? "왼쪽" : "오른쪽");
 
-  /* 열두 자리 — 그 얼굴 안에서 서로 견주어 가립니다 */
+  /* 열두 자리 — 그 얼굴 안에서 서로 견주어 가립니다.
+     무서워하는 얼굴로 보여준 셋은 실제로 서지 않습니다. 말이 어긋나니까요. */
+  const 보류 = PICK3.map(x=>x.i);
   const lvAll = gradeAll(m);
   const jari = GUNG.map((G, i) => {
     const lv = lvAll[G.k];
-    const bg = pickFrom(G.pool, seed, i*31 + lv);
+    const pool = G.pool.filter(x=>보류.indexOf(x)<0);
+    const bg = pickFrom(pool.length?pool:G.pool, seed, i*31 + lv);
     return { g:G, lv, bg };
   });
 
