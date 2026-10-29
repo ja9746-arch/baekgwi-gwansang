@@ -1608,6 +1608,13 @@ function onMark(e){
   if(S.mark)return;
   const r=fw.getBoundingClientRect();
   const cx=(e.clientX-r.left)/r.width*100, cy=(e.clientY-r.top)/r.height*100;
+  /* 얼굴 밖을 짚으면 가장 가까운 자리를 단정하게 됩니다. 얼굴 안일 때만 읽습니다. */
+  const rx=(px(100)-px(0))/2, ry=(py(100)-py(0))/2;
+  const ex=(cx-px(50))/rx, ey=(cy-py(50))/ry;
+  if(ex*ex+ey*ey > 1.10){
+    $("markHint").innerHTML="…거기는 얼굴 밖입니다.<br>얼굴 안에서 자국이 있는 자리를 짚어 주세요.";
+    return;
+  }
   let best=null,bd=1e9;
   GUNG.forEach(g=>{
     const dx=px(g.x)-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
@@ -1619,6 +1626,7 @@ function onMark(e){
   fw.appendChild(m);
   const ji=R.jari.find(j=>j.g.k===best.k);
   $("markHint").hidden=true;
+  $("markHint").innerHTML="…얼굴에 점이나 흉, 파인 자리가 있으면<br>사진 위에서 그 자리를 한 번 짚어주세요.";
   $("markOut").innerHTML=
     `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
     `<div class="txt"><div class="nm">원안법사</div>`+
