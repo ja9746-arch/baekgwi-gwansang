@@ -389,7 +389,7 @@ function divine(m, age, sex){
 
   /* 기색은 빛을 탑니다. 어둡거나 날아간 사진이면 그 사실을 숨기지 않습니다. */
   const light = (m.meanL < 118) ? "어둠" : (m.meanL > 228 ? "날림" : "");
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, pick3, light,
+  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, age, pick3, light,
            brightest, darkest,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }

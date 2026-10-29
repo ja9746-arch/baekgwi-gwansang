@@ -531,6 +531,31 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .flink{font-family:var(--serif);font-size:12px;letter-spacing:.06em;
   color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:14px 4px}
 
+/* 십성 분포 막대 */
+.tenbar{margin-top:12px;display:grid;gap:6px}
+.tb{display:flex;align-items:center;gap:9px}
+.tb .tbn{flex:none;width:34px;font-family:var(--serif);font-size:12.5px;color:var(--jae-dim)}
+.tb .tbr{flex:1;height:9px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+.tb .tbr i{position:absolute;left:0;top:0;bottom:0;display:block;
+  background:linear-gradient(90deg,rgba(201,162,74,.5),rgba(232,195,119,.85));min-width:2px}
+.tb .tbc{flex:none;width:16px;text-align:right;font-family:var(--serif);font-size:12.5px;color:var(--jae-dim)}
+.tb.want .tbn{color:#9fd5b0}
+.tb.want .tbr i{background:linear-gradient(90deg,rgba(72,150,104,.5),rgba(159,213,176,.9))}
+.tb.avoid .tbn{color:#e08a76}
+.tb.avoid .tbr i{background:linear-gradient(90deg,rgba(150,54,38,.5),rgba(224,138,118,.9))}
+
+/* 대운 띠 — 열 해씩 지나온 자리 */
+.dutrack{margin-top:12px;display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.du{border:1px solid rgba(201,162,74,.22);background:rgba(10,6,7,.5);
+  padding:7px 1px 6px;text-align:center}
+.du .dua{display:block;font-size:9.5px;color:var(--jae-dim);letter-spacing:.02em}
+.du .dut{display:block;margin-top:3px;font-family:var(--serif);font-size:12.5px;color:#d8c6a6}
+.du.on{border-color:var(--geum-hot);background:linear-gradient(180deg,rgba(74,30,14,.8),rgba(26,12,8,.9));
+  box-shadow:0 0 18px rgba(201,120,52,.3),inset 0 1px 0 rgba(255,214,150,.2)}
+.du.on .dua{color:#f0c88a}
+.du.on .dut{color:#f7e7c8}
+
 /* 족자 — 맺음과 교차에 쓰는 두루마리 */
 .scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);position:relative;
   backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
@@ -1217,12 +1242,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029j"></script>
-<script src="js/gungsang.js?v=20261029j"></script>
-<script src="js/engine.js?v=20261029j"></script>
-<script src="js/saju.js?v=20261029j"></script>
-<script src="js/cross.js?v=20261029j"></script>
-<script src="js/sound.js?v=20261029j"></script>
+<script src="js/baekgwi.js?v=20261029k"></script>
+<script src="js/gungsang.js?v=20261029k"></script>
+<script src="js/engine.js?v=20261029k"></script>
+<script src="js/saju.js?v=20261029k"></script>
+<script src="js/cross.js?v=20261029k"></script>
+<script src="js/sound.js?v=20261029k"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -2195,7 +2220,7 @@ async function runCross(){
 
   try{
     const P=fourPillars(y,m,d,h,mi,{hasTime:!noT});
-    const C=crossJudge(R,P);
+    const C=crossJudge(R,P,{y,m,d,h,mi,opt:{hasTime:!noT}});
     buildCross(C,P);
     go("s-crossout");
   }catch(e){ toast("셈하지 못했습니다"); }
@@ -2206,7 +2231,7 @@ $("crossGo").addEventListener("click",runCross);
 const KEY=["겹","그","때","둘","반"];
 const KEYNM={ "겹":"겹침", "그":"그릇만", "때":"때만", "둘":"둘 다 빔", "반":"반반" };
 function buildCross(C,P){
-  const S4=C.saju;
+  const S4=C.saju, me=P.ilgan;
   $("coTitle").innerHTML = C.겹침
     ? `얼굴에서도 사주에서도<br><span style="color:#e08a76">같은 것이 나왔습니다.</span>`
     : `얼굴은 그릇,<br><span style="color:var(--geum-hot)">사주는 때입니다.</span>`;
@@ -2222,7 +2247,7 @@ function buildCross(C,P){
       `올해 손님이 가장 조심하셔야 할 자리가 거기입니다.</p></div>`;
   }
 
-  /* 사주 네 기둥 */
+  /* ── 1. 네 기둥 ─────────────────────────── */
   html += `<p class="kick" style="margin-top:22px">손님 사주</p>`+
     `<div class="pillars">`+
     [["년주",S4.year],["월주",S4.month],["일주",S4.day],["시주",S4.hour]].map(([k,v])=>
@@ -2230,19 +2255,124 @@ function buildCross(C,P){
     `</div>`+
     `<p class="hint center" style="margin-top:9px">`+
     `일간은 <b style="color:var(--geum-hot);font-weight:400">${S4.ilgan}</b>, `+
-    `${S4.ilganOh}의 기운입니다. ${S4.ddi}띠고요.</p>`;
+    `${S4.ilganOh}의 기운입니다. ${S4.ddi}띠고요.`+
+    (C.GM.at.length ? `<br>공망은 <b style="color:#d8a7a0;font-weight:400">${C.GM.t}</b>이고, ${C.GM.at.map(x=>JARI_MAL[x]).join("·")} 자리가 거기 걸려 있습니다.`
+                    : `<br>공망은 ${C.GM.t}인데, 네 기둥에는 걸리지 않았습니다.`)+
+    `</p>`;
 
-  /* 그릇과 일간의 맞물림 */
-  html += `<div class="scroll" style="margin-top:16px">`+
+  /* ── 2. 타고난 짜임 ─────────────────────── */
+  const gk = GYEOK_MAL[C.GK.nm] || ["", "", ""];
+  const sm = SIN_MAL[C.BS.lv];
+  const cnt = C.t.cnt, mx = Math.max(1, ...Object.values(cnt));
+  html += `<p class="kick" style="margin-top:26px">타고난 짜임</p>`+
+    `<h3 class="sect">${C.GK.nm} — ${gk[0]}</h3>`+
+    `<p class="sectsub">${C.GK.why}으로 잡았습니다.</p>`+
+    `<div class="scroll" style="margin-top:12px">`+
+      `<div class="srow"><span class="sk">결</span><span class="sv">${gk[1]}</span></div>`+
+      `<div class="srow"><span class="sk">조심</span><span class="sv">${gk[2]}</span></div>`+
+      `<div class="srow bind"><span class="sk">그릇</span><span class="sv">`+
+        `<span class="verd">${sm[0]}</span>${sm[1]}<br>${sm[2]}</span></div>`+
+    `</div>`+
+    `<div class="tenbar">`+
+      Object.keys(cnt).map(g=>{
+        const on = C.YS.want.indexOf(g)>=0, off = C.YS.avoid.indexOf(g)>=0;
+        return `<div class="tb${on?" want":off?" avoid":""}">`+
+          `<span class="tbn">${g}</span>`+
+          `<span class="tbr"><i style="width:${Math.round(cnt[g]/mx*100)}%"></i></span>`+
+          `<span class="tbc">${cnt[g]}</span></div>`;
+      }).join("")+
+    `</div>`+
+    `<p class="hint" style="margin-top:8px">여덟 글자 가운데 무엇이 몇인지입니다. `+
+    `<b style="color:#9fd5b0;font-weight:400">초록</b>은 손님께 모자라 채워야 할 갈래, `+
+    `<b style="color:#e08a76;font-weight:400">붉은빛</b>은 이미 넘쳐 덜어내야 할 갈래예요.</p>`;
+
+  /* 지지에 걸린 것 */
+  const rel = [].concat(
+    C.BR.chung.map(x=>["충",x.t,relMal("충",x.nm)]),
+    C.BR.hap.map(x=>["합",x.t,relMal("합",x.nm)]),
+    C.BR.hyeong.map(x=>["형",x.t,relMal("형",x.nm)]));
+  if(rel.length){
+    html += `<div class="scroll" style="margin-top:12px">`+
+      rel.slice(0,4).map(([k,t,m])=>
+        `<div class="srow"><span class="sk">${k}</span><span class="sv"><b class="go">${t}</b> — ${m}</span></div>`
+      ).join("")+`</div>`;
+  }
+
+  /* ── 3. 얼굴과 맞물림 ───────────────────── */
+  html += `<p class="kick" style="margin-top:26px">얼굴과 사주의 맞물림</p>`+
+    `<div class="scroll" style="margin-top:12px">`+
     `<div class="srow bind"><span class="sk">맞물림</span><span class="sv">`+
     `<span class="verd">${C.hap}</span>얼굴은 ${OH[R.hyeong].nm}, 사주의 일간은 ${S4.ilganOh}입니다.`+
-    `<br>${C.hapMal}</span></div>`+
-    `<div class="srow when"><span class="sk">올해</span><span class="sv">`+
-    `<span class="verd">${C.seun.title}</span>${C.seun.year}년은 <b class="go">${C.seun.text}</b>, `+
-    `손님께는 ${C.seun.god}의 해입니다.<br>${C.seun.body}</span></div></div>`;
+    `<br>${C.hapMal}</span></div></div>`;
 
-  /* 종합운 네 자리 */
-  html += `<p class="kick" style="margin-top:24px">종합운 네 자리</p>`;
+  /* ── 4. 지금 지나는 자리 — 대운 ─────────── */
+  if(C.duNow){
+    const dS = DAEUN_MAL[C.duNow.gS], dB = DAEUN_MAL[C.duNow.gB];
+    html += `<p class="kick" style="margin-top:26px">지금 지나는 자리 · 대운(大運)</p>`+
+      `<h3 class="sect">${C.duNow.from}세부터 ${C.duNow.to}세까지 — ${C.duNow.t} ${C.duNow.h}</h3>`+
+      `<p class="sectsub">대운은 열 해씩 바뀌는 큰 흐름입니다. 손님은 ${C.DU.num}세에 첫 대운에 들어 `+
+      `${C.DU.forward?"순행":"역행"}으로 돌고 계시고, 지금 자리는 <b style="color:var(--geum-hot);font-weight:400">${HAE(C.duNow.left)}</b> 남았습니다.</p>`+
+      `<div class="scroll" style="margin-top:12px">`+
+        `<div class="srow"><span class="sk">앞 다섯 해</span><span class="sv">`+
+          `<span class="verd">${dS[0]}</span>${dS[1]}</span></div>`+
+        `<div class="srow"><span class="sk">뒤 다섯 해</span><span class="sv">`+
+          `<span class="verd">${dB[0]}</span>${dB[1]}</span></div>`+
+        (C.duNext ? `<div class="srow when"><span class="sk">다음</span><span class="sv">`+
+          `<b class="go">${C.duNext.from}세 ${C.duNext.t} ${C.duNext.h}</b>로 바뀝니다. `+
+          `${DAEUN_MAL[C.duNext.gB][0]}예요. 지금 자리에서 못 맺은 것은 그때 다시 옵니다.</span></div>` : "")+
+      `</div>`+
+      `<div class="dutrack">`+
+        C.DU.list.slice(0,8).map(x=>{
+          const on = C.duNow && x.from===C.duNow.from;
+          return `<div class="du${on?" on":""}"><span class="dua">${x.from}</span>`+
+                 `<span class="dut">${STEM[x.s][0]}${BRANCH[x.b][0]}</span></div>`;
+        }).join("")+
+      `</div>`;
+  }
+
+  /* ── 5. 올해 ────────────────────────────── */
+  const MON = n => n+"월";
+  html += `<p class="kick" style="margin-top:26px">올해 · ${C.seun.year}년</p>`+
+    `<div class="scroll" style="margin-top:12px">`+
+    `<div class="srow when"><span class="sk">세운</span><span class="sv">`+
+    `<span class="verd">${C.seun.title}</span>${C.seun.year}년은 <b class="go">${C.seun.text}</b>, `+
+    `손님께는 ${C.seun.god}의 해입니다.<br>${C.seun.body}</span></div>`+
+    (C.SR.hits.length ? `<div class="srow"><span class="sk">걸리는 자리</span><span class="sv">`+
+      C.SR.hits.map(h=>`<b class="go">${h.t}</b> — ${JO(JARI_MAL[h.n],"이","가")} ${h.kind==="충"?"한 번 흔들립니다":"묶입니다"}.`).join("<br>")+
+      `</span></div>` : "")+
+    (C.SR.gm ? `<div class="srow"><span class="sk">공망</span><span class="sv">`+
+      `올해 지지가 손님 공망에 듭니다. 크게 벌여도 손에 남는 것이 적은 해예요. 벌이기보다 매듭짓는 쪽이 낫습니다.</span></div>` : "")+
+    `<div class="srow"><span class="sk">달</span><span class="sv">`+
+      (C.ML.good.length ? `<b class="go">${C.ML.good.map(MON).join("과 ")}</b>에 움직이세요. 손님에게 모자란 기운이 드는 달입니다.` : "")+
+      (C.ML.bad.length ? `<br><b class="no">${C.ML.bad.map(MON).join("과 ")}</b>은 벌이지 마세요. 손님을 누르는 기운이 드는 달입니다.` : "")+
+    `</span></div></div>`;
+
+  /* ── 6. 쓸 것과 꺼릴 것 ─────────────────── */
+  const y1 = YONG_MAL[C.YS.want[0]], y2 = YONG_MAL[C.YS.want[1]];
+  const faceSaek = (typeof RX!=="undefined" && RX && RX.gil && RX.gil[0]) ? RX.gil[0][0] : null;
+  const matched = faceSaek && C.YS.saek.indexOf(faceSaek)>=0;
+  html += `<p class="kick" style="margin-top:26px">사주가 쓰라는 것</p>`+
+    `<h3 class="sect">${JO(C.YS.want[0],"과","와")} ${JO(C.YS.want[1],"을","를")} 채우세요</h3>`+
+    `<p class="sectsub">손님 그릇은 ${C.BS.nm}입니다. 사주는 이 두 갈래로 받치라고 합니다.</p>`+
+    `<div class="scroll" style="margin-top:12px">`+
+      `<div class="srow"><span class="sk">늘릴 것</span><span class="sv">`+
+        `<b class="go">${y1[0]}</b> — ${y1[1]}<br><b class="go">${y2[0]}</b> — ${y2[1]}</span></div>`+
+      `<div class="srow"><span class="sk">색·방위</span><span class="sv">`+
+        `<b class="go">${C.YS.saek.join("·")}</b>${batchim(C.YS.saek[C.YS.saek.length-1])?"을":"를"} 가까이 두시고, <b class="go">${C.YS.bang}</b>${batchim(C.YS.bang)?"과":"와"} `+
+        `<b class="go">${C.YS.cheol}</b>이 손님을 받칩니다.<br>`+
+        `<b class="no">${C.YS.kkeori}</b>${batchim(C.YS.kkeori)?"은":"는"} 올해 덜 쓰세요.</span></div>`+
+      `<div class="srow bind"><span class="sk">얼굴과</span><span class="sv">`+
+        (faceSaek
+          ? (matched
+             ? `얼굴이 고른 색도 <b class="go">${faceSaek}</b>입니다. 얼굴과 사주가 같은 색을 불렀어요. 이런 건 그냥 쓰시면 됩니다.`
+             : `얼굴은 <b class="go">${faceSaek}</b>${batchim(faceSaek)?"을":"를"} 쓰라 하고 사주는 <b class="go">${C.YS.saek[0]}</b>${batchim(C.YS.saek[0])?"을":"를"} 쓰라 합니다. `+
+               `둘 다 쓰시되, 몸에 닿는 것은 사주 쪽으로, 남 눈에 보이는 것은 얼굴 쪽으로 두세요.`)
+          : `처방을 먼저 받으시면 얼굴이 고른 색과 맞대어 볼 수 있습니다.`)+
+      `</span></div>`+
+    `</div>`;
+
+  /* ── 7. 종합운 네 자리 ──────────────────── */
+  html += `<p class="kick" style="margin-top:26px">종합운 네 자리</p>`;
   C.rows.forEach(r=>{
     html += `<div class="crow k-${r.key}">`+
       `<div class="ch"><span class="cn">${r.n}</span><span class="ck">${KEYNM[r.key]}</span></div>`+
@@ -2259,13 +2389,14 @@ function buildCross(C,P){
   });
 
   html += `<p class="foot">얼굴은 마의상법·유장상법의 십이궁으로, 사주는 입춘과 절입으로 가른 네 기둥으로 셈했습니다.<br>`+
+    `대운은 절입까지의 날수를 사흘에 한 해로 쳐서 잡았고, 격국은 월지에서, 용신은 억부로 보았습니다.<br>`+
     `생년월일은 이 기기 안에서만 쓰이고 저장되지 않습니다.</p>`;
   $("coBody").innerHTML = html;
 }
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.10";
+const BUILD = "2026-10-29.11";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
