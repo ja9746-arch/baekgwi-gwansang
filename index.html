@@ -28,6 +28,9 @@
   color-scheme:dark;
   /* 한지와 먹 */
   --hanji:#efe6d4; --hanji2:#e3d8c0; --meok:#2b2520; --meok2:#4a4036;
+  /* 명도 폭 — 전부 중간값이면 탁해 보입니다 */
+  --ink:#050304;        /* 진짜 검정 — 깊이를 만들 때 */
+  --hi:#fff6e8;         /* 가장 밝은 글 — 제목과 결론에만 */
   --jusa2:#9a2f22; --gold2:#8a6a3a;
 --co-tl:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2222%22%20height%3D%2222%22%20viewBox%3D%220%200%2022%2022%22%3E%20%3Cg%20transform%3D%22rotate%280%2011%2011%29%22%20fill%3D%22none%22%20stroke%3D%22%23c9a24a%22%20stroke-width%3D%221.1%22%3E%20%3Cpath%20d%3D%22M1%208%20V1%20H8%22%2F%3E%3Cpath%20d%3D%22M5.5%2011%20V5.5%20H11%22%20opacity%3D%22.62%22%2F%3E%20%3C%2Fg%3E%3C%2Fsvg%3E");
   --co-tr:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2222%22%20height%3D%2222%22%20viewBox%3D%220%200%2022%2022%22%3E%20%3Cg%20transform%3D%22rotate%2890%2011%2011%29%22%20fill%3D%22none%22%20stroke%3D%22%23c9a24a%22%20stroke-width%3D%221.1%22%3E%20%3Cpath%20d%3D%22M1%208%20V1%20H8%22%2F%3E%3Cpath%20d%3D%22M5.5%2011%20V5.5%20H11%22%20opacity%3D%22.62%22%2F%3E%20%3C%2Fg%3E%3C%2Fsvg%3E");
@@ -158,8 +161,11 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
   transform:rotate(-40deg);opacity:.85}
 .snd[aria-pressed="true"] .off{display:none}
 
-h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
-  line-height:1.8;margin:0 0 2px;letter-spacing:-.018em;text-shadow:0 2px 16px #000;
+/* 화면의 목소리 — 가장 밝고 가장 크게. 행간 1.8 은 본문 값이라
+   두 줄짜리 제목이 덩어리로 안 뭉쳤습니다. */
+h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(22px,6.2vw,28px);
+  line-height:1.44;margin:0 0 var(--s2);letter-spacing:-.02em;color:#fff6e8;
+  text-shadow:0 2px 14px rgba(0,0,0,.95),0 0 26px rgba(0,0,0,.7);
   text-wrap:balance}
 .kick{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.26em;color:#efcf93;
   margin:0 0 13px;display:flex;align-items:center;gap:9px;
@@ -445,8 +451,16 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .zoom{display:flex;align-items:center;gap:10px;margin:14px 2px 0}
 .zoom span{font-size:var(--fs-label);letter-spacing:.14em;color:var(--jae-dim);font-family:var(--serif)}
 .zoom input{flex:1}
-.order{min-height:46px;display:block;text-align:center;line-height:1.8;
-  font-family:var(--serif);font-size:var(--fs-h3);color:#f0e4d2;margin-top:10px;transition:opacity .3s}
+/* 거울 앞의 분부와 읽기 끝의 맺는 말 — 화면의 목소리입니다 */
+.order{min-height:46px;display:block;text-align:center;line-height:1.5;
+  font-family:var(--serif);font-size:var(--fs-h2);color:var(--hi);margin-top:var(--s4);
+  text-shadow:0 2px 12px rgba(0,0,0,.95);transition:opacity .3s}
+/* 양옆에 가는 금선을 둘러 한 줄짜리 말에 무게를 줍니다 */
+#readOrder{position:relative;margin-top:var(--s5);padding:0 var(--s5)}
+#readOrder::before,#readOrder::after{content:"";position:absolute;top:50%;width:32px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(214,172,86,.55));}
+#readOrder::before{left:0}
+#readOrder::after{right:0;transform:scaleX(-1)}
 .order b{color:var(--geum-hot);font-weight:400}
 
 /* 마디 안의 꼭지 — 이게 무슨 기능인지 먼저 밝힙니다 */
@@ -1361,12 +1375,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029v"></script>
-<script src="js/gungsang.js?v=20261029v"></script>
-<script src="js/engine.js?v=20261029v"></script>
-<script src="js/saju.js?v=20261029v"></script>
-<script src="js/cross.js?v=20261029v"></script>
-<script src="js/sound.js?v=20261029v"></script>
+<script src="js/baekgwi.js?v=20261029w"></script>
+<script src="js/gungsang.js?v=20261029w"></script>
+<script src="js/engine.js?v=20261029w"></script>
+<script src="js/saju.js?v=20261029w"></script>
+<script src="js/cross.js?v=20261029w"></script>
+<script src="js/sound.js?v=20261029w"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -2560,7 +2574,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.22";
+const BUILD = "2026-10-29.23";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
