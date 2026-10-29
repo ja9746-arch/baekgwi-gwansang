@@ -16,7 +16,7 @@
      유년운기 → 올해를 쥔 자리와 그 자리의 우두머리 */
 
 /* 얼굴 틀 — 거울면 안에서 길잡이 타원이 차지하는 자리 (백분율) */
-const FACE = { x:26, y:15, w:48, h:70 };
+const FACE = { x:28, y:19, w:44, h:62 };
 
 /* ── 1. 거울에 비친 그대로를 화폭에 옮긴다 ───────────── */
 function captureMirror(srcEl, st, holeW, holeH){
@@ -59,8 +59,24 @@ function readMetrics(canvas, sex){
   if(aN<400) return null;
   aR/=aN; aG/=aN; aB/=aN;
   const avg0=(aR+aG+aB)/3;
-  const nd=v=>Math.max(.88,Math.min(1.14,1+(avg0/Math.max(v,1)-1)*0.55));
-  const wR=nd(aR), wG=nd(aG), wB=nd(aB);
+  /* 흰 것이 비치면 그것을 흰 기준으로 삼습니다. 찬 전등·누런 전등을 먼저 걷어내야
+     살빛을 제대로 가려낼 수 있습니다. */
+  let wN0=0,wR0=0,wG0=0,wB0=0;
+  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
+    if(!inFace(x,y)) continue;
+    const i=(y*CW+x)*4, r=px[i], g=px[i+1], b=px[i+2];
+    const mx2=Math.max(r,g,b), mn2=Math.min(r,g,b);
+    if(mx2>148 && mx2<252 && (mx2-mn2)/mx2 < 0.14){ wN0++; wR0+=r; wG0+=g; wB0+=b; }
+  }
+  let wR,wG,wB;
+  if(wN0 > aN*0.004){
+    const rm=wR0/wN0, gm=wG0/wN0, bm=wB0/wN0, wl=(rm+gm+bm)/3;
+    const lim=v=>Math.max(0.76,Math.min(1.30,v));
+    wR=lim(wl/Math.max(rm,1)); wG=lim(wl/Math.max(gm,1)); wB=lim(wl/Math.max(bm,1));
+  }else{
+    const nd=v=>Math.max(.88,Math.min(1.14,1+(avg0/Math.max(v,1)-1)*0.55));
+    wR=nd(aR); wG=nd(aG); wB=nd(aB);
+  }
   /* 살빛인가 — 얼굴 찾을 때와 같은 잣대입니다 */
   const isSkin=(i)=>{
     const r=Math.min(255,px[i]*wR), g=Math.min(255,px[i+1]*wG), b=Math.min(255,px[i+2]*wB);
@@ -103,22 +119,10 @@ function readMetrics(canvas, sex){
   const sd = Math.sqrt(Math.max(0, sumL2/n - meanL*meanL));
   let mR = sumR/n, mG = sumG/n, mB = sumB/n;
 
-  /* 빛 보정 — 흰 것이 비칠 때만 합니다.
-     살빛을 살빛으로 나누면 기색이 통째로 날아갑니다. 흰 자리가 없으면 그냥 둡니다. */
-  let wN=0,wRs=0,wGs=0,wBs=0;
-  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
-    if(!inFace(x,y)) continue;
-    const i=(y*CW+x)*4, r=px[i], g=px[i+1], b=px[i+2];
-    const mx2=Math.max(r,g,b), mn2=Math.min(r,g,b);
-    if(mx2>186 && mx2<252 && (mx2-mn2)/mx2 < 0.11){ wN++; wRs+=r; wGs+=g; wBs+=b; }
-  }
-  if(wN > aN*0.004){
-    const wRm=wRs/wN, wGm=wGs/wN, wBm=wBs/wN, wL=(wRm+wGm+wBm)/3;
-    const lim = v => Math.max(0.86, Math.min(1.18, v));
-    mR = Math.min(255, mR*lim(wL/Math.max(wRm,1)));
-    mG = Math.min(255, mG*lim(wL/Math.max(wGm,1)));
-    mB = Math.min(255, mB*lim(wL/Math.max(wBm,1)));
-  }
+  /* 살빛 가릴 때 쓴 보정을 색 평균에도 그대로 적용합니다 */
+  mR = Math.min(255, mR*wR);
+  mG = Math.min(255, mG*wG);
+  mB = Math.min(255, mB*wB);
 
   function widthAt(t0,t1){
     let w=0,c=0;
@@ -133,12 +137,22 @@ function readMetrics(canvas, sex){
   const faceH = (bot>top) ? bot-top : fh;
   const wUp = widthAt(0.10,0.34), wMid = widthAt(0.34,0.67), wLow = widthAt(0.70,0.95);
   const wMax = Math.max(wUp,wMid,wLow,1);
+  /* 네모진 정도 — 폭이 위아래로 얼마나 고른가.
+     네모꼴이면 1 에 가깝고, 아래로 뾰족하면 작아집니다. */
+  let wSum=0, wCnt=0, wPeak=0;
+  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
+    if(y<0||y>=CH||rowMax[y]<0) continue;
+    const w=rowMax[y]-rowMin[y];
+    wSum+=w; wCnt++; if(w>wPeak) wPeak=w;
+  }
+  const boxy = wCnt ? (wSum/wCnt)/Math.max(wPeak,1) : 0.78;
 
   /* 궁별 자리 */
+  /* 짝이 있는 자리는 양쪽을 다 봅니다.
+     다만 남좌여우로 본인 쪽에 무게를 더 둡니다 — 남자는 몸의 왼쪽(사진의 오른쪽). */
   const gung = {};
-  for(const G of GUNG){
-    const gx = fx + fw*gungX(G, sex)/100, gy = fy + fh*G.y/100;
-    const hw = fw*G.sx/200, hh = fh*G.sy/200;
+  function patch(gxp, gy, hw, hh){
+    const gx = fx + fw*gxp/100;
     let gn=0, gs=0, gs2=0;
     for(let y=Math.round(gy-hh); y<=Math.round(gy+hh); y++){
       if(y<0||y>=CH) continue;
@@ -147,8 +161,22 @@ function readMetrics(canvas, sex){
         const L=lum((y*CW+x)*4); gn++; gs+=L; gs2+=L*L;
       }
     }
-    gung[G.k] = gn ? { L:gs/gn, sd:Math.sqrt(Math.max(0,gs2/gn-(gs/gn)*(gs/gn))) }
-                   : { L:meanL, sd:sd };
+    if(!gn) return null;
+    const m0=gs/gn;
+    return { L:m0, sd:Math.sqrt(Math.max(0,gs2/gn-m0*m0)) };
+  }
+  for(const G of GUNG){
+    const gy = fy + fh*G.y/100, hw = fw*G.sx/200, hh = fh*G.sy/200;
+    if(G.x === 50){
+      gung[G.k] = patch(50, gy, hw, hh) || { L:meanL, sd:sd };
+      continue;
+    }
+    const mine = gungX(G, sex), other = 100 - mine;
+    const a1 = patch(mine, gy, hw, hh), a2 = patch(other, gy, hw, hh);
+    if(a1 && a2){
+      const w1 = 0.68, w2 = 0.32;
+      gung[G.k] = { L:a1.L*w1 + a2.L*w2, sd:a1.sd*w1 + a2.sd*w2 };
+    } else gung[G.k] = a1 || a2 || { L:meanL, sd:sd };
   }
 
   /* 얼굴이 맞는지 — 결이 거의 없거나 너무 어둡고 너무 밝으면 못 읽습니다 */
@@ -163,6 +191,8 @@ function readMetrics(canvas, sex){
     ratio: wMax/Math.max(faceH,1),      /* 가로세로비 */
     taper: wLow/Math.max(wMid,1),       /* 하정이 좁아지는 정도 */
     brow:  wUp/Math.max(wMid,1),        /* 상정 폭 */
+    boxy,                               /* 네모진 정도 */
+    bandW: [wUp, wMid, wLow],           /* 삼정의 폭 */
     gung
   };
 }
@@ -171,13 +201,19 @@ function readMetrics(canvas, sex){
    다섯 갈래에 각각 점수를 매겨 가장 높은 쪽으로 봅니다.
    얼굴마다 조금씩이라도 기운 데가 있으므로 한쪽으로 몰리지 않습니다. */
 function pickHyeong(m){
-  const r = m.ratio, t = m.taper, sd = m.sd;
+  /* 가늠자는 실제 얼굴들을 재서 잡았습니다.
+     가로세로비·하정의 좁아짐·네모진 정도, 셋으로 다섯 갈래를 가립니다.
+     결이 거친 정도(sd)는 사진기와 빛에 따라 들쭉날쭉해 쓰지 않습니다. */
+  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.866 : m.boxy);
+  const zr = (r - 0.647) / 0.072;   /* 넓을수록 큼 */
+  const zt = (t - 0.806) / 0.045;   /* 아래가 두터울수록 큼 */
+  const zx = (x - 0.866) / 0.023;   /* 네모질수록 큼 */
   const sc = {
-    "목": (0.720 - r) / 0.12,     /* 길고 곧은 상 */
-    "수": (r - 0.720) / 0.12,     /* 둥글고 도톰한 상 */
-    "화": (0.745 - t) / 0.13,     /* 아래로 뾰족이 모이는 상 */
-    "토": (t - 0.745) / 0.13,     /* 두텁고 네모진 상 */
-    "금": (sd - 46) / 26          /* 뼈대가 또렷한 상 */
+    "목": -zr,                        /* 길고 좁은 상 */
+    "수":  zr*0.85 - zx*0.45,         /* 넓고 둥글며 모가 없는 상 */
+    "화": -zt,                        /* 아래로 뾰족이 모이는 상 */
+    "토":  zt*0.85 + zr*0.35,         /* 아래가 두텁고 넓은 상 */
+    "금":  zx                         /* 각이 지고 네모진 상 */
   };
   let best="수", bv=-1e9;
   for(const k in sc){ if(sc[k] > bv){ bv=sc[k]; best=k; } }
@@ -198,8 +234,9 @@ function pickGisaek(m){
   if (chae < 0.13) return "백";
   /* 보통 살빛은 누런빛이 푸른빛보다 한참 앞섭니다.
      그 차가 좁아지면 푸른 기가 도는 것입니다. */
-  const puleun = (G - B) / Math.max(R - G, 1);
-  if (puleun < 0.35) return "청";
+  /* 살빛은 누런빛이 푸른빛을 한참 앞섭니다. 그 사이가 거의 없어졌을 때만 청기입니다.
+     찬 전등 아래 사진을 모두 청기라 하면 점이 아니라 조명 이야기가 됩니다. */
+  if ((G - B) < (R - G) * 0.12) return "청";
   /* 붉은 쪽인가 누런 쪽인가 */
   const ddeum = (R - G) / Math.max(R - B, 1);
   if (ddeum > 0.70 || (chae > 0.42 && ddeum > 0.64)) return "적";
@@ -208,6 +245,15 @@ function pickGisaek(m){
 
 /* ── 5. 삼정을 가린다 ─────────────────────────────── */
 function pickSamjeong(m){
+  /* 삼정은 어느 마디의 폭이 도드라지는가로 봅니다.
+     밝기로 보면 세 마디가 거의 같아 아무 뜻도 못 담습니다. */
+  if (m.bandW){
+    const [u, c, l] = m.bandW;
+    const up = u/Math.max(c,1), lo = l/Math.max(c,1), d = up - lo;
+    if (d > 0.13) return "상";
+    if (d < 0.07) return "하";
+    return "중";
+  }
   const [a,b,c] = m.sam;
   const mx = Math.max(a,b,c);
   return mx===a ? "상" : (mx===b ? "중" : "하");

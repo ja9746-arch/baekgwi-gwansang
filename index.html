@@ -333,8 +333,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
    테두리를 거울의 어둠으로 풀어 줍니다. */
 .hole::after{content:"";position:absolute;inset:-1px;z-index:3;pointer-events:none;
   border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,
-    rgba(7,4,6,0) 56%, rgba(7,4,6,.55) 78%, rgba(7,4,6,.95) 93%, #070406 100%)}
+  background:radial-gradient(ellipse 60% 74% at 50% 50%,
+    rgba(7,4,6,0) 60%, rgba(7,4,6,.5) 80%, rgba(7,4,6,.92) 93%, #070406 100%)}
 .guide{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
 .guide.idle .tick,.guide.idle .dim{opacity:0}
 .guide.idle .face,.guide.idle .rim{opacity:0}
@@ -753,14 +753,14 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
       <svg class="guide idle" id="guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M26,50 A24,35 0 1,0 74,50 A24,35 0 1,0 26,50 Z"></path>
-        <ellipse class="rim" cx="50" cy="50" rx="46" ry="46"></ellipse>
-        <ellipse class="face" cx="50" cy="50" rx="24" ry="35"></ellipse>
+        <path class="dim" fill-rule="evenodd" d="M0,0H100V100H0Z M28,50 A22,31 0 1,0 72,50 A22,31 0 1,0 28,50 Z"></path>
+        <ellipse class="rim" cx="50" cy="50" rx="45" ry="45"></ellipse>
+        <ellipse class="face" cx="50" cy="50" rx="22" ry="31"></ellipse>
         <g class="tick">
-          <line x1="50" y1="6" x2="50" y2="10.5"></line>
-          <line x1="50" y1="89.5" x2="50" y2="94"></line>
-          <line x1="6" y1="50" x2="10.5" y2="50"></line>
-          <line x1="89.5" y1="50" x2="94" y2="50"></line>
+          <line x1="50" y1="4" x2="50" y2="9"></line>
+          <line x1="50" y1="91" x2="50" y2="96"></line>
+          <line x1="4" y1="50" x2="9" y2="50"></line>
+          <line x1="91" y1="50" x2="96" y2="50"></line>
           <line x1="46.8" y1="50" x2="53.2" y2="50"></line>
           <line x1="50" y1="46.8" x2="50" y2="53.2"></line>
         </g>
@@ -1311,7 +1311,8 @@ function autoFit(srcEl){
 function layout(img,box){
   const r=box.getBoundingClientRect();
   if(!S.natW||!r.width)return;
-  const cover=Math.max(r.width/S.natW,r.height/S.natH);
+  const z=box.classList && box.classList.contains("facewrap") ? FZ : 1;
+  const cover=Math.max(r.width/S.natW,r.height/S.natH)*z;
   const w=S.natW*cover*S.scale, h=S.natH*cover*S.scale;
   // 거울 밖으로 밀려나 빈 데가 생기지 않도록 가둔다
   const limX=Math.max(0,(w-r.width)/2)/r.width*100;
@@ -1462,8 +1463,9 @@ function mountFace(wrapId){
   return fw;
 }
 /* 얼굴 틀 안 좌표 → 원 안 백분율 */
-const FX=26, FY=15, FW=48, FH=70;
-const px=x=>FX+x*FW/100, py=y=>FY+y*FH/100;
+const FX=28, FY=19, FW=44, FH=62;
+const FZ=1.38;                       /* 풀이 화면에서 얼굴을 당겨 보는 배수 */
+const px=x=>50+(FX+x*FW/100-50)*FZ, py=y=>50+(FY+y*FH/100-50)*FZ;
 
 /* ── 3. 읽기 ──────────────────────────────── */
 function startRead(){
@@ -1495,7 +1497,7 @@ function startRead(){
     setTimeout(()=>{
       const d=document.createElement("div");
       d.className="pt lvl"+j.lv;
-      d.style.left=px(gungX(j.g,S.sex))+"%"; d.style.top=py(j.g.y)+"%";
+      d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
       d.innerHTML="<i></i>";
       fw.appendChild(d);
     },700+i*150);
@@ -1585,7 +1587,7 @@ function onMark(e){
   const cx=(e.clientX-r.left)/r.width*100, cy=(e.clientY-r.top)/r.height*100;
   let best=null,bd=1e9;
   GUNG.forEach(g=>{
-    const dx=px(gungX(g,S.sex))-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
+    const dx=px(g.x)-cx, dy=py(g.y)-cy, d=dx*dx+dy*dy;
     if(d<bd){bd=d;best=g;}
   });
   S.mark=best;
@@ -1695,7 +1697,7 @@ function buildBoard(){
   R.jari.forEach(j=>{
     const d=document.createElement("button");
     d.className="pt "+(isOpen(j)?"lvl"+j.lv:"locked");
-    d.style.left=px(gungX(j.g,S.sex))+"%"; d.style.top=py(j.g.y)+"%";
+    d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
     d.innerHTML="<i></i>"; d.dataset.k=j.g.k;
     d.setAttribute("aria-label",j.g.n);
     d.addEventListener("click",()=>tapGung(j));
