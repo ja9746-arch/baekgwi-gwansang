@@ -179,13 +179,49 @@ function readMetrics(canvas, sex){
     } else gung[G.k] = a1 || a2 || { L:meanL, sd:sd };
   }
 
-  /* 얼굴이 맞는지 — 결이 거의 없거나 너무 어둡고 너무 밝으면 못 읽습니다 */
+  /* 얼굴이 맞는지 ──────────────────────────────
+     결과 밝기만 보면 절 사진에도 "화형 흑기" 를 내놓습니다.
+     얼굴이라면 반드시 지켜지는 세 가지를 같이 봅니다.
+       살빛 비율  — 떼어낸 상자가 대체로 살빛인가
+       좌우 대칭  — 왼쪽과 오른쪽을 뒤집어 포갰을 때 맞는가
+       눈자리 그늘 — 눈·눈썹 띠가 볼 띠보다 어두운가 */
   let rows=0;
   for(let y=0;y<CH;y++) if(rowMax[y]>=0) rows++;
-  const ok = sd >= 10 && meanL > 16 && meanL < 243 && rows >= fh*0.35;
+
+  const bx0=Math.max(0,Math.round(fx)), bx1=Math.min(CW,Math.round(fx+fw));
+  const by0=Math.max(0,Math.round(fy)), by1=Math.min(CH,Math.round(fy+fh));
+  let skinN=0, boxN=0;
+  for(let y=by0;y<by1;y+=2) for(let x=bx0;x<bx1;x+=2){ boxN++; if(isSkin((y*CW+x)*4)) skinN++; }
+  const skinRate = boxN ? skinN/boxN : 0;
+
+  /* 좌우 대칭 — 가운데 선 기준으로 포개어 밝기 차를 봅니다 */
+  let symD=0, symN=0;
+  const midX=(bx0+bx1)/2;
+  for(let y=by0;y<by1;y+=3) for(let d=2; d<(bx1-bx0)/2; d+=3){
+    const xa=Math.round(midX-d), xb=Math.round(midX+d);
+    if(xa<0||xb>=CW) continue;
+    symD += Math.abs(lum((y*CW+xa)*4) - lum((y*CW+xb)*4)); symN++;
+  }
+  const sym = symN ? 1 - Math.min(1, (symD/symN) / Math.max(meanL*0.55, 1)) : 0;
+
+  /* 눈자리가 볼보다 어두운가 — band 는 위에서 삼정으로 쪼갠 것 */
+  const eyeY0=fy+fh*0.30, eyeY1=fy+fh*0.46;   /* 눈·눈썹 띠 */
+  const chkY0=fy+fh*0.56, chkY1=fy+fh*0.72;   /* 볼 띠 */
+  function bandL(y0,y1){
+    let s2=0,n2=0;
+    for(let y=Math.max(0,Math.round(y0)); y<Math.min(CH,Math.round(y1)); y+=2)
+      for(let x=bx0;x<bx1;x+=2){ const i2=(y*CW+x)*4; if(!isSkin(i2)) continue; s2+=lum(i2); n2++; }
+    return n2 ? s2/n2 : -1;
+  }
+  const eL=bandL(eyeY0,eyeY1), cL=bandL(chkY0,chkY1);
+  const eyeDark = (eL>0 && cL>0) ? (cL-eL)/Math.max(cL,1) : -1;
+
+  const ok = sd >= 10 && meanL > 16 && meanL < 243 && rows >= fh*0.35
+           && skinRate >= 0.42 && sym >= 0.45 && eyeDark >= 0.008;
 
   return {
     ok, meanL, sd, mR, mG, mB,
+    skinRate, sym, eyeDark,
     sam: band.map(b=> b.n ? b.s/b.n : meanL),
     left: ln?ls/ln:meanL, right: rn?rs/rn:meanL,
     ratio: wMax/Math.max(faceH,1),      /* 가로세로비 */
