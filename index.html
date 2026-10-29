@@ -206,16 +206,21 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .say em{font-style:normal;color:var(--jusa2);font-weight:500}
 
 /* 단추 */
-.btn{display:block;width:100%;margin-top:14px;padding:17px 14px;font-family:var(--serif);
+.btn{display:block;width:100%;margin-top:var(--s4);padding:var(--s5) var(--s4);font-family:var(--serif);
   font-size:var(--fs-h3);letter-spacing:.02em;text-align:center;position:relative;overflow:hidden;
   border:1px solid rgba(201,162,74,.55);
   background:linear-gradient(180deg,rgba(72,48,22,.95),rgba(38,24,13,.95) 46%,rgba(18,11,7,.97));
   color:#f6ead6;box-shadow:0 10px 28px rgba(0,0,0,.5),
     inset 0 1px 0 rgba(255,228,176,.22),inset 0 -1px 0 rgba(0,0,0,.55);
   transition:transform .12s,box-shadow .2s,border-color .2s}
-/* 안쪽에 한 겹 더 두른 금줄 */
+/* 안쪽 금줄과 네 모서리 창살 — 다른 판과 결을 맞춥니다 */
 .btn::before{content:"";position:absolute;inset:4px;pointer-events:none;
-  border:1px solid rgba(201,162,74,.38)}
+  border:1px solid rgba(201,162,74,.38);
+  background:
+    var(--co-tl) left 2px top 2px / 11px 11px no-repeat,
+    var(--co-tr) right 2px top 2px / 11px 11px no-repeat,
+    var(--co-bl) left 2px bottom 2px / 11px 11px no-repeat,
+    var(--co-br) right 2px bottom 2px / 11px 11px no-repeat}
 .btn:not(.ghost)::after{content:"\2192";margin-left:11px;color:rgba(232,195,119,.9);
   font-size:var(--fs-h3);vertical-align:1px}
 .btn.ghost::before{display:none}
@@ -367,7 +372,13 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .agewrap{display:flex;align-items:flex-end;gap:14px}
 .agebar{flex:1;position:relative;padding-top:4px}
 .agewrap input[type=range]{width:100%}
-.ageticks{display:flex;justify-content:space-between;margin:2px 2px 0}
+/* 어림수를 슬라이더 위치에 맞춰 세웁니다 (16~90) */
+.ageticks{position:relative;height:16px;margin:var(--s1) 2px 0}
+.ageticks span{position:absolute;transform:translateX(-50%)}
+.ageticks span:nth-child(1){left:5.4%}
+.ageticks span:nth-child(2){left:32.4%}
+.ageticks span:nth-child(3){left:59.5%}
+.ageticks span:nth-child(4){left:86.5%}
 .ageticks span{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.06em;color:rgba(206,170,96,.82)}
 .agewrap b{font-family:var(--serif);font-size:var(--fs-display);line-height:1;color:var(--geum-hot);
   min-width:84px;text-align:right;text-shadow:0 2px 12px rgba(0,0,0,.8)}
@@ -924,7 +935,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <div class="agewrap">
         <div class="agebar">
           <input type="range" id="age" min="16" max="90" step="1" value="34" aria-label="나이">
-          <div class="ageticks"><span>16</span><span>35</span><span>53</span><span>71</span><span>90</span></div>
+          <div class="ageticks"><span>20</span><span>40</span><span>60</span><span>80</span></div>
         </div>
         <b id="ageN">34<i>세</i></b>
       </div>
@@ -1343,12 +1354,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029r"></script>
-<script src="js/gungsang.js?v=20261029r"></script>
-<script src="js/engine.js?v=20261029r"></script>
-<script src="js/saju.js?v=20261029r"></script>
-<script src="js/cross.js?v=20261029r"></script>
-<script src="js/sound.js?v=20261029r"></script>
+<script src="js/baekgwi.js?v=20261029s"></script>
+<script src="js/gungsang.js?v=20261029s"></script>
+<script src="js/engine.js?v=20261029s"></script>
+<script src="js/saju.js?v=20261029s"></script>
+<script src="js/cross.js?v=20261029s"></script>
+<script src="js/sound.js?v=20261029s"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -2541,7 +2552,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.18";
+const BUILD = "2026-10-29.19";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
