@@ -387,6 +387,15 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   font-family:var(--serif);font-size:15px;color:#f0e4d2;margin-top:10px;transition:opacity .3s}
 .order b{color:var(--geum-hot);font-weight:400}
 
+/* 마디 안의 꼭지 — 이게 무슨 기능인지 먼저 밝힙니다 */
+.sect{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:19px;color:#f3e7d3;
+  letter-spacing:.01em}
+.sectsub{margin:6px 0 0;font-size:12.5px;line-height:1.85;color:var(--jae-dim)}
+.molezoom input{accent-color:#c0392b}
+.moletell{margin:8px 0 0;text-align:center;font-family:var(--serif);font-size:13px;
+  color:var(--geum-dim);transition:color .3s}
+.moletell.on{color:#e8846e}
+
 /* 얼굴 판 */
 .facewrap{position:relative;width:min(94%,420px);margin:0 auto;aspect-ratio:694/604;
   border-radius:50%;overflow:hidden;border:1px solid rgba(201,162,74,.4);
@@ -409,11 +418,22 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   box-shadow:0 0 14px rgba(255,236,200,.8);animation:none}
 .pt.sel::after{content:"";position:absolute;inset:9px;border:1px solid var(--geum-hot);border-radius:50%}
 @keyframes blip{0%,100%{opacity:.45;transform:scale(.8)}50%{opacity:1;transform:scale(1.12)}}
-.mole{position:absolute;width:14px;height:14px;transform:translate(-50%,-50%);z-index:5;pointer-events:none;
-  opacity:0;transition:opacity .5s}
-.mole::before{content:"";position:absolute;inset:4px;border-radius:50%;background:#8f1f17;
-  box-shadow:0 0 10px rgba(192,54,42,.9),inset 0 0 3px rgba(0,0,0,.8)}
+/* 점자리 — 찍힌 것이 한눈에 보여야 합니다 */
+.mole{position:absolute;width:34px;height:34px;transform:translate(-50%,-50%);z-index:5;pointer-events:none;
+  opacity:0;transition:opacity .45s}
+.mole::before{content:"";position:absolute;inset:12px;border-radius:50%;
+  background:radial-gradient(circle at 36% 32%,#c0392b 0%,#7d1a13 62%,#4a0d08 100%);
+  box-shadow:0 0 14px rgba(214,62,44,.95),0 0 30px rgba(192,54,42,.5),
+             inset 0 0 4px rgba(0,0,0,.85),0 1px 2px rgba(0,0,0,.9)}
+.mole::after{content:"";position:absolute;inset:0;border-radius:50%;
+  border:1px solid rgba(232,112,88,.85);opacity:0}
 .mole.on{opacity:1}
+.mole.on::before{animation:molepop .5s cubic-bezier(.2,1.5,.4,1) both, molebeat 2.6s 0.5s ease-in-out infinite}
+.mole.on::after{animation:molering .9s ease-out both}
+@keyframes molepop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.28)}100%{transform:scale(1);opacity:1}}
+@keyframes molebeat{50%{box-shadow:0 0 20px rgba(226,78,58,1),0 0 40px rgba(192,54,42,.68),
+  inset 0 0 4px rgba(0,0,0,.85),0 1px 2px rgba(0,0,0,.9)}}
+@keyframes molering{0%{transform:scale(.3);opacity:.95}100%{transform:scale(1.9);opacity:0}}
 .tapmark{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);z-index:6;pointer-events:none}
 .tapmark::before,.tapmark::after{content:"";position:absolute;background:var(--jusa-hot);box-shadow:0 0 8px var(--jusa-hot)}
 .tapmark::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
@@ -943,13 +963,17 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   </div>
 
   <p class="kick" style="margin-top:22px">첫째 · 점자리</p>
+  <h3 class="sect">점을 찍어 보겠습니다</h3>
+  <p class="sectsub">아래 손잡이를 오른쪽으로 밀면 법사가 짚은 자리에 점이 하나씩 찍힙니다.
+    찍기 전과 찍은 뒤를 견주어 보세요.</p>
   <div class="facewrap" id="faceCure">
     <img class="ph" alt="">
     <div class="veil"></div>
   </div>
-  <div class="zoom" style="margin-top:12px">
+  <div class="zoom molezoom" style="margin-top:12px">
     <span>찍기 전</span><input type="range" id="moleSlide" min="0" max="100" value="0" aria-label="점 찍기 전후"><span>찍은 뒤</span>
   </div>
+  <p class="moletell" id="moleTell">손잡이를 밀어 보세요</p>
   <div id="moleOut" style="margin-top:10px"></div>
 
   <p class="kick" style="margin-top:24px">둘째 · 색</p>
@@ -1193,12 +1217,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029i"></script>
-<script src="js/gungsang.js?v=20261029i"></script>
-<script src="js/engine.js?v=20261029i"></script>
-<script src="js/saju.js?v=20261029i"></script>
-<script src="js/cross.js?v=20261029i"></script>
-<script src="js/sound.js?v=20261029i"></script>
+<script src="js/baekgwi.js?v=20261029j"></script>
+<script src="js/gungsang.js?v=20261029j"></script>
+<script src="js/engine.js?v=20261029j"></script>
+<script src="js/saju.js?v=20261029j"></script>
+<script src="js/cross.js?v=20261029j"></script>
+<script src="js/sound.js?v=20261029j"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1970,9 +1994,20 @@ function buildCure(){
     `<p class="tagline" style="margin-top:8px">얼굴은 ${RX.oh.nm}으로 봅니다 · 삼정은 ${SAMJEONG[R.samjeong].nm}이 두텁습니다<br>짝이 있는 자리는 남좌여우(男左女右)로, ${S.sex==="남"?"왼":"오른"}쪽을 손님 본인 자리로 놓고 읽었습니다</p>`;
 }
 function setMoles(v){
+  let n=0;
   document.querySelectorAll("#faceCure .mole").forEach((m,i)=>{
-    m.classList.toggle("on", v>i*25);
+    const on = v>i*25;
+    if(on) n++;
+    m.classList.toggle("on", on);
   });
+  const t=$("moleTell");
+  if(t){
+    const all = (RX && RX.jeom) ? RX.jeom.length : 3;
+    t.textContent = n===0 ? "손잡이를 밀어 보세요"
+                  : n>=all ? `세 자리를 다 찍었습니다 — 이 얼굴이 됩니다`
+                  : `${["","한","두","세","네"][n]||n} 자리를 찍었습니다`;
+    t.classList.toggle("on", n>0);
+  }
 }
 $("moleSlide").addEventListener("input",e=>setMoles(+e.target.value));
 $("cureGo").addEventListener("click",()=>{ go("s-tanghwa"); buildTang(); });
@@ -2230,7 +2265,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.9";
+const BUILD = "2026-10-29.10";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
