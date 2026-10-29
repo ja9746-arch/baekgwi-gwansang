@@ -410,23 +410,35 @@ function seunRel(P, Y){
            gm: (gongmang(P).br.indexOf(sp.b)>=0) };
 }
 /* 그 해 열두 달 — 쓸 달과 쉴 달 */
-function monthLuck(P, Y, YS){
-  const yp = yearPillar(Y);
-  const first = SMOD(SMOD(yp.s,5)*2+2,10);        /* 오호둔 — 인월의 천간 */
+/* 그 해 열두 달이 아니라, 보는 날로부터 앞으로 열두 달을 봅니다.
+   시월에 보면서 지난 유월을 권하면 사주를 본 게 아닙니다. */
+function monthLuck(P, Y, YS, fromDate){
   const me = P.ilgan;
-  const good = [], bad = [];
+  const now = fromDate || new Date();
   const rows = [];
-  for(let i=0;i<12;i++){
-    const br = SMOD(2+i,12), st = SMOD(first+i,10);
-    const label = (i+1<=10) ? (i+2) : (i+2-12);   /* 인월 ≒ 양력 2월 */
-    const mth = ((i+1)%12)+1;
+  for(let k=0; k<12; k++){
+    /* 이번 달부터 앞으로 열두 달 — 달의 한가운데를 잡아 절입을 넘겨 셉니다 */
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth()+k, 16, 3, 0));
+    const jd = toJd(d.getUTCFullYear(), d.getUTCMonth()+1, d.getUTCDate(), 12, 0);
+    const lon = sunLongitude(jd);
+    const order = Math.floor(SMOD(lon-315,360)/30);        /* 0 = 인월 */
+    const br = SMOD(2+order,12);
+    let sy = d.getUTCFullYear();
+    if(jd < ipchunJd(sy)) sy = sy-1;                        /* 입춘 전이면 지난해 */
+    const yp = yearPillar(sy);
+    const first = SMOD(SMOD(yp.s,5)*2+2,10);                /* 오호둔 */
+    const st = SMOD(first+order,10);
     const gS = GROUP[tenGod(me, st)], gB = GROUP[tenGod(me, JIJANG[br])];
     const score = (YS.want.indexOf(gS)>=0?1:0) + (YS.want.indexOf(gB)>=0?1.2:0)
                 - (YS.avoid.indexOf(gS)>=0?1:0) - (YS.avoid.indexOf(gB)>=0?1.2:0);
-    rows.push({ mth, st, br, score, gS, gB });
+    rows.push({ y:d.getUTCFullYear(), mth:d.getUTCMonth()+1, st, br, score, gS, gB, k });
   }
-  rows.sort((a,b)=>b.score-a.score);
-  return { good: rows.slice(0,2).filter(r=>r.score>0).map(r=>r.mth).sort((a,b)=>a-b),
-           bad : rows.slice(-2).filter(r=>r.score<0).map(r=>r.mth).sort((a,b)=>a-b),
-           rows };
+  const byScore = rows.slice().sort((a,b)=>b.score-a.score || a.k-b.k);
+  const pick = arr => arr.sort((a,b)=>a.k-b.k);
+  return {
+    good: pick(byScore.slice(0,2).filter(r=>r.score>0)),
+    bad : pick(byScore.slice(-2).filter(r=>r.score<0)),
+    rows
+  };
 }
+

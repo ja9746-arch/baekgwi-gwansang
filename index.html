@@ -184,6 +184,16 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(22px,6.2vw,28px);
 .plateleg .l0 i{background:#a9ddb9;box-shadow:0 0 7px rgba(159,213,176,.7),0 0 0 1px rgba(8,4,6,.6)}
 .plateleg .l1 i{background:#e8c377;box-shadow:0 0 7px rgba(232,195,119,.65),0 0 0 1px rgba(8,4,6,.6)}
 .plateleg .l2 i{background:#e0694f;box-shadow:0 0 7px rgba(216,96,76,.75),0 0 0 1px rgba(8,4,6,.6)}
+/* 짚은 자리의 이름표 */
+.readtag{margin:var(--s3) 0 0;min-height:44px;text-align:center;font-size:var(--fs-sm);
+  color:var(--jae-dim);line-height:1.7;text-shadow:0 1px 5px rgba(6,3,5,.95);transition:color .3s}
+.readtag.on{color:#e9dcc6}
+.readtag b{font-family:var(--serif);font-size:var(--fs-h3);font-weight:400}
+.readtag span{font-family:var(--serif);color:var(--geum-dim);margin-left:4px}
+.readtag em{display:block;font-style:normal;font-size:var(--fs-label);color:var(--jae-dim);margin-top:2px}
+/* 지금 짚은 점 */
+.pt.named::before{border-color:rgba(255,244,222,.9);inset:8px;
+  box-shadow:0 0 12px rgba(255,236,200,.6)}
 /* 바탕 그림 위에 바로 얹히는 글 — 어둠을 한 겹 둘러 늘 읽히게 합니다 */
 .foot,.footlinks,.tagline2,.sect,.sectsub,.order,.moletell,.t,.step{
   text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.8)}
@@ -473,6 +483,44 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .moletell.on{color:#e8846e}
 
 /* 얼굴 판 */
+/* ── 장면 그림 ──────────────────────────────────
+   거울 화면이 좋은 건 청동 거울이라는 중심 그림이 있어서입니다.
+   다른 마디에도 그 마디를 말해 주는 그림을 하나씩 놓습니다. */
+.scene{position:relative;margin:var(--s5) calc(var(--s5) * -1) var(--s5);overflow:hidden}
+.scene img{width:100%;display:block}
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(180deg,var(--mook) 0%,rgba(10,5,7,.18) 26%,rgba(10,5,7,.14) 64%,var(--mook) 100%),
+    linear-gradient(90deg,var(--mook) 0%,rgba(10,5,7,0) 16%,rgba(10,5,7,0) 84%,var(--mook) 100%)}
+.scene .cap{position:absolute;left:0;right:0;bottom:var(--s4);text-align:center;z-index:2;
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.2em;color:#e6c9a0;
+  text-shadow:0 1px 6px #000}
+
+/* 봉인 — 틀에 가두지 않고 어둠에 번지게 둡니다 */
+.sigil{position:relative;margin:var(--s5) auto var(--s4);width:min(74%,300px);aspect-ratio:1;
+  display:grid;place-items:center}
+/* 검정 바탕 위의 빛이므로 screen 으로 얹습니다 — 검정은 날아가고 불빛만 남습니다 */
+.sigil img{width:100%;display:block;mix-blend-mode:screen;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 60%,rgba(0,0,0,.5) 80%,rgba(0,0,0,0) 97%);
+  mask-image:radial-gradient(circle at 50% 50%,#000 60%,rgba(0,0,0,.5) 80%,rgba(0,0,0,0) 97%);
+  animation:sigilbreath 5.5s ease-in-out infinite}
+/* 봉인 뒤를 눌러 바탕과 섞이지 않게 */
+.sigil::before{content:"";position:absolute;left:50%;top:50%;width:132%;height:132%;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,rgba(6,2,3,.92) 0%,rgba(6,2,3,.72) 46%,rgba(6,2,3,0) 76%)}
+.sigil .n{position:absolute;text-align:center;font-family:var(--serif);color:#ffd9c6;
+  padding:var(--s4) var(--s5);border-radius:50%;
+  text-shadow:0 0 18px rgba(255,80,50,.9),0 2px 10px #000}
+/* 붉은 선 위에 글이 묻히지 않게 어둠을 한 겹 */
+.sigil .n::before{content:"";position:absolute;left:50%;top:50%;width:190%;height:190%;
+  transform:translate(-50%,-50%);z-index:-1;border-radius:50%;
+  background:radial-gradient(circle,rgba(6,2,3,.97) 0%,rgba(6,2,3,.93) 54%,rgba(6,2,3,0) 82%)}
+.sigil .n b{display:block;font-size:var(--fs-display);font-weight:400;line-height:1.1;color:#fff1e4}
+.sigilcap{margin:calc(var(--s2) * -1) 0 var(--s5);text-align:center;font-family:var(--serif);
+  font-size:var(--fs-label);letter-spacing:.2em;color:#f0bda8;
+  text-shadow:0 1px 6px #000,0 0 16px rgba(255,80,50,.4)}
+@keyframes sigilbreath{50%{opacity:.78;transform:scale(.985)}}
+
 /* 얼굴판 — 거울 화면의 금테와 결을 맞춥니다.
    틀 없이 떠 있으면 사진이 그냥 얹힌 것처럼 보입니다. */
 .facewrap{position:relative;width:min(92%,400px);margin:0 auto;aspect-ratio:694/604;
@@ -752,22 +800,29 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   box-shadow:0 0 18px rgba(232,195,119,.9)}
 
 /* 백귀 패 */
-/* 셋 중 하나를 고르는 자리입니다 — 카드가 화면의 주인공이어야 합니다 */
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-top:var(--s5)}
+/* 셋 중 하나를 고르는 자리입니다 — 그림이 가로형이라
+   가로 셋으로 늘어놓으면 잘리거나 손톱만 해집니다. 세로로 쌓습니다. */
+.cards3{display:grid;gap:var(--s3);margin-top:var(--s5)}
 .card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
   box-shadow:0 12px 30px rgba(0,0,0,.66),0 0 22px rgba(150,70,26,.10);transition:transform .18s,border-color .2s}
 .card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   box-shadow:inset 0 1px 0 rgba(236,199,130,.14),
     inset 0 16px 26px -20px rgba(0,0,0,.9),inset 0 -18px 28px -20px rgba(0,0,0,.92),
     inset 18px 0 26px -22px rgba(0,0,0,.85),inset -18px 0 26px -22px rgba(0,0,0,.85)}
-.card img{width:100%;aspect-ratio:3/4.1;object-fit:cover;object-position:50% 38%;
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 42%;
   filter:sepia(.12) saturate(1.3) brightness(1.54) contrast(1.1)}
-.card .nm{position:absolute;left:0;right:0;bottom:0;padding:var(--s4) var(--s1) var(--s2);text-align:center;
-  font-family:var(--serif);font-size:var(--fs-sm);letter-spacing:.04em;color:#f6e9d2;
+.card .nm{position:relative;padding:var(--s3) var(--s4);text-align:left;
+  font-family:var(--serif);font-size:var(--fs-h3);letter-spacing:.02em;color:#f6e9d2;
   text-shadow:0 1px 6px #000;
-  background:linear-gradient(180deg,transparent,rgba(5,3,4,.72) 42%,rgba(5,3,4,.97))}
-.card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-8px) scale(1.03);
+  background:linear-gradient(180deg,rgba(26,16,13,.9),rgba(10,6,7,.96));
+  border-top:1px solid rgba(201,162,74,.26)}
+.card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
   box-shadow:0 20px 38px rgba(0,0,0,.76),0 0 30px rgba(201,162,74,.42)}
+/* 고른 패에 도장 하나 */
+.card[aria-pressed="true"] .nm::after{content:"짚음";float:right;
+  font-size:var(--fs-label);letter-spacing:.14em;color:#ffd9bf;
+  border:1px solid rgba(226,120,88,.6);padding:1px 9px 2px;
+  background:linear-gradient(180deg,rgba(120,38,24,.5),rgba(58,18,12,.5))}
 .card[aria-pressed="true"]::after{content:"";position:absolute;inset:-1px;z-index:3;pointer-events:none;
   border:1px solid rgba(255,226,170,.6)}
 .card.dim img{filter:sepia(.18) grayscale(.5) brightness(1.44) contrast(1.16)}
@@ -934,6 +989,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <div class="top"><div class="brand">백귀관상</div><div class="step">1 / 6</div></div>
   <p class="kick">첫째 마디 · 묻기</p>
   <h2 class="t">나이와 성별부터<br>여쭙겠습니다…</h2>
+  <div class="scene" aria-hidden="true">
+    <img src="img/ob-jangbu.webp" alt="" loading="lazy" decoding="async">
+    <span class="cap">원 안 법 사 의  장 부</span>
+  </div>
   <div class="say">
     <div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt">
@@ -1019,6 +1078,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <div class="veil"></div>
   </div>
   <p class="plateleg" id="readLeg" aria-hidden="true"></p>
+  <p class="readtag" id="readTag">점을 하나 눌러 보세요 — 어느 자리인지 짚어 드립니다</p>
   <div class="order" id="readOrder" style="min-height:62px"></div>
   <div id="readOut"></div>
   <button class="btn" id="readGo" hidden>지난 일을 짚어 보겠습니다</button>
@@ -1088,6 +1148,11 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <p>이거까지만 봐드릴 테니, 손님도 마음을 정하셔야 해요…</p>
     </div>
   </div>
+  <div class="sigil" aria-hidden="true">
+    <img src="img/ob-seal.webp" alt="" loading="lazy" decoding="async">
+    <span class="n"><b id="sealN">11</b></span>
+  </div>
+  <p class="sigilcap">자리가 봉해져 있습니다</p>
   <div class="valuegrid">
     <div><b>열두 자리 전부</b><span>십이궁 낱낱의 풀이</span></div>
     <div><b>우두머리</b><span>올해를 쥔 하나</span></div>
@@ -1116,6 +1181,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <div class="txt"><div class="nm">원안법사</div><div id="cureSay"></div></div>
   </div>
 
+  <div class="scene" aria-hidden="true">
+    <img src="img/ob-heungjeong.webp" alt="" loading="lazy" decoding="async">
+    <span class="cap">백 귀 와  말 을  섞 다</span>
+  </div>
   <p class="kick" style="margin-top:22px">첫째 · 점자리</p>
   <h3 class="sect">점을 찍어 보겠습니다</h3>
   <p class="sectsub">아래 손잡이를 오른쪽으로 밀면 법사가 짚은 자리에 점이 하나씩 찍힙니다.
@@ -1375,12 +1444,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029y"></script>
-<script src="js/gungsang.js?v=20261029y"></script>
-<script src="js/engine.js?v=20261029y"></script>
-<script src="js/saju.js?v=20261029y"></script>
-<script src="js/cross.js?v=20261029y"></script>
-<script src="js/sound.js?v=20261029y"></script>
+<script src="js/baekgwi.js?v=20261030c"></script>
+<script src="js/gungsang.js?v=20261030c"></script>
+<script src="js/engine.js?v=20261030c"></script>
+<script src="js/saju.js?v=20261030c"></script>
+<script src="js/cross.js?v=20261030c"></script>
+<script src="js/sound.js?v=20261030c"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1737,10 +1806,24 @@ function startRead(){
 
   R.jari.forEach((j,i)=>{
     setTimeout(()=>{
-      const d=document.createElement("div");
+      /* 이름 없는 점은 확인할 길이 없습니다 — 눌러서 어느 자리인지 알게 합니다 */
+      const d=document.createElement("button");
       d.className="pt lvl"+j.lv;
+      d.type="button";
       d.style.left=px(j.g.x)+"%"; d.style.top=py(j.g.y)+"%";
       d.innerHTML="<i></i>";
+      d.setAttribute("aria-label", j.g.n+" "+j.g.bu);
+      d.addEventListener("click",e=>{
+        e.stopPropagation();
+        fw.querySelectorAll(".pt").forEach(n=>n.classList.remove("named"));
+        d.classList.add("named");
+        const tag=$("readTag");
+        if(tag){
+          tag.innerHTML=`<b class="g${j.lv}">${j.g.n}</b> <span>${j.g.bu}</span>`+
+                        `<em>${j.g.d} · ${["트임","반반","막힘"][j.lv]}</em>`;
+          tag.classList.add("on");
+        }
+      });
       fw.appendChild(d);
     },700+i*150);
   });
@@ -2080,6 +2163,7 @@ const PRICE_CROSS = { now: 9900, list: null, name: "백귀관상 · 얼굴과 �
   if(el) el.innerHTML=(PRICE.list?`<del>${won(PRICE.list)}</del>`:"")+won(PRICE.now);
   const btn=$("payBtn");
   if(btn) btn.textContent=`${won(PRICE.now)} 내고 열두 자리 열기`;
+  const sn=$("sealN"); if(sn && typeof R!=="undefined" && R) sn.textContent="11";
   if(!PRICE.list){
     const t=$("payTimer");
     if(t) t.textContent="한 번 열면 이 기기에서 계속 보실 수 있어요.";
@@ -2510,8 +2594,10 @@ function buildCross(C,P){
   }
 
   /* ── 5. 올해 ────────────────────────────── */
-  const MON = n => n+"월";
-  html += `<p class="kick" style="margin-top:26px">올해 · ${C.seun.year}년</p>`+
+  /* 해가 넘어가면 연도까지 밝힙니다 */
+  const nowY = new Date().getFullYear();
+  const MON = r => (r.y!==nowY ? r.y+"년 " : "") + r.mth + "월";
+  html += `<p class="kick" style="margin-top:26px">올해와 앞으로 열두 달</p>`+
     `<div class="scroll" style="margin-top:12px">`+
     `<div class="srow when"><span class="sk">세운</span><span class="sv">`+
     `<span class="verd">${C.seun.title}</span>${C.seun.year}년은 <b class="go">${C.seun.text}</b>, `+
@@ -2521,9 +2607,9 @@ function buildCross(C,P){
       `</span></div>` : "")+
     (C.SR.gm ? `<div class="srow"><span class="sk">공망</span><span class="sv">`+
       `올해 지지가 손님 공망에 듭니다. 크게 벌여도 손에 남는 것이 적은 해예요. 벌이기보다 매듭짓는 쪽이 낫습니다.</span></div>` : "")+
-    `<div class="srow"><span class="sk">달</span><span class="sv">`+
+    `<div class="srow"><span class="sk">앞으로<br>열두 달</span><span class="sv">`+
       (C.ML.good.length ? `<b class="go">${C.ML.good.map(MON).join("과 ")}</b>에 움직이세요. 손님에게 모자란 기운이 드는 달입니다.` : "")+
-      (C.ML.bad.length ? `<br><b class="no">${C.ML.bad.map(MON).join("과 ")}</b>은 벌이지 마세요. 손님을 누르는 기운이 드는 달입니다.` : "")+
+      (C.ML.bad.length ? `<br><b class="no">${C.ML.bad.map(MON).join("과 ")}</b>${batchim(C.ML.bad[C.ML.bad.length-1].mth+"월")?"은":"는"} 벌이지 마세요. 손님을 누르는 기운이 드는 달입니다.` : "")+
     `</span></div></div>`;
 
   /* ── 6. 쓸 것과 꺼릴 것 ─────────────────── */
@@ -2575,7 +2661,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.24";
+const BUILD = "2026-10-30.3";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
