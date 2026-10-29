@@ -90,8 +90,17 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     radial-gradient(ellipse 128% 52% at 50% 0%,rgba(142,62,22,.30),rgba(10,5,7,0) 56%),
     linear-gradient(180deg,rgba(10,5,7,.66) 0%,rgba(10,5,7,.56) 40%,
                     rgba(10,5,7,.62) 76%,rgba(10,5,7,.80) 100%),
-    url("img/wall.webp") center top/432px 594px repeat,
-    var(--mook)}
+    var(--scene) center top/432px 594px repeat,
+    var(--mook);
+  transition:background-image .5s}
+/* 마디마다 다른 자리로 — 화면이 넘어가면 장소가 바뀝니다 */
+:root{--scene:url("img/wall.webp")}                    /* 천불벽 */
+html[data-scene="s-ask"],html[data-scene="s-pick"]{--scene:url("img/sc-mun.webp")}      /* 사천왕문 */
+html[data-scene="s-pay"]{--scene:url("img/sc-buja.webp")}                                /* 부적 */
+/* 부적은 결이 굵어 글을 삼킵니다 — 그 자리만 한 겹 더 덮습니다 */
+html[data-scene="s-pay"] body::before{filter:brightness(.82)}
+html[data-scene="s-cure"],html[data-scene="s-crossout"]{--scene:url("img/sc-beopdang.webp")} /* 법당 */
+html[data-scene="s-end"],html[data-scene="s-tanghwa"]{--scene:url("img/sc-ansae.webp")}  /* 안개 전각 */
 button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none}
 img{max-width:100%;display:block}
 [hidden]{display:none!important}
@@ -152,7 +161,7 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   line-height:1.8;margin:0 0 2px;letter-spacing:-.018em;text-shadow:0 2px 16px #000;
   text-wrap:balance}
-.kick{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.26em;color:#e3bd77;
+.kick{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.26em;color:#efcf93;
   margin:0 0 13px;display:flex;align-items:center;gap:9px;
   text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.85)}
 .kick::before{content:"";width:16px;height:1px;background:var(--geum-dim);flex:none}
@@ -174,32 +183,36 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.8)}
 
 /* 술사 대사 */
-.say{display:flex;gap:14px;align-items:flex-start;margin:20px 0;position:relative;
-  padding:19px 18px 20px;color:var(--meok);
-  border:1px solid #c3ac84;
+/* 법사의 말 — 문서가 아니라 쪽지입니다.
+   앞서 이 판이 매 화면에서 가장 크고 밝은 덩어리라, 주인공이 늘 뒤로 밀렸습니다.
+   초상을 판 밖으로 빼고 폭을 줄이고, 창살 모서리는 격식 있는 판에만 남깁니다. */
+.say{position:relative;margin:var(--s5) var(--s3) var(--s5) var(--s5);
+  padding:var(--s4) var(--s4) var(--s4) var(--s5);color:var(--meok);
+  border:1px solid #bda683;
   background:
-    var(--co-tl) left 6px top 6px / 22px 22px no-repeat,
-    var(--co-tr) right 6px top 6px / 22px 22px no-repeat,
-    var(--co-bl) left 6px bottom 6px / 22px 22px no-repeat,
-    var(--co-br) right 6px bottom 6px / 22px 22px no-repeat,
-    var(--papermark) right -6px bottom -8px / 132px 132px no-repeat,
+    var(--papermark) right -10px bottom -12px / 104px 104px no-repeat,
     linear-gradient(168deg,rgba(252,246,230,.34) 0%,rgba(243,231,205,.10) 44%,rgba(224,205,172,.40) 100%),
     url("img/hanji.webp") left top/256px 256px repeat,
     linear-gradient(168deg,var(--hanji) 0%,#eae0cc 46%,var(--hanji2) 100%) #e9dfca;
-  box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.4),
-             inset 0 0 44px rgba(160,130,86,.14)}
-.say .por{position:relative;width:52px;height:52px;flex:none;border-radius:50%;
-  border:1px solid #b89a5e;background:#1a120c;
-  box-shadow:0 0 0 2px rgba(239,230,212,.85),0 2px 10px rgba(0,0,0,.4)}
-.say .por::after{content:"";position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);
-  width:32px;height:17px;background:var(--lotus) center/32px 17px no-repeat;opacity:.95}
+  box-shadow:0 8px 22px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.34)}
+/* 접힌 자국 하나 — 종이라는 걸 말 없이 알려 줍니다 */
+.say::after{content:"";position:absolute;left:0;right:0;top:38%;height:2px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(120,96,58,.13),rgba(255,252,242,.34))}
+/* 초상은 판 밖 왼쪽 위에 걸칩니다 */
+.say .por{position:absolute;left:-22px;top:-18px;width:56px;height:56px;border-radius:50%;
+  border:1px solid #b89a5e;background:#1a120c;z-index:2;
+  box-shadow:0 0 0 3px rgba(18,10,9,.9),0 0 0 4px rgba(201,162,74,.5),0 6px 16px rgba(0,0,0,.65)}
+.say .por::after{content:"";position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);
+  width:30px;height:16px;background:var(--lotus) center/30px 16px no-repeat;opacity:.95;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.9))}
 .say .por img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;border-radius:50%}
-.say .txt{flex:1;min-width:0}
-.say .nm{font-family:var(--serif);font-size:var(--fs-sm);letter-spacing:.1em;color:#6d4c22;margin-bottom:6px}
-.say p{margin:0;font-size:var(--fs-body);line-height:1.96;color:var(--meok)}
+.say .txt{min-width:0}
+.say .nm{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.12em;color:#7a5526;
+  margin:0 0 var(--s2) 34px}
+.say p{margin:0;font-size:var(--fs-body);line-height:1.88;color:var(--meok)}
 .say .txt p:first-of-type::before{content:"\201C"}
 .say .txt p:last-of-type::after{content:"\201D"}
-.say p+p{margin-top:7px}
+.say p+p{margin-top:var(--s2)}
 .say em{font-style:normal;color:var(--jusa2);font-weight:500}
 
 /* 단추 */
@@ -725,19 +738,24 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   box-shadow:0 0 18px rgba(232,195,119,.9)}
 
 /* 백귀 패 */
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:4px}
+/* 셋 중 하나를 고르는 자리입니다 — 카드가 화면의 주인공이어야 합니다 */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin-top:var(--s5)}
 .card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
   box-shadow:0 12px 30px rgba(0,0,0,.66),0 0 22px rgba(150,70,26,.10);transition:transform .18s,border-color .2s}
 .card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   box-shadow:inset 0 1px 0 rgba(236,199,130,.14),
     inset 0 16px 26px -20px rgba(0,0,0,.9),inset 0 -18px 28px -20px rgba(0,0,0,.92),
     inset 18px 0 26px -22px rgba(0,0,0,.85),inset -18px 0 26px -22px rgba(0,0,0,.85)}
-.card img{width:100%;aspect-ratio:5/3;object-fit:cover;
+.card img{width:100%;aspect-ratio:3/4.1;object-fit:cover;object-position:50% 38%;
   filter:sepia(.12) saturate(1.3) brightness(1.54) contrast(1.1)}
-.card .nm{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;text-align:center;
-  font-family:var(--serif);font-size:var(--fs-label);color:#f0e2c9;background:linear-gradient(180deg,transparent,rgba(5,3,4,.95))}
-.card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
-  box-shadow:0 14px 30px rgba(0,0,0,.7),0 0 22px rgba(201,162,74,.3)}
+.card .nm{position:absolute;left:0;right:0;bottom:0;padding:var(--s4) var(--s1) var(--s2);text-align:center;
+  font-family:var(--serif);font-size:var(--fs-sm);letter-spacing:.04em;color:#f6e9d2;
+  text-shadow:0 1px 6px #000;
+  background:linear-gradient(180deg,transparent,rgba(5,3,4,.72) 42%,rgba(5,3,4,.97))}
+.card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-8px) scale(1.03);
+  box-shadow:0 20px 38px rgba(0,0,0,.76),0 0 30px rgba(201,162,74,.42)}
+.card[aria-pressed="true"]::after{content:"";position:absolute;inset:-1px;z-index:3;pointer-events:none;
+  border:1px solid rgba(255,226,170,.6)}
 .card.dim img{filter:sepia(.18) grayscale(.5) brightness(1.44) contrast(1.16)}
 .card.dim{opacity:.82}
 
@@ -1343,12 +1361,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029t"></script>
-<script src="js/gungsang.js?v=20261029t"></script>
-<script src="js/engine.js?v=20261029t"></script>
-<script src="js/saju.js?v=20261029t"></script>
-<script src="js/cross.js?v=20261029t"></script>
-<script src="js/sound.js?v=20261029t"></script>
+<script src="js/baekgwi.js?v=20261029v"></script>
+<script src="js/gungsang.js?v=20261029v"></script>
+<script src="js/engine.js?v=20261029v"></script>
+<script src="js/saju.js?v=20261029v"></script>
+<script src="js/cross.js?v=20261029v"></script>
+<script src="js/sound.js?v=20261029v"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1372,6 +1390,7 @@ function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.hidden=true);
   const el=$(id); if(!el) return;
   el.hidden=false;
+  document.documentElement.dataset.scene = id;   /* 마디마다 바탕을 바꿉니다 */
   el.style.animation="none"; void el.offsetWidth; el.style.animation="";
   window.scrollTo({top:0,behavior:"instant"});
   requestAnimationFrame(relayoutAll);
@@ -2541,7 +2560,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.20";
+const BUILD = "2026-10-29.22";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
