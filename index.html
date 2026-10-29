@@ -65,13 +65,15 @@ html,body{height:100%;margin:0}
 body{background:var(--mook);color:var(--jae);font-family:var(--sans);font-weight:400;
   line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 /* 촛불 켠 법당을 아주 옅게 깔아 둡니다 — 백귀사주에서 가져온 그림 */
-body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
-  background:url("img/hall.webp") center top/cover no-repeat var(--mook);
-  opacity:.17;filter:saturate(.82)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+/* 바탕 — 촛불 켠 법당. 덮개는 글이 읽힐 만큼만 씌웁니다.
+   앞서 body::after 가 두 번 선언돼 이 덮개가 통째로 무시되고 있었습니다. */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:
-    radial-gradient(ellipse 120% 62% at 50% 6%,rgba(122,52,18,.20),rgba(10,5,7,0) 62%),
-    linear-gradient(180deg,rgba(10,5,7,.42) 0%,rgba(10,5,7,.80) 42%,var(--mook) 88%)}
+    radial-gradient(ellipse 128% 52% at 50% 0%,rgba(142,62,22,.30),rgba(10,5,7,0) 56%),
+    linear-gradient(180deg,rgba(10,5,7,.66) 0%,rgba(10,5,7,.56) 40%,
+                    rgba(10,5,7,.62) 76%,rgba(10,5,7,.80) 100%),
+    url("img/wall.webp") center top/432px 594px repeat,
+    var(--mook)}
 button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none}
 img{max-width:100%;display:block}
 [hidden]{display:none!important}
@@ -85,12 +87,17 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
     var(--cloud) right -60px top 46vh / 300px 112px no-repeat,
     var(--papermark) left -50px bottom -40px / 230px 230px no-repeat,
     var(--papermark) right -60px top 22vh / 200px 200px no-repeat}
+/* 판 — 바탕의 천불벽이 비쳐야 하므로 여기에 불투명 색을 깔지 않습니다.
+   앞서 var(--mook) 를 깔아 두어 배경 그림이 영영 가려져 있었습니다. */
 #stage{position:relative;z-index:1;overflow-x:clip;max-width:520px;min-height:100svh;margin:0 auto;overflow:hidden;
   background:
-    radial-gradient(120% 60% at 50% 0%, rgba(120,46,30,.30), transparent 60%),
-    radial-gradient(100% 50% at 50% 100%, rgba(90,30,22,.22), transparent 62%),
-    var(--mook);
+    radial-gradient(120% 60% at 50% 0%, rgba(120,46,30,.26), transparent 60%),
+    radial-gradient(100% 50% at 50% 100%, rgba(90,30,22,.20), transparent 62%);
   box-shadow:0 0 90px rgba(0,0,0,.9)}
+/* 바탕 그림이 판 너머로도 이어지도록, 넓은 화면에서는 양옆을 어둡게 모읍니다 */
+@media (min-width:560px){
+  #stage{box-shadow:0 0 0 1px rgba(201,162,74,.12),0 0 120px 40px rgba(10,5,7,.92)}
+}
 #stage::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode:overlay}
@@ -100,9 +107,13 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 /* 머리글 */
 .top{display:flex;align-items:center;justify-content:space-between;
   padding:16px 2px 11px;margin-bottom:4px;position:relative}
+.top::before{content:"";position:absolute;left:-20px;right:-20px;top:-40px;bottom:-14px;z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,4,6,.94) 0%,rgba(8,4,6,.86) 62%,rgba(8,4,6,0) 100%)}
 .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(201,162,74,.35) 18%,rgba(201,162,74,.35) 82%,transparent)}
-.top .brand{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--geum-dim)}
+.top .brand{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:#d9b985;
+  text-shadow:0 1px 5px rgba(6,3,5,.95)}
 .top .step{font-size:11px;letter-spacing:.16em;color:rgba(236,224,210,.6)}
 .snd{position:relative;flex:0 0 auto;
   width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
@@ -123,12 +134,17 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   line-height:1.8;margin:0 0 2px;letter-spacing:-.018em;text-shadow:0 2px 16px #000;
   text-wrap:balance}
-.kick{font-family:var(--serif);font-size:11.5px;letter-spacing:.26em;color:var(--geum);
-  margin:0 0 13px;display:flex;align-items:center;gap:9px}
+.kick{font-family:var(--serif);font-size:11.5px;letter-spacing:.26em;color:#e3bd77;
+  margin:0 0 13px;display:flex;align-items:center;gap:9px;
+  text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.85)}
 .kick::before{content:"";width:16px;height:1px;background:var(--geum-dim);flex:none}
 .rule{width:54px;height:1px;margin:16px auto;background:linear-gradient(90deg,transparent,var(--geum-dim),transparent)}
-.hint{font-size:12.5px;color:var(--jae-dim);line-height:1.85}
+.hint{font-size:12.5px;color:#cbbda9;line-height:1.85;
+  text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.85)}
 .center{text-align:center}
+/* 바탕 그림 위에 바로 얹히는 글 — 어둠을 한 겹 둘러 늘 읽히게 합니다 */
+.foot,.footlinks,.tagline2,.sect,.sectsub,.order,.moletell,.t,.step{
+  text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.8)}
 
 /* 술사 대사 */
 .say{display:flex;gap:14px;align-items:flex-start;margin:20px 0;position:relative;
@@ -140,8 +156,8 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     var(--co-bl) left 6px bottom 6px / 22px 22px no-repeat,
     var(--co-br) right 6px bottom 6px / 22px 22px no-repeat,
     var(--papermark) right -6px bottom -8px / 132px 132px no-repeat,
-    linear-gradient(168deg,rgba(247,241,226,.80) 0%,rgba(234,224,204,.74) 46%,rgba(226,214,190,.80) 100%),
-    url("img/hanji.webp") center/cover,
+    linear-gradient(168deg,rgba(252,246,230,.34) 0%,rgba(243,231,205,.10) 44%,rgba(224,205,172,.40) 100%),
+    url("img/hanji.webp") left top/256px 256px repeat,
     linear-gradient(168deg,var(--hanji) 0%,#eae0cc 46%,var(--hanji2) 100%) #e9dfca;
   box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.4),
              inset 0 0 44px rgba(160,130,86,.14)}
@@ -236,15 +252,17 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   pointer-events:none;
   background:radial-gradient(ellipse 120% 100% at 50% 0%,rgba(122,52,18,.28),rgba(10,5,7,0) 70%)}
 .tags{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0 8px}
-.tags span{position:relative;font-family:var(--serif);font-size:12px;letter-spacing:.12em;
-  color:#ecdcbe;padding:9px 2px 8px;text-align:center;letter-spacing:.04em;border:1px solid rgba(201,162,74,.5);
-  background:
-    var(--co-tl) left 2px top 2px / 8px 8px no-repeat,
-    var(--co-tr) right 2px top 2px / 8px 8px no-repeat,
-    var(--co-bl) left 2px bottom 2px / 8px 8px no-repeat,
-    var(--co-br) right 2px bottom 2px / 8px 8px no-repeat,
-    linear-gradient(180deg,rgba(32,19,14,.88),rgba(11,7,8,.9));
-  box-shadow:0 2px 12px rgba(0,0,0,.6);text-shadow:0 1px 6px #000}
+.tags span{position:relative;font-family:var(--serif);font-size:12.5px;
+  color:#f3e3c4;padding:12px 2px 11px;text-align:center;letter-spacing:.04em;
+  border:1px solid rgba(214,172,86,.62);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(54,30,16,.72),rgba(18,10,9,.78));
+  box-shadow:inset 0 1px 0 rgba(255,222,164,.22),
+             inset 0 -10px 16px -12px rgba(0,0,0,.9),
+             0 6px 18px rgba(0,0,0,.6),0 0 16px rgba(170,92,36,.14);
+  text-shadow:0 1px 6px #000}
+.tags span::after{content:"";position:absolute;left:4px;right:4px;top:3px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,226,170,.28),transparent)}
 
 /* 창살 모서리 — 금테 두른 칸에 공통으로 */
 .valuegrid div, .doc{
@@ -390,7 +408,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 /* 마디 안의 꼭지 — 이게 무슨 기능인지 먼저 밝힙니다 */
 .sect{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:19px;color:#f3e7d3;
   letter-spacing:.01em}
-.sectsub{margin:6px 0 0;font-size:12.5px;line-height:1.85;color:var(--jae-dim)}
+.sectsub{margin:6px 0 0;font-size:12.5px;line-height:1.85;color:#cfc1ad}
 .molezoom input{accent-color:#c0392b}
 .moletell{margin:8px 0 0;text-align:center;font-family:var(--serif);font-size:13px;
   color:var(--geum-dim);transition:color .3s}
@@ -1246,12 +1264,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029m"></script>
-<script src="js/gungsang.js?v=20261029m"></script>
-<script src="js/engine.js?v=20261029m"></script>
-<script src="js/saju.js?v=20261029m"></script>
-<script src="js/cross.js?v=20261029m"></script>
-<script src="js/sound.js?v=20261029m"></script>
+<script src="js/baekgwi.js?v=20261029o"></script>
+<script src="js/gungsang.js?v=20261029o"></script>
+<script src="js/engine.js?v=20261029o"></script>
+<script src="js/saju.js?v=20261029o"></script>
+<script src="js/cross.js?v=20261029o"></script>
+<script src="js/sound.js?v=20261029o"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -2439,7 +2457,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.13";
+const BUILD = "2026-10-29.15";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
