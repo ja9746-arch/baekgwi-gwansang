@@ -184,7 +184,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .titlewrap{position:absolute;left:0;right:0;bottom:6px;z-index:2;text-align:center;
   padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
 .eyebrow{position:relative;display:inline-block;margin:22px 0 0;font-family:var(--serif);font-size:10.5px;
-  letter-spacing:.2em;font-size:11px;color:#e8c98c;padding:4px 12px;
+  letter-spacing:.12em;font-size:11.5px;color:#edd199;padding:4px 13px;
   border-top:1px solid rgba(201,162,74,.35);border-bottom:1px solid rgba(201,162,74,.35);
   background:rgba(10,5,7,.5);text-shadow:0 1px 6px #000}
 .eyebrow::before{content:"";position:absolute;left:50%;top:-13px;transform:translateX(-50%);
@@ -206,9 +206,9 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .intro-body::before{content:"";position:absolute;left:0;right:0;top:-120px;height:220px;z-index:-1;
   pointer-events:none;
   background:radial-gradient(ellipse 120% 100% at 50% 0%,rgba(122,52,18,.28),rgba(10,5,7,0) 70%)}
-.tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:14px 0 8px}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0 8px}
 .tags span{position:relative;font-family:var(--serif);font-size:12px;letter-spacing:.12em;
-  color:#ecdcbe;padding:9px 13px 8px;border:1px solid rgba(201,162,74,.5);
+  color:#ecdcbe;padding:9px 2px 8px;text-align:center;letter-spacing:.04em;border:1px solid rgba(201,162,74,.5);
   background:
     var(--co-tl) left 2px top 2px / 8px 8px no-repeat,
     var(--co-tr) right 2px top 2px / 8px 8px no-repeat,
@@ -335,7 +335,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   border-radius:50%;
   background:radial-gradient(ellipse 60% 74% at 50% 50%,
     rgba(7,4,6,0) 60%, rgba(7,4,6,.5) 80%, rgba(7,4,6,.92) 93%, #070406 100%)}
-.guide{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
+.guide{position:absolute;left:0;top:0;width:100%;height:100%;display:block;z-index:2;pointer-events:none;transition:opacity .4s}
 .guide.idle .tick,.guide.idle .dim{opacity:0}
 .guide.idle .face,.guide.idle .rim{opacity:0}
 .guide .face{fill:none;stroke:rgba(255,246,232,.82);stroke-width:1.1;
@@ -479,7 +479,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .footlinks{margin:6px 0 0;text-align:center;font-size:11.5px;color:rgba(198,184,168,.78)}
 .footlinks span{margin:0 9px;color:rgba(201,162,74,.8)}
 .flink{font-family:var(--serif);font-size:12px;letter-spacing:.06em;
-  color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:11px 6px}
+  color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:14px 7px}
 
 /* 족자 — 맺음과 교차에 쓰는 두루마리 */
 .scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);
@@ -558,8 +558,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   font-family:var(--serif);font-size:12px;color:#f0e2c9;background:linear-gradient(180deg,transparent,rgba(5,3,4,.95))}
 .card[aria-pressed="true"]{border-color:var(--geum-hot);transform:translateY(-4px);
   box-shadow:0 14px 30px rgba(0,0,0,.7),0 0 22px rgba(201,162,74,.3)}
-.card.dim img{filter:grayscale(.45) brightness(.78) contrast(1.05)}
-.card.dim{opacity:.72}
+.card.dim img{filter:sepia(.18) grayscale(.5) brightness(1.44) contrast(1.16)}
+.card.dim{opacity:.82}
 
 .seal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;
   width:52px;height:52px;display:grid;place-items:center;
@@ -636,23 +636,28 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   box-shadow:inset 0 0 0 1.5px rgba(232,190,104,.95),
              inset 0 0 8px rgba(0,0,0,.4),
              0 0 12px rgba(232,195,119,.45)}
-.tang .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 40%;
-  filter:sepia(.14) saturate(1.34) brightness(1.72) contrast(1.14)}
+.tang .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;
+  transform:scale(1.2);transform-origin:50% 38%;
+  filter:sepia(.4) saturate(1.5) brightness(1.76) contrast(1.42)}
 .tang .slot::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.2),transparent 66%)}
+  background:radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.12),transparent 70%)}
 .tang .slot.on{opacity:1;transform:none;transition:opacity .5s,transform .5s}
-.tang .slot.boss{box-shadow:inset 0 0 0 2.5px rgba(255,214,150,1),
-  0 0 0 2px rgba(255,74,44,.9),0 0 26px rgba(255,84,54,.95),0 0 52px rgba(255,54,32,.7);
+.tang .slot.on:not(.boss) img{filter:sepia(.46) saturate(1.3) brightness(1.56) contrast(1.38)}
+.tang .slot.on:not(.boss)::after{background:
+  radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.1),transparent 70%),
+  linear-gradient(180deg,rgba(8,4,5,.1),rgba(8,4,5,.22))}
+.tang .slot.boss{box-shadow:inset 0 0 0 3px rgba(255,238,200,1),inset 0 0 14px rgba(190,24,14,.55),
+  0 0 0 3px rgba(255,62,34,1),0 0 30px rgba(255,84,54,1),0 0 64px rgba(255,44,24,.85);
   animation:bossglow 2.2s ease-in-out infinite}
-.tang .slot.boss img{filter:sepia(.06) saturate(1.5) brightness(1.9) contrast(1.16)}
+.tang .slot.boss img{filter:sepia(.2) saturate(1.7) brightness(1.94) contrast(1.46)}
 .tang .slot.boss::after{background:
   radial-gradient(ellipse at 50% 38%,rgba(255,226,170,.26),transparent 64%),
   linear-gradient(180deg,rgba(255,70,40,.16),rgba(190,24,14,.24))}
 @keyframes bossglow{
-  0%,100%{box-shadow:inset 0 0 0 2.5px rgba(255,214,150,1),0 0 0 2px rgba(255,74,44,.9),
-          0 0 18px rgba(255,84,54,.8),0 0 36px rgba(255,54,32,.5)}
-  50%    {box-shadow:inset 0 0 0 2.5px rgba(255,236,196,1),0 0 0 3px rgba(255,96,56,1),
-          0 0 32px rgba(255,104,64,1),0 0 66px rgba(255,54,32,.85)}
+  0%,100%{box-shadow:inset 0 0 0 3px rgba(255,238,200,1),inset 0 0 14px rgba(190,24,14,.55),
+          0 0 0 2.5px rgba(255,62,34,.95),0 0 22px rgba(255,84,54,.85),0 0 44px rgba(255,54,32,.55)}
+  50%    {box-shadow:inset 0 0 0 3px rgba(255,255,236,1),inset 0 0 16px rgba(214,34,20,.6),
+          0 0 0 4px rgba(255,86,46,1),0 0 38px rgba(255,112,70,1),0 0 78px rgba(255,44,24,.9)}
 }
 @media (prefers-reduced-motion:reduce){ .tang .slot.boss{animation:none} }
 
@@ -748,7 +753,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <div class="hole" id="hole">
       <div class="empty" id="holeEmpty">
         <div class="ico">鏡</div>
-        <div>얼굴을 한 번 비춰주세요<br>정면, 민낯에 가까울수록 좋습니다</div>
+        <div>얼굴을 한 번 비춰주세요<br>정면·민낯, 흰빛 도는 자리에서요</div>
       </div>
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
@@ -842,7 +847,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <img class="ph" alt="">
     <div class="veil"></div>
   </div>
-  <p class="hint center" style="margin-top:10px">자리를 눌러 보세요. 서 있는 것이 비켜주면 풀이가 열립니다.</p>
+  <p class="hint center" id="boardHint" style="margin-top:10px">자리를 눌러 보세요. 서 있는 것이 비켜주면 풀이가 열립니다.</p>
   <div id="boardHead"></div>
   <div class="gungs" id="gungs"></div>
   <div id="boardTail"></div>
@@ -971,7 +976,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
     <h3>복채(결제)</h3>
     <ul>
-      <li>무료로 명궁(命宮) 한 자리까지 보여 드립니다. 나머지 열한 자리와
+      <li>얼굴을 읽어 드리는 데까지와 열두 자리 중 <b>한 자리</b>는 값 없이 보여 드립니다.
+          어느 자리가 열리는지는 손님 얼굴에 따라 달라집니다. 나머지 열한 자리와
           처방(점자리·길한 색·머리 모양)·백귀도는 <b>3,990원</b>에 열립니다.</li>
       <li>얼굴과 사주를 맞대어 보는 교차 풀이(연애·금전·직장사업·이동수)는
           <b>9,900원</b>이며, 위 3,990원과 별개의 상품입니다.</li>
@@ -1035,6 +1041,9 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
           카드번호 등 결제수단 정보는 결제대행사가 처리하며 회사는 보관하지 않습니다.</li>
       <li><b>문의 내역</b>: 문의에 답하기 위해 보내 주신 이메일 주소와 내용.</li>
       <li><b>접속 기록</b>: 서비스 운영과 오류 확인을 위한 최소한의 기록.</li>
+      <li><b>기기 안의 복채 표시</b>: 복채를 내신 뒤 같은 브라우저에서 다시 내지 않으셔도 되도록,
+          주문번호와 결제 시각을 그 기기의 브라우저 저장소(로컬 스토리지)에만 남깁니다.
+          서버로 보내지 않으며, 브라우저 저장 자료를 지우시면 함께 사라집니다.</li>
     </ul>
 
     <h3>3. 보유 기간</h3>
@@ -1135,12 +1144,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029d"></script>
-<script src="js/gungsang.js?v=20261029d"></script>
-<script src="js/engine.js?v=20261029d"></script>
-<script src="js/saju.js?v=20261029d"></script>
-<script src="js/cross.js?v=20261029d"></script>
-<script src="js/sound.js?v=20261029d"></script>
+<script src="js/baekgwi.js?v=20261029e"></script>
+<script src="js/gungsang.js?v=20261029e"></script>
+<script src="js/engine.js?v=20261029e"></script>
+<script src="js/saju.js?v=20261029e"></script>
+<script src="js/cross.js?v=20261029e"></script>
+<script src="js/sound.js?v=20261029e"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1716,6 +1725,9 @@ function buildBoard(){
   $("boardTitle").innerHTML = S.paid
     ? `열두 자리가 모두 열렸습니다.<br><span style="color:var(--geum-hot)">트인 곳 ${R.opened} · 반반 ${12-R.opened-R.blocked} · 막힌 곳 ${R.blocked}</span>`
     : "얼굴에 열두 자리가 있고<br>자리마다 하나씩 서 있어요…";
+  $("boardHint").textContent = S.paid
+    ? "자리를 눌러 보시면 그 자리 풀이가 펼쳐집니다."
+    : "자리를 눌러 보세요. 서 있는 것이 비켜주면 풀이가 열립니다.";
   /* 가진 것을 먼저 — 트인 자리는 흉이 아니라 손님 몫입니다 */
   const gang = R.jari.filter(j=>j.lv===0).slice(0,4);
   $("boardHead").innerHTML = (S.paid && gang.length)
@@ -1724,7 +1736,7 @@ function buildBoard(){
         `<div><span class="gn">${GANG[j.g.k][0]}</span>`+
         `<span class="gg">${j.g.n} · ${j.g.bu}</span>`+
         `<p>${GANG[j.g.k][1]}</p></div>`).join("")+`</div>`+
-      `<p class="kick" style="margin-top:22px">그리고 막힌 데</p>`
+      `<p class="kick" style="margin-top:22px">그리고, 열두 자리를 하나씩</p>`
     : "";
   $("boardTail").innerHTML = S.paid
     ? `<button class="btn" id="toCure">법사와 흥정을 보겠습니다</button>`
@@ -2145,7 +2157,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.4";
+const BUILD = "2026-10-29.5";
 (function(){ const b=$("buildNo"); if(b) b.textContent=BUILD; })();
 
 /* 배경음 — 처음에는 꺼져 있고, 눌러야 켜집니다 */

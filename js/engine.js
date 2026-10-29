@@ -226,21 +226,33 @@ function pickHyeong(m){
 function pickGisaek(m){
   const { mR:R, mG:G, mB:B, meanL:L } = m;
   const mx = Math.max(R,G,B), mn = Math.min(R,G,B);
-  const chae  = (mx - mn) / Math.max(mx,1);
+  const chae = (mx - mn) / Math.max(mx,1);                 /* 핏기 */
+  const warm = (R - G) / Math.max(L,1);                    /* 붉은 쪽으로 치우친 정도 */
+  const gb   = (G - B) / Math.max(L,1);                    /* 누런 쪽으로 치우친 정도 */
   const geuneul = (Math.max.apply(null,m.sam) - Math.min.apply(null,m.sam)) / Math.max(L,1);
-  /* 어둡거나 그늘이 한쪽에만 지면 흑기 */
-  if (L < 72 || geuneul > 0.46) return "흑";
-  /* 핏기가 거의 없으면 백기 */
-  if (chae < 0.13) return "백";
-  /* 보통 살빛은 누런빛이 푸른빛보다 한참 앞섭니다.
-     그 차가 좁아지면 푸른 기가 도는 것입니다. */
-  /* 살빛은 누런빛이 푸른빛을 한참 앞섭니다. 그 사이가 거의 없어졌을 때만 청기입니다.
-     찬 전등 아래 사진을 모두 청기라 하면 점이 아니라 조명 이야기가 됩니다. */
-  if ((G - B) < (R - G) * 0.12) return "청";
-  /* 붉은 쪽인가 누런 쪽인가 */
-  const ddeum = (R - G) / Math.max(R - B, 1);
-  if (ddeum > 0.70 || (chae > 0.42 && ddeum > 0.64)) return "적";
-  return "황";
+
+  /* 얼굴 열일곱을 재어 얻은 자리입니다.
+     절대 눈금으로 끊으면 살빛은 평생 그 눈금을 넘지 못해
+     다섯 기색 중 황기 하나만 나옵니다. 그래서 무리 안에서의 치우침으로 가립니다. */
+  const zL    = (L    - 178.2) / 18.9;
+  const zChae = (chae - 0.281) / 0.059;
+  const zWarm = (warm - 0.187) / 0.046;
+  const zGb   = (gb   - 0.135) / 0.039;
+
+  /* 네 쪽으로 얼마나 치우쳤는가. 그늘은 흑기에만 거듭니다. */
+  const sc = {
+    "흑": -zL * 0.78 + Math.min(geuneul / 0.14, 2.2) * 0.42,
+    "백": -zChae,
+    "적":  zWarm * 0.82 - zGb * 0.34,
+    "청": -zGb * 0.86 - zChae * 0.30
+  };
+  /* 어지간한 얼굴은 황기입니다. 기색마다 넘어야 할 문턱이 달라서,
+     흔한 흑·적보다 드문 청기의 문턱을 높게 둡니다.
+     문턱을 가장 많이 넘어선 쪽이 그 얼굴에 도는 빛입니다. */
+  const need = { "흑":0.95, "백":1.05, "적":0.90, "청":1.45 };
+  let best = "황", bv = 0;
+  for (const k in sc) { const over = sc[k] - need[k]; if (over > bv) { bv = over; best = k; } }
+  return best;
 }
 
 /* ── 5. 삼정을 가린다 ─────────────────────────────── */
@@ -265,9 +277,18 @@ function pickSamjeong(m){
 function gradeAll(m){
   const ks = GUNG.map(G=>G.k);
   const v = ks.map(k => m.gung[k].L - m.gung[k].sd*0.42);
-  const mu = v.reduce((a,b)=>a+b,0)/v.length;
-  const sd = Math.sqrt(v.reduce((a,b)=>a+(b-mu)*(b-mu),0)/v.length) || 1;
-  const z = v.map(x=>(x-mu)/sd);
+  /* 얼굴 평균으로 나눠, 사진이 밝든 어둡든 같은 자로 재게 합니다. */
+  const face = m.meanL || (v.reduce((a,b)=>a+b,0)/v.length) || 1;
+  const rel = v.map(x => x / Math.max(face,1));
+  /* 자리마다 타고난 밝기가 달라서, 그 자리 무리 안에서 견줍니다.
+     얼굴 열두 자리끼리 견주면 눈두덩은 누구나 막히고 산근은 누구나 트입니다. */
+  const z = ks.map((k,i)=>{
+    const bs = (typeof GUNG_BASE !== "undefined") && GUNG_BASE[k];
+    if(!bs) return 0;
+    /* 표본이 좁게 뭉친 자리가 눈금만 민감해지지 않게 폭을 잡아 둡니다. */
+    const sd = Math.max(0.055, Math.min(0.20, bs[1]));
+    return (rel[i] - bs[0]) / sd;
+  });
   const out = {}, zz = {};
   ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); zz[k]=z[i]; });
   out.__z = zz;
