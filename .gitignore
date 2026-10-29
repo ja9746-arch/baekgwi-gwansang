@@ -1,3 +1,6 @@
 .DS_Store
 Thumbs.db
 .deck.json
+
+.openai/
+dist/

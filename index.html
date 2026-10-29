@@ -964,6 +964,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   padding:11px 18px;font-size:var(--fs-sm);font-family:var(--serif);opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.on{opacity:1}
 </style>
+<link rel="stylesheet" href="css/atelier.css?v=1">
 </head>
 <body>
 
@@ -972,12 +973,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <!-- 0. 들어가기 -->
 <section class="screen" id="s-intro">
   <div class="hero keyvis">
-    <img src="img/hero.webp" alt="원안법사">
+    <img class="entrance-character" src="img/atelier/wonan-welcome.webp" alt="청동거울을 들고 손을 내미는 원안법사" fetchpriority="high">
     <div class="titlewrap">
       <img class="titleimg" src="img/title.webp" alt="백귀관상">
-      <p class="eyebrow">원광법사의 제자 · 圓安法師</p>
-      <p class="tagline2">얼굴에 새겨진 기운을 읽어<br>타고난 성향과 운의 흐름을 살핍니다</p>
-      <div class="tags"><span>성향운</span><span>재물운</span><span>인연운</span><span>건강운</span><span>말년운</span></div>
+      <p class="eyebrow">원안법사의 비밀 관상소</p>
+      <p class="tagline2">얼굴에는<br>자네가 살아온 흔적이<br>남아 있지.</p>
+      <p class="entrance-caption">얼굴 한 장으로 펼쳐지는 나만의 관상첩</p>
     </div>
   </div>
   <div class="intro-body">
@@ -985,12 +986,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <div class="por"><img src="img/seer-mirror.webp" alt=""></div>
       <div class="txt">
         <div class="nm">원안법사 圓安法師</div>
-        <p>…저, 오셨네요. 거울을 하나 들고 있는데요…</p>
-        <p>백귀는 거울에 비친 것으로만 드러나서… 그래서, 얼굴을 한 번 비춰주셔야 해요. 괜찮으시면요…</p>
+        <p>어서 오시게.<br>거울 앞에 앉아보시게나.</p>
+        <p>자네 얼굴에 새겨진 이야기를<br>하나씩 읽어드리지.</p>
       </div>
     </div>
     <div id="lastNote"></div>
-    <button class="btn" data-go="s-ask">거울 앞에 서겠습니다</button>
+    <button class="btn" data-go="s-ask">원안법사에게 얼굴 보이기</button>
     <p class="foot">역사·설화를 바탕으로 재구성한 디지털 점찰 콘텐츠입니다.<br>
       올리신 사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
     <p class="footlinks">
@@ -1009,8 +1010,9 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <!-- 1. 묻기 -->
 <section class="screen" id="s-ask" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">1 / 6</div></div>
+  <div class="character-scene"><img src="img/atelier/wonan-record.webp" alt="관상첩을 기록하는 원안법사" loading="lazy" decoding="async"></div>
   <p class="kick">첫째 마디 · 묻기</p>
-  <h2 class="t">나이와 성별부터<br>여쭙겠습니다…</h2>
+  <h2 class="t">관상첩을 펴기 전에,<br>두 가지만 여쭙겠네.</h2>
   <div class="scene" aria-hidden="true">
     <img src="img/ob-jangbu.webp" alt="" loading="lazy" decoding="async">
     <span class="cap">원 안 법 사 의  장 부</span>
@@ -1019,8 +1021,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt">
       <div class="nm">원안법사</div>
-      <p>얼굴에는 나이마다 자리가 정해져 있어요. <em>유년운기부위</em>라고 하는데… 몇 살인지를 알아야 올해 운이 어느 자리에 걸렸는지 짚을 수 있어서요.</p>
-      <p>…그리고 남녀가 세는 방향이 반대라서요. 죄송한데 둘 다 여쭐게요.</p>
+      <p>옛 관상에서는 나이에 따라 얼굴을 살피는 자리를 달리했네. 그 전통적인 구분을 안내하는 데 쓰겠네.</p>
+      <p>이 정보로 자네의 성격이나 미래를 단정하지는 않네.</p>
     </div>
   </div>
   <div class="fields">
@@ -1044,19 +1046,20 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <div class="yunpae" id="yunHint"></div>
     </div>
   </div>
-  <button class="btn" id="askGo" disabled>거울을 받겠습니다</button>
+  <button class="btn" id="askGo" disabled>청동거울 앞에 앉기</button>
   <p class="askhint" id="askHint">먼저 성별을 골라 주세요.</p>
 </section>
 
 <!-- 2. 거울 -->
 <section class="screen" id="s-mirror" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">2 / 6</div></div>
+  <div class="character-scene"><img src="img/atelier/wonan-mirror.webp" alt="거울을 들어 얼굴을 살피는 원안법사" loading="lazy" decoding="async"></div>
   <p class="kick">둘째 마디 · 비추기</p>
   <div class="mirror" id="mirror">
     <div class="hole" id="hole">
       <div class="empty" id="holeEmpty">
         <div class="ico">鏡</div>
-        <div>얼굴을 한 번 비춰주세요<br>정면·민낯, 흰빛 도는 자리에서요</div>
+        <div>얼굴을 한 번 비춰주세요<br>정면을 바라보고, 얼굴을 가린 물건은 치워주세요</div>
       </div>
       <video class="ph" id="vid" playsinline muted hidden></video>
       <img class="ph" id="phMirror" alt="" hidden>
@@ -1082,11 +1085,11 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   </div>
   <input type="file" id="filePick" accept="image/*" hidden>
   <div id="getrow">
-    <button class="btn" id="live" hidden>거울에 바로 비추기</button>
-    <label class="btn ghost" for="filePick" id="pickLbl">사진첩에서 고르기</label>
+    <button class="btn" id="live" hidden>사진 촬영</button>
+    <label class="btn ghost" for="filePick" id="pickLbl">앨범에서 선택</label>
   </div>
-  <button class="btn" id="shotLive" hidden>이대로 찍겠습니다</button>
-  <button class="btn" id="shot" hidden>자세를 다 잡았습니다</button>
+  <button class="btn" id="shotLive" hidden>이 얼굴로 관상 보기</button>
+  <button class="btn" id="shot" hidden>이 얼굴로 관상 보기</button>
   <label class="btn ghost" for="filePick" id="redo" hidden>다른 사진으로 바꾸기</label>
   <p class="hint center" id="mirrorHint" style="margin-top:12px">사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
 </section>
@@ -1094,6 +1097,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <!-- 3. 읽기 -->
 <section class="screen" id="s-read" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">3 / 6</div></div>
+  <div class="character-scene"><img src="img/atelier/wonan-explain.webp" alt="얼굴의 이야기를 해설하는 원안법사" loading="lazy" decoding="async"></div>
   <p class="kick">셋째 마디 · 읽기</p>
   <div class="facewrap" id="faceRead">
     <img class="ph" alt="">
@@ -1103,7 +1107,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="readtag" id="readTag">점을 하나 눌러 보세요 — 어느 자리인지 짚어 드립니다</p>
   <div class="order" id="readOrder" style="min-height:62px"></div>
   <div id="readOut"></div>
-  <button class="btn" id="readGo" hidden>지난 일을 짚어 보겠습니다</button>
+  <button class="btn" id="readGo" hidden>내 얼굴 관상도 펼치기</button>
 </section>
 
 <!-- 4. 적중 -->
@@ -1161,13 +1165,14 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <!-- 7. 값 -->
 <section class="screen" id="s-pay" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">5 / 6</div></div>
+  <div class="character-scene"><img src="img/atelier/wonan-letter.webp" alt="봉인된 밀서를 건네는 원안법사" loading="lazy" decoding="async"></div>
   <p class="kick">다섯째 마디 · 복채</p>
-  <h2 class="t">열한 자리가<br>아직 봉해져 있어요…</h2>
+  <h2 class="t">아직 펼치지 않은<br>자네의 이야기가 있네.</h2>
   <div class="say">
     <div class="por"><img src="img/seer-deal.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
-      <p>…제가 저것들하고 말을 좀 섞어야 하는데요. 그게, 그냥은 안 비켜줘서…</p>
-      <p>이거까지만 봐드릴 테니, 손님도 마음을 정하셔야 해요…</p>
+      <p>여기부터는 얼굴 한 곳만 따로 볼 수가 없네. 앞에서 본 자리들과 함께 놓고 봐야 하거든.</p>
+      <p>여덟 첩에 담긴 이야기와 마지막 밀서까지, 자네의 관상첩을 완성해 보겠나?</p>
     </div>
   </div>
   <div class="sigil" aria-hidden="true">
@@ -1175,14 +1180,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <span class="n"><b id="sealN">11</b></span>
   </div>
   <p class="sigilcap">자리가 봉해져 있습니다</p>
-  <div class="valuegrid">
-    <div><b>열두 자리 전부</b><span>십이궁 낱낱의 풀이</span></div>
-    <div><b>우두머리</b><span>올해를 쥔 하나</span></div>
-    <div><b>점자리</b><span>찍을 자리·뺄 자리</span></div>
-    <div><b>길한 색</b><span>쓸 색 둘, 꺼릴 색 하나</span></div>
-    <div><b>머리 모양</b><span>가릴 곳과 드러낼 곳</span></div>
-    <div><b>백귀도 한 장</b><span>열두 칸을 채운 그림</span></div>
-  </div>
+  <div class="valuegrid"><div><b>재물과 인연</b><span>서로 이어지는 얼굴의 자리</span></div><div><b>사회적 인상</b><span>내가 느끼는 나와 함께 읽기</span></div><div><b>세월과 균형</b><span>삼정으로 살피는 얼굴 이야기</span></div><div><b>얼굴 열두 자리</b><span>내 사진 위에서 직접 탐색</span></div><div><b>마지막 밀서</b><span>원안법사가 건네는 편지</span></div><div><b>나만의 관상첩</b><span>저장하고 다시 펼치는 기록</span></div></div>
   <div class="price">
     <div class="s">복 채</div>
     <div class="b" id="payPrice"><del>5,900원</del>3,990원</div>
@@ -1255,6 +1253,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <!-- 10. 맺음 -->
 <section class="screen" id="s-end" hidden>
   <div class="top"><div class="brand">백귀관상</div><div class="step">맺음</div></div>
+  <div class="character-scene"><img src="img/atelier/wonan-letter.webp" alt="마지막 밀서를 건네는 원안법사" loading="lazy" decoding="async"></div>
   <p class="kick">맺음 · 총평</p>
   <h2 class="t" id="endTitle"></h2>
 
@@ -1265,7 +1264,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
   <div class="scroll" id="endScroll"></div>
 
-  <p class="kick" style="margin-top:26px">얼굴은 그릇, 때는 사주</p>
+  <div hidden>  <p class="kick" style="margin-top:26px">얼굴은 그릇, 때는 사주</p>
   <div class="say">
     <div class="por"><img src="img/seer-end.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
@@ -1285,7 +1284,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <div class="n">대면으로 사주·관상을 함께 보면 보통 수만 원대입니다</div>
   </div>
   <button class="btn hot" id="crossBtn">생년월일을 적겠습니다</button>
-  <button class="btn ghost" id="again">처음부터 다시 보겠습니다</button>
+  <button class="btn ghost" id="again">처음부터 다시 보겠습니다</button></div>
+  <button class="btn" onclick="openBook()">내 관상첩으로 돌아가기</button>
 </section>
 
 <section class="screen" id="s-legal" hidden>
@@ -1299,40 +1299,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <p>역사와 설화를 바탕으로 재구성한 읽을거리이며, 미래의 사건이나 초자연적 존재를
        객관적으로 확정하지 않습니다. 의료·법률·투자 판단의 근거로 쓰지 마십시오.</p>
 
-    <h3>복채(결제)</h3>
-    <ul>
-      <li>얼굴을 읽어 드리는 데까지와 열두 자리 중 <b>한 자리</b>는 값 없이 보여 드립니다.
-          어느 자리가 열리는지는 손님 얼굴에 따라 달라집니다. 나머지 열한 자리와
-          처방(점자리·길한 색·머리 모양)·백귀도는 <b>3,990원</b>에 열립니다.</li>
-      <li>얼굴과 사주를 맞대어 보는 교차 풀이(연애·금전·직장사업·이동수)는
-          <b>9,900원</b>이며, 위 3,990원과 별개의 상품입니다.</li>
-      <li>3,990원은 여는 날 기념값입니다. 기념 기간이 끝나면 정가 5,900원으로
-          올리며, 값이 바뀌기 전에 이 쪽에 먼저 적습니다.</li>
-      <li>단건 결제이며 자동 갱신이나 정기 결제는 없습니다.</li>
-      <li>한 번 복채를 내시면 그 기기의 브라우저에서는 다시 내지 않으셔도 됩니다.
-          다만 얼굴 사진을 저장하지 않으므로, 풀이를 다시 보시려면 얼굴을 한 번 더
-          비춰 주셔야 합니다. 브라우저 기록을 지우거나 다른 기기에서 여실 때는
-          다시 결제해야 합니다.</li>
-      <li>결제는 결제대행사를 통해 처리되며, 본 서비스는 카드번호 등 결제수단 정보를
-          보관하지 않습니다.</li>
-    </ul>
-
-    <h3>환불</h3>
-    <ul>
-      <li>결제 즉시 디지털 콘텐츠가 제공되므로, <b>봉인을 해제해 풀이를 열람하신 뒤에는
-          환불이 어렵습니다.</b> (전자상거래법 제17조 제2항 제5호)</li>
-      <li>결제 전 명궁 한 자리를 무료로 먼저 보여 드리는 것으로 시험 사용을 갈음합니다.
-          (같은 법 제17조 제6항)</li>
-      <li>결제했으나 <b>풀이를 열람하지 않은 경우</b>, 결제일로부터 7일 이내 전액
-          환불해 드립니다.</li>
-      <li>9,900원 교차 풀이도 같습니다. 생년월일을 넣고 풀이가 뜬 뒤에는 환불이
-          어렵고, 결제만 하고 풀이를 받지 않으셨다면 7일 이내 전액 환불합니다.</li>
-      <li>오류·중복결제·미제공 등 서비스 쪽 사유일 때는 열람 여부와 관계없이 전액
-          환불합니다.</li>
-      <li>환불 요청은 아래 문의처로 결제일시와 결제수단을 적어 보내 주십시오.
-          영업일 기준 3일 안에 처리합니다.</li>
-    </ul>
-
+    <h3>원안법사의 비밀 관상첩</h3><p>첫 관상첩과 이마·눈·코 탐색은 무료입니다. 전체 상품은 8첩 구성, 9,900원 단건 상품으로 준비하고 있습니다.</p><p>현재는 리디자인 검수 버전입니다. 실제 결제는 연결되어 있지 않으며, 유료 화면 미리보기에 비용이 청구되지 않습니다. 결제 연동 전 정식 이용·환불 조건을 안내합니다.</p>
     <h3>얼굴 사진</h3>
     <ul>
       <li>올리신 사진은 <b>이용자의 기기 안에서만</b> 처리됩니다. 서버로 전송되지 않고,
@@ -1354,9 +1321,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <h3>1. 얼굴 사진을 수집하지 않습니다</h3>
     <p>백귀관상은 이용자가 올린 얼굴 사진을 서버로 전송하지 않습니다. 사진 판독은 전부
        이용자의 기기(브라우저) 안에서 이루어지며, 판독이 끝난 뒤에도 사진은 기기를
-       벗어나지 않습니다. 창을 닫으면 사진과 판독 결과는 모두 사라집니다.</p>
-    <p>그러므로 회사는 얼굴 사진, 얼굴에서 뽑은 수치, 그에 따른 풀이 내용을
-       보관하지 않습니다.</p>
+       벗어나지 않습니다. 창을 닫으면 원본 사진은 사라집니다. 최근 판독 요약은 이 기기의 브라우저 저장소에 남을 수 있습니다.</p>
+    <p>회사는 원본 사진과 판독 내용을 서버에 보관하지 않습니다. 기기의 최근 판독 기록은 브라우저 사이트 데이터 삭제로 지울 수 있습니다.</p>
 
     <h3>2. 처리하는 개인정보와 목적</h3>
     <ul>
@@ -1942,7 +1908,7 @@ function compareHTML(c){
    (!c.better.length&&!c.worse.length?`<div class="srow"><span class="sk">달라진 것</span><span class="sv">열두 자리가 모두 그대로입니다. 아직 움직이지 않았어요.</span></div>`:"")+
    `</div>`;
 }
-$("readGo").addEventListener("click",()=>{ showHit(); });
+$("readGo").addEventListener("click",()=>{ go("s-board"); buildBoard(); });
 
 /* ── 4. 적중 ──────────────────────────────── */
 function showHit(){
@@ -2195,7 +2161,7 @@ const DEMO_CHECKOUT = true;      /* 연동 전까지는 참 */
 /* list 는 기념값이 끝난 뒤 실제로 받을 값이어야 합니다.
    그럴 뜻이 없으면 null 로 두세요 — 줄 그은 값이 사라집니다.
    받지 않을 값을 줄 그어 두면 거짓 할인이 됩니다. */
-const PRICE = { now: 3990, list: 5900, name: "백귀관상 · 열두 자리 개봉" };
+const PRICE = { now: 9900, list: null, name: "원안법사의 비밀 관상첩" };
 const PRICE_CROSS = { now: 9900, list: null, name: "백귀관상 · 얼굴과 사주 교차" };
 
 /* 값 표시를 PRICE 에 맞춥니다 */
@@ -2204,7 +2170,7 @@ const PRICE_CROSS = { now: 9900, list: null, name: "백귀관상 · 얼굴과 �
   const el=$("payPrice");
   if(el) el.innerHTML=(PRICE.list?`<del>${won(PRICE.list)}</del>`:"")+won(PRICE.now);
   const btn=$("payBtn");
-  if(btn) btn.textContent=`${won(PRICE.now)} 내고 열두 자리 열기`;
+  if(btn) btn.textContent=`내 관상첩 모두 열기 · ${won(PRICE.now)}`;
   const sn=$("sealN"); if(sn && typeof R!=="undefined" && R) sn.textContent="11";
   if(!PRICE.list){
     const t=$("payTimer");
@@ -2231,11 +2197,11 @@ function hasTicket(k){ return !!tickets()[k]; }
 function putTicket(k){
   try{ const v=tickets(); v[k]=Date.now(); localStorage.setItem(TICKET,JSON.stringify(v)); }catch(e){}
 }
-S.paid = hasTicket("gung");
+S.paid = DEMO_CHECKOUT ? false : hasTicket("gung");
 
 function unlockAll(){
-  S.paid=true; putTicket("gung");
-  go("s-board"); buildBoard();
+  S.paid=true; if(!DEMO_CHECKOUT) putTicket("gung");
+  openBook();
 }
 $("payBtn").addEventListener("click",async()=>{
   const b=$("payBtn"); if(b.disabled) return;
@@ -2782,5 +2748,6 @@ if(S.prev){
 refreshAsk();
 </script>
 
+<script src="js/atelier.js?v=1"></script>
 </body>
 </html>
