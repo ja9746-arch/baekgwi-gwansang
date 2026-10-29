@@ -268,8 +268,9 @@ function gradeAll(m){
   const mu = v.reduce((a,b)=>a+b,0)/v.length;
   const sd = Math.sqrt(v.reduce((a,b)=>a+(b-mu)*(b-mu),0)/v.length) || 1;
   const z = v.map(x=>(x-mu)/sd);
-  const out = {};
-  ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); });
+  const out = {}, zz = {};
+  ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); zz[k]=z[i]; });
+  out.__z = zz;
   /* 어느 얼굴에도 가진 것과 고칠 것이 함께 있어야 풀이가 섭니다.
      고르게 뭉친 얼굴이면 높은 차례·낮은 차례로 조금 벌려 줍니다. */
   const order = ks.map((k,i)=>({k, z:z[i]})).sort((a,b)=>b.z-a.z);
@@ -338,12 +339,16 @@ function divine(m, age, sex){
   const pick3 = PICK_POOL.map((th,ti)=>({ i: pickFrom(th.pool, seed, 907+ti*53), q: th.q }));
   const 보류 = pick3.map(x=>x.i);
   const lvAll = gradeAll(m);
+  const zAll = lvAll.__z || {};
   const jari = GUNG.map((G, i) => {
     const lv = lvAll[G.k];
     const pool = G.pool.filter(x=>보류.indexOf(x)<0);
     const bg = pickFrom(pool.length?pool:G.pool, seed, i*31 + lv);
-    return { g:G, lv, bg };
+    return { g:G, lv, bg, z: (zAll[G.k]===undefined ? 0 : zAll[G.k]) };
   });
+  /* 실제로 가장 환한 자리와 가장 그늘진 자리 */
+  const byZ = jari.slice().sort((a,b)=>b.z-a.z);
+  const brightest = byZ[0], darkest = byZ[byZ.length-1];
 
   /* 올해를 쥔 자리 */
   let boss = jari.find(j => j.g.k === yun.g) || jari[0];
@@ -359,6 +364,7 @@ function divine(m, age, sex){
   const opened  = jari.filter(j=>j.lv===0).length;
 
   return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, pick3,
+           brightest, darkest,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }
 
@@ -370,9 +376,18 @@ function prescribe(R){
   /* 점자리 — 올해를 쥔 궁에서 */
   const jeom = (JEOM[R.boss.g.k] || JEOM["명"]).slice();
 
-  /* 색 — 그릇의 길색 둘, 그리고 지금 기운이 누르는 색 하나 */
-  const gil = oh.ggil.slice();
+  /* 색 — 그릇의 길색 둘, 그리고 지금 기운이 누르는 색 하나.
+     같은 형상이라도 고쳐야 할 자리가 다르면 쓰는 데가 달라집니다. */
+  const needK = (R.boss.lv >= 1) ? R.boss.g.k
+              : ((R.darkest && R.darkest.g.k !== R.boss.g.k) ? R.darkest.g.k : R.boss.g.k);
+  const ter = (typeof SAEK_TER !== "undefined" && SAEK_TER[needK]) || null;
+  const gil = oh.ggil.map((c,i)=>{
+    const c2 = c.slice();
+    if(ter) c2[2] = ter[0][i] || c2[2];
+    return c2;
+  });
   let hyung = oh.ghyung.slice();
+  if(ter) hyung[2] = ter[1];
   hyung[2] = hyung[2] + "에는 올해 쓰지 마세요";
   /* 기색이 그릇을 누르고 있으면 꺼릴 색을 기색 쪽으로 바꿉니다 */
   if (R.gyo.dan === "극(剋)"){
@@ -389,6 +404,9 @@ function prescribe(R){
     mori[1] += " 턱을 덮지 마시고요. 손님은 뒤로 갈수록 좋아지는 얼굴입니다.";
   if (R.samjeong === "상")
     mori[1] += " 이마는 끝까지 드러내세요. 초년에 받은 것이 거기 있습니다.";
+  /* 고쳐야 할 자리에 맞춘 한 줄을 더 얹습니다 */
+  if (typeof MORI_TER !== "undefined" && MORI_TER[needK])
+    mori[1] += " " + MORI_TER[needK];
 
   return { jeom, gil, hyung, mori, oh, gi };
 }

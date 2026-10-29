@@ -1528,6 +1528,15 @@ function showReadOut(){
    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>${oh.seong}</p>${gyeol}
+      ${(()=>{
+        const b1=R.brightest, w1=R.darkest;
+        if(!b1 && !w1) return "";
+        let t="";
+        if(b1) t += `손님 얼굴에서 가장 환한 데는 <em>${b1.g.bu}</em>, ${b1.g.n} 자리예요. ${b1.g.d}을 보는 자리입니다.`;
+        if(b1 && w1) t += " ";
+        if(w1) t += `반대로 가장 그늘진 데는 <em>${w1.g.bu}</em>, ${w1.g.n}이고요.`;
+        return `<p>${t}</p>`;
+      })()}
       <p>열두 자리 중에 <em>${R.opened}곳이 트이고 ${R.blocked}곳이 막혔습니다.</em> 나머지 ${12-R.opened-R.blocked}곳은 반반이고요. 어디가 막혔는지는 이따가요…</p>
     </div></div>`;
   const cmp=compareReading(S.prev, R);
