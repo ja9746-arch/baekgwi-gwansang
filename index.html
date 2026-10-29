@@ -47,8 +47,31 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
+/* 네모를 네모로만 두지 않습니다.
+   가장자리를 안쪽으로 먹여 판이 뒤로 물러나게 하고,
+   윗선에만 가는 금빛을 얹어 빛이 걸리게 합니다. (백귀사주의 판 처리를 응용) */
+:root{
+  --feather:
+    inset 0 1px 0 rgba(236,199,130,.11),
+    inset 0 20px 34px -24px rgba(0,0,0,.95),
+    inset 0 -24px 38px -26px rgba(0,0,0,.95),
+    inset 26px 0 36px -30px rgba(0,0,0,.92),
+    inset -26px 0 36px -30px rgba(0,0,0,.92);
+  --lift: 0 14px 34px rgba(0,0,0,.55), 0 0 28px rgba(150,70,26,.10);
+  --lift-sm: 0 8px 22px rgba(0,0,0,.5), 0 0 20px rgba(150,70,26,.08);
+}
+.panelish{position:relative;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  box-shadow:var(--feather),var(--lift-sm)}
 body{background:var(--mook);color:var(--jae);font-family:var(--sans);font-weight:400;
   line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+/* 촛불 켠 법당을 아주 옅게 깔아 둡니다 — 백귀사주에서 가져온 그림 */
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:url("img/hall.webp") center top/cover no-repeat var(--mook);
+  opacity:.17;filter:saturate(.82)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 120% 62% at 50% 6%,rgba(122,52,18,.20),rgba(10,5,7,0) 62%),
+    linear-gradient(180deg,rgba(10,5,7,.42) 0%,rgba(10,5,7,.80) 42%,var(--mook) 88%)}
 button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none}
 img{max-width:100%;display:block}
 [hidden]{display:none!important}
@@ -88,17 +111,6 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .snd::before{content:"";position:absolute;inset:-8px;border-radius:50%}
 .top .snd{margin-left:auto}
 .top .snd + .step{margin-left:12px}
-.plaque{position:absolute;z-index:3;left:14px;top:max(12px,env(safe-area-inset-top,0px));
-  width:42px;padding:12px 0 10px;display:flex;flex-direction:column;align-items:center;gap:10px;
-  border:1px solid rgba(201,162,74,.55);
-  background:linear-gradient(180deg,rgba(14,8,9,.86),rgba(8,5,6,.9));
-  box-shadow:0 6px 18px rgba(0,0,0,.6),inset 0 0 0 1px rgba(201,162,74,.14)}
-.plaque .v{flex:none;display:block;width:1em;line-height:1.34;word-break:break-all;
-  font-family:var(--serif);font-size:14px;letter-spacing:0;color:#ecd9b2;text-align:center;
-  text-shadow:0 1px 6px #000}
-.plaque .nakgwan{flex:none;width:18px;height:18px;text-align:center;
-  background:#a8291f;color:#f3e3c4;font-family:var(--serif);font-size:11.5px;line-height:18px;
-  box-shadow:0 0 0 1px rgba(255,224,170,.25)}
 .hero .snd{position:absolute;z-index:3;top:max(12px,env(safe-area-inset-top,0px));
   right:14px;background:rgba(10,5,7,.55);backdrop-filter:blur(3px);
   border-color:rgba(201,162,74,.4);color:rgba(230,205,160,.85)}
@@ -128,9 +140,13 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     var(--co-bl) left 6px bottom 6px / 22px 22px no-repeat,
     var(--co-br) right 6px bottom 6px / 22px 22px no-repeat,
     var(--papermark) right -6px bottom -8px / 132px 132px no-repeat,
+    linear-gradient(168deg,rgba(247,241,226,.80) 0%,rgba(234,224,204,.74) 46%,rgba(226,214,190,.80) 100%),
+    url("img/hanji.webp") center/cover,
     linear-gradient(168deg,var(--hanji) 0%,#eae0cc 46%,var(--hanji2) 100%) #e9dfca;
   box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.4),
              inset 0 0 44px rgba(160,130,86,.14)}
+.say .por::after{content:"";position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);
+  width:30px;height:15px;background:var(--lotus-b) center/contain no-repeat;opacity:.7}
 .say .por{position:relative;width:52px;height:52px;flex:none;border-radius:50%;
   border:1px solid #b89a5e;background:#1a120c;
   box-shadow:0 0 0 2px rgba(239,230,212,.85),0 2px 10px rgba(0,0,0,.4)}
@@ -181,7 +197,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
 .hero.keyvis::after{background:
   linear-gradient(180deg,rgba(10,5,7,.34) 0%,rgba(10,5,7,0) 14%,rgba(10,5,7,0) 30%,
     rgba(10,5,7,.30) 44%,rgba(10,5,7,.74) 56%,rgba(10,5,7,.95) 68%,var(--mook) 80%)}
-.titlewrap{position:absolute;left:0;right:0;bottom:6px;z-index:2;text-align:center;
+.titlewrap{position:absolute;left:0;right:0;bottom:2px;z-index:2;text-align:center;
   padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
 .eyebrow{position:relative;display:inline-block;margin:22px 0 0;font-family:var(--serif);font-size:10.5px;
   letter-spacing:.12em;font-size:11.5px;color:#edd199;padding:4px 13px;
@@ -192,7 +208,7 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   background:radial-gradient(ellipse 46% 60% at 50% 54%,rgba(10,5,7,.96) 46%,rgba(10,5,7,0) 80%),
              var(--lotus-b) center/40px 21px no-repeat;
   filter:drop-shadow(0 1px 4px rgba(0,0,0,.9))}
-.hero .titlewrap .titleimg{width:min(58%,236px);margin:0 auto;display:block;
+.hero .titlewrap .titleimg{width:min(74%,300px);margin:0 auto;display:block;
   filter:drop-shadow(0 3px 14px rgba(0,0,0,.95)) drop-shadow(0 0 26px rgba(255,120,40,.3))}
 .tagline2{margin:11px 0 0;font-family:var(--serif);font-size:13px;line-height:1.9;color:#e8dbc6;
   text-shadow:0 2px 10px #000,0 0 20px rgba(0,0,0,.9)}
@@ -202,6 +218,19 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   background:linear-gradient(180deg,#f6e3b6,#c9a24a 58%,#8a6f33);-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
 .intro-body{position:relative;padding:0 20px 0}
+/* 바닥 전각 — 백귀사주의 야경을 띠로 깝니다 */
+.footbank{position:relative;margin:18px -20px 0;height:152px;overflow:hidden}
+.footbank::before{content:"";position:absolute;left:12%;right:12%;top:0;height:1px;z-index:3;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.5),transparent)}
+.footbank img{position:absolute;left:50%;top:50%;width:132%;transform:translate(-50%,-46%);
+  filter:saturate(1.05) brightness(1.18) contrast(1.1)}
+.footbank::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,var(--mook) 0%,rgba(10,5,7,.56) 30%,rgba(10,5,7,.1) 62%,rgba(10,5,7,.5) 100%)}
+.footbank .lo{position:absolute;bottom:2px;width:92px;height:92px;z-index:2;opacity:.62;
+  background:var(--lotus) center/contain no-repeat;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))}
+.footbank .lo.l{left:-14px}
+.footbank .lo.r{right:-14px;transform:scaleX(-1)}
 /* 키비주얼의 온기가 본문 위까지 이어지게 */
 .intro-body::before{content:"";position:absolute;left:0;right:0;top:-120px;height:220px;z-index:-1;
   pointer-events:none;
@@ -400,8 +429,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
 /* 네 기둥 */
 .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.pillars div{border:1px solid rgba(201,162,74,.3);background:linear-gradient(180deg,rgba(26,16,13,.9),rgba(11,7,8,.95));
-  padding:11px 4px;text-align:center}
+.pillars div{border:1px solid rgba(201,162,74,.3);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(26,16,13,.72),rgba(11,7,8,.82));
+  padding:11px 4px;text-align:center;box-shadow:var(--feather),var(--lift-sm)}
 .pk{display:block;font-size:10.5px;letter-spacing:.14em;color:var(--geum-dim);font-family:var(--serif)}
 .pv{display:block;margin-top:6px;font-family:var(--serif);font-size:14.5px;color:#f2e6d2;line-height:1.5}
 
@@ -442,8 +473,13 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
 /* 타고난 것 */
 .gangs{display:grid;gap:8px;margin-top:4px}
-.gangs div{border:1px solid rgba(159,213,176,.3);
-  background:linear-gradient(180deg,rgba(16,26,20,.85),rgba(9,13,11,.9));padding:12px 13px}
+.gangs div{border:1px solid rgba(159,213,176,.3);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(16,26,20,.70),rgba(9,13,11,.80));padding:12px 13px;
+  box-shadow:inset 0 1px 0 rgba(182,224,195,.12),
+    inset 0 20px 34px -24px rgba(0,0,0,.95),inset 0 -24px 38px -26px rgba(0,0,0,.95),
+    inset 26px 0 36px -30px rgba(0,0,0,.9),inset -26px 0 36px -30px rgba(0,0,0,.9),
+    0 10px 26px rgba(0,0,0,.5),0 0 24px rgba(60,150,96,.08)}
 .gn{display:block;font-family:var(--serif);font-size:15.5px;color:#b6e0c3}
 .gg{display:block;margin-top:2px;font-size:11px;letter-spacing:.1em;color:rgba(159,213,176,.6);
   font-family:var(--serif)}
@@ -469,22 +505,17 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .doc li{font-size:13px;line-height:1.95;color:#ded2c0;margin-bottom:6px}
 .doc b{color:#f3e7d2;font-weight:400}
 .doc .warn{margin-top:12px;border-left:2px solid var(--jusa);padding-left:10px;color:#d9b9a8}
-.introfoot{position:relative;margin-top:26px;height:96px;pointer-events:none;
-  background:
-    var(--papermark) left -42px bottom -26px / 150px 150px no-repeat,
-    var(--papermark) right -42px bottom -26px / 150px 150px no-repeat,
-    radial-gradient(ellipse 70% 100% at 50% 100%,rgba(122,52,18,.3),rgba(10,5,7,0) 72%)}
-.introfoot::after{content:"";position:absolute;left:12%;right:12%;bottom:34px;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(201,162,74,.4),transparent)}
-.footlinks{margin:6px 0 0;text-align:center;font-size:11.5px;color:rgba(198,184,168,.78)}
-.footlinks span{margin:0 9px;color:rgba(201,162,74,.8)}
+.footlinks{margin:6px 0 0;text-align:center;font-size:11.5px;color:rgba(198,184,168,.78);
+  white-space:nowrap}
+.footlinks span{margin:0 4px;color:rgba(201,162,74,.8)}
 .flink{font-family:var(--serif);font-size:12px;letter-spacing:.06em;
-  color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:14px 7px}
+  color:rgba(214,176,92,.9);text-decoration:underline;text-underline-offset:3px;padding:14px 4px}
 
 /* 족자 — 맺음과 교차에 쓰는 두루마리 */
-.scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);
-  background:linear-gradient(180deg,rgba(26,16,14,.94),rgba(13,8,9,.96));
-  box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.scroll{margin-top:16px;border:1px solid rgba(201,162,74,.32);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(26,16,14,.76),rgba(13,8,9,.84));
+  box-shadow:var(--feather),var(--lift)}
 .srow{display:flex;gap:13px;padding:14px 14px;border-bottom:1px solid rgba(201,162,74,.15)}
 .srow:last-child{border-bottom:0}
 .verd{display:inline-block;margin:0 8px 3px 0;padding:3px 9px 2px;font-family:var(--serif);
@@ -503,13 +534,17 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .numlist b{display:block;font-family:var(--serif);font-weight:400;font-size:13px;
   color:var(--geum-dim);letter-spacing:.08em;margin-bottom:1px}
 .crossgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
-.crossgrid div{border:1px solid rgba(201,162,74,.22);background:rgba(10,6,7,.6);padding:11px 12px}
+.crossgrid div{border:1px solid rgba(201,162,74,.22);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:rgba(10,6,7,.46);padding:11px 12px;box-shadow:var(--feather),var(--lift-sm)}
 .crossgrid b{display:block;font-family:var(--serif);font-size:14px;color:#f0e4d2;font-weight:400}
 .crossgrid span{display:block;margin-top:3px;font-size:11.5px;color:var(--jae-dim);line-height:1.6}
 
 /* 판정 요약 */
-.verdict{margin-top:16px;border:1px solid rgba(201,162,74,.3);
-  background:linear-gradient(180deg,rgba(24,15,13,.92),rgba(12,7,9,.94))}
+.verdict{margin-top:16px;border:1px solid rgba(201,162,74,.3);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(24,15,13,.74),rgba(12,7,9,.82));
+  box-shadow:var(--feather),var(--lift)}
 .vrow{display:flex;gap:12px;padding:11px 13px;border-bottom:1px solid rgba(201,162,74,.14)}
 .vrow:last-child{border-bottom:0}
 .vrow.bind{background:rgba(70,22,16,.28)}
@@ -551,7 +586,11 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 /* 백귀 패 */
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:4px}
 .card{position:relative;border:1px solid rgba(201,162,74,.34);background:#0d0708;overflow:hidden;
-  box-shadow:0 10px 26px rgba(0,0,0,.6);transition:transform .18s,border-color .2s}
+  box-shadow:0 12px 30px rgba(0,0,0,.66),0 0 22px rgba(150,70,26,.10);transition:transform .18s,border-color .2s}
+.card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(236,199,130,.14),
+    inset 0 16px 26px -20px rgba(0,0,0,.9),inset 0 -18px 28px -20px rgba(0,0,0,.92),
+    inset 18px 0 26px -22px rgba(0,0,0,.85),inset -18px 0 26px -22px rgba(0,0,0,.85)}
 .card img{width:100%;aspect-ratio:5/3;object-fit:cover;
   filter:sepia(.12) saturate(1.3) brightness(1.54) contrast(1.1)}
 .card .nm{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;text-align:center;
@@ -568,8 +607,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
 /* 열두 자리 목록 */
 .gungs{display:grid;gap:8px;margin-top:4px}
-.gung{display:flex;gap:11px;align-items:center;border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(22,12,14,.9),rgba(12,7,9,.92));padding:9px 11px;width:100%;text-align:left}
+.gung{display:flex;gap:11px;align-items:center;border:1px solid var(--line);position:relative;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(22,12,14,.72),rgba(12,7,9,.80));padding:9px 11px;width:100%;text-align:left;
+  box-shadow:var(--feather),var(--lift-sm)}
 .gung .th{width:62px;height:46px;flex:none;overflow:hidden;border:1px solid rgba(201,162,74,.3);position:relative;background:#0a0506}
 .gung .th img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
   filter:sepia(.12) saturate(1.3) brightness(1.58) contrast(1.1)}
@@ -599,7 +640,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 /* 값 */
 .price{border-top:1px solid rgba(201,162,74,.4);border-bottom:1px solid rgba(201,162,74,.4);
   padding:18px 10px;text-align:center;margin-top:20px;position:relative;
-  background:linear-gradient(180deg,rgba(26,16,13,.8),rgba(12,7,9,.85))}
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  background:linear-gradient(180deg,rgba(26,16,13,.64),rgba(12,7,9,.74));
+  box-shadow:inset 0 1px 0 rgba(236,199,130,.11),
+    inset 0 20px 34px -24px rgba(0,0,0,.9),inset 0 -24px 38px -26px rgba(0,0,0,.9)}
 .price::before,.price::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
   width:64px;height:22px;
   background:radial-gradient(ellipse 48% 62% at 50% 52%,rgba(10,5,7,.96) 44%,rgba(10,5,7,0) 82%),
@@ -679,7 +723,6 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 <section class="screen" id="s-intro">
   <div class="hero keyvis">
     <img src="img/hero.webp" alt="원안법사">
-    <div class="plaque" aria-hidden="true"><span class="v">백귀관상</span><span class="nakgwan">觀</span></div>
     <div class="titlewrap">
       <img class="titleimg" src="img/title.png" alt="백귀관상">
       <p class="eyebrow">원광법사의 제자 · 圓安法師</p>
@@ -701,11 +744,15 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
     <p class="foot">역사·설화를 바탕으로 재구성한 디지털 점찰 콘텐츠입니다.<br>
       올리신 사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않습니다.</p>
     <p class="footlinks">
-      <button class="flink" data-go="s-legal">이용안내 · 환불</button><span>|</span>
+      <button class="flink" data-go="s-legal">이용안내</button><span>|</span>
+      <button class="flink" data-go="s-legal">환불</button><span>|</span>
       <button class="flink" data-go="s-privacy">개인정보</button><span>|</span>
       <button class="flink" data-go="s-biz">사업자 정보</button>
     </p>
-    <div class="introfoot" aria-hidden="true"></div>
+    <div class="footbank" aria-hidden="true">
+      <img src="img/panorama.webp" alt="">
+      <span class="lo l"></span><span class="lo r"></span>
+    </div>
   </div>
 </section>
 
@@ -1146,12 +1193,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029h"></script>
-<script src="js/gungsang.js?v=20261029h"></script>
-<script src="js/engine.js?v=20261029h"></script>
-<script src="js/saju.js?v=20261029h"></script>
-<script src="js/cross.js?v=20261029h"></script>
-<script src="js/sound.js?v=20261029h"></script>
+<script src="js/baekgwi.js?v=20261029i"></script>
+<script src="js/gungsang.js?v=20261029i"></script>
+<script src="js/engine.js?v=20261029i"></script>
+<script src="js/saju.js?v=20261029i"></script>
+<script src="js/cross.js?v=20261029i"></script>
+<script src="js/sound.js?v=20261029i"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -2183,7 +2230,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.8";
+const BUILD = "2026-10-29.9";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */

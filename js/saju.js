@@ -206,3 +206,227 @@ function sajuText(P){
     ddi: BRANCH[P.year.b][4]
   };
 }
+
+/* ══════════════════════════════════════════════
+   때를 셈합니다 — 대운·격국·신강약·용신·충합·공망·월운
+   "얼굴은 그릇, 사주는 때" 라고 말해 놓고 때를 안 알려주면
+   그건 사주를 판 것이 아닙니다.
+   ══════════════════════════════════════════════ */
+
+/* 지지 속 천간 — 여기(餘氣)·중기(中氣)·정기(正氣) */
+const JIJANG3 = [
+  [8,null,9],[9,7,5],[4,2,0],[0,null,1],[1,9,4],[4,6,2],
+  [2,5,3],[3,1,5],[4,8,6],[6,null,7],[7,3,4],[4,0,8]
+];
+/* 십성 무리 → 일간에서 본 오행 */
+function grpElem(meStem, grp){
+  const mo = STEM[meStem][2];
+  if(grp==="비겁") return mo;
+  if(grp==="식상") return SAENG[mo];
+  if(grp==="재성") return GEUK[mo];
+  if(grp==="관성") return Object.keys(GEUK).find(k=>GEUK[k]===mo);
+  if(grp==="인성") return Object.keys(SAENG).find(k=>SAENG[k]===mo);
+  return mo;
+}
+const ELEM_SAEK = { "목":"쪽빛", "화":"다홍", "토":"치자", "금":"백자", "수":"먹빛" };
+const ELEM_BANG = { "목":"동쪽", "화":"남쪽", "토":"가운데", "금":"서쪽", "수":"북쪽" };
+const ELEM_CHEOL= { "목":"봄",   "화":"여름", "토":"환절기", "금":"가을", "수":"겨울" };
+
+/* ── 대운 ───────────────────────────────────────
+   양년생 남자와 음년생 여자는 순행, 나머지는 역행합니다.
+   생일에서 절입까지의 날수를 사흘에 한 해로 쳐서 첫 대운 나이를 잡습니다. */
+function daeun(P, y, m, d, h, mi, sex, opt){
+  const o = opt||{};
+  const corr = (o.correctionMin===undefined) ? 30 : o.correctionMin;
+  const hasTime = o.hasTime !== false;
+  const base = new Date(Date.UTC(y, m-1, d, hasTime?h:12, hasTime?mi:0));
+  base.setUTCMinutes(base.getUTCMinutes() - (hasTime?corr:0));
+  const jd = toJd(base.getUTCFullYear(), base.getUTCMonth()+1, base.getUTCDate(),
+                  base.getUTCHours(), base.getUTCMinutes());
+
+  const yangYear = STEM[P.year.s][3] === "양";
+  const forward  = (yangYear === (sex === "남"));
+
+  const lon   = sunLongitude(jd);
+  const order = Math.floor(SMOD(lon-315,360)/30);        /* 0 = 인월 */
+  const curT  = SMOD(315 + order*30, 360);
+  const curJd = solarTermJd(curT, jd-15);
+  const nxtJd = solarTermJd(SMOD(curT+30,360), jd+15);
+
+  const days = forward ? (nxtJd - jd) : (jd - curJd);
+  let num = Math.floor(days/3 + 0.5);
+  if(num < 1) num = 1; if(num > 10) num = 10;
+
+  const list = [];
+  for(let i=0;i<9;i++){
+    const step = forward ? (i+1) : -(i+1);
+    list.push({ s:SMOD(P.month.s+step,10), b:SMOD(P.month.b+step,12),
+                from:num + i*10, to:num + i*10 + 9 });
+  }
+  return { forward, num, list };
+}
+/* 그 나이에 어느 대운을 지나는가 */
+function daeunAt(D, age){
+  if(age < D.num) return { before:true, at:null, idx:-1 };
+  const idx = Math.min(D.list.length-1, Math.floor((age - D.num)/10));
+  return { before:false, at:D.list[idx], idx, next:D.list[idx+1]||null };
+}
+
+/* ── 신강·신약 ─────────────────────────────────
+   월령을 가장 무겁게 보고, 일지·천간·지지 순으로 무게를 둡니다. */
+function bodyStrength(P){
+  const me = P.ilgan;
+  const help = g => (g==="비겁" || g==="인성");
+  let sc = 0, cap = 0;
+  const put = (stem, w) => {
+    const g = GROUP[tenGod(me, stem)];
+    sc += help(g) ? w : -w*0.82; cap += w;
+  };
+  put(JIJANG[P.month.b], 3.0);                 /* 월령 */
+  put(P.month.s,         1.3);
+  put(JIJANG[P.day.b],   2.0);                 /* 득지 */
+  put(P.year.s,          1.0);
+  put(JIJANG[P.year.b],  1.1);
+  if(P.hour){ put(P.hour.s, 1.1); put(JIJANG[P.hour.b], 1.2); }
+  const r = sc / Math.max(cap,1);
+  /* -1 아주 약 … +1 아주 강 */
+  const lv = r >=  0.34 ? 4 : r >= 0.10 ? 3 : r >= -0.14 ? 2 : r >= -0.38 ? 1 : 0;
+  return { r, lv, nm:["아주 약함","약함","중화에 가까움","강함","아주 강함"][lv],
+           strong: lv >= 3, weak: lv <= 1 };
+}
+
+/* ── 격국 ──────────────────────────────────────
+   월지의 정기를 보되, 그 글자가 천간에 드러나 있으면 그쪽을 먼저 씁니다. */
+function gyeokguk(P){
+  const me = P.ilgan;
+  const [yeo, jung, jeong] = JIJANG3[P.month.b];
+  const stems = [P.year.s, P.month.s].concat(P.hour?[P.hour.s]:[]);
+  /* 정기가 천간에 드러나면 그것, 아니면 중기·여기 순, 아무것도 안 드러나면 정기로 봅니다 */
+  let use = jeong, why = "월지의 정기";
+  if(jeong!=null && stems.indexOf(jeong)>=0)      { use = jeong; why = "월지의 정기가 천간에 드러남"; }
+  else if(jung!=null && stems.indexOf(jung)>=0)   { use = jung;  why = "월지의 중기가 천간에 드러남"; }
+  else if(yeo!=null && stems.indexOf(yeo)>=0)     { use = yeo;   why = "월지의 여기가 천간에 드러남"; }
+  const g = tenGod(me, use);
+  let nm;
+  if(g==="비견")      nm = "건록격(建祿格)";
+  else if(g==="겁재") nm = "양인격(羊刃格)";
+  else                nm = g + "격";
+  return { god:g, grp:GROUP[g], nm, why, stem:use };
+}
+
+/* ── 용신 가닥 ─────────────────────────────────
+   억부(抑扶)로 봅니다. 강하면 덜어내고, 약하면 받칩니다. */
+function yongsin(P, BS){
+  const me = P.ilgan, T = tally(P);
+  let want, avoid;
+  if(BS.strong){
+    /* 재성이 이미 두터우면 관성으로 눌러 쓰고, 아니면 식상·재성으로 덜어냅니다 */
+    want  = (T.cnt.재성 >= 2) ? ["관성","식상"] : ["식상","재성"];
+    avoid = ["인성","비겁"];
+  }else if(BS.weak){
+    want  = (T.cnt.관성 >= 2) ? ["인성","비겁"] : ["비겁","인성"];
+    avoid = ["재성","관성"];
+  }else{
+    /* 중화에 가까우면 가장 모자란 쪽을 채웁니다 */
+    const order = Object.keys(T.cnt).sort((a,b)=>T.cnt[a]-T.cnt[b]);
+    want  = [order[0], order[1]];
+    avoid = [order[4]];
+  }
+  const el = g => grpElem(me, g);
+  return {
+    want, avoid,
+    wantEl : want.map(el),
+    avoidEl: avoid.map(el),
+    saek   : want.map(g=>ELEM_SAEK[el(g)]),
+    bang   : ELEM_BANG[el(want[0])],
+    cheol  : ELEM_CHEOL[el(want[0])],
+    kkeori : ELEM_SAEK[el(avoid[0])]
+  };
+}
+
+/* ── 지지끼리의 관계 ───────────────────────── */
+const YUKHAP  = [[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+const SAMHAP  = [[8,0,4,"수"],[11,3,7,"목"],[2,6,10,"화"],[5,9,1,"금"]];
+const HYEONG  = [[2,5,8],[1,10,7],[0,3]];
+const JAHYEONG= [4,6,9,11];
+function branchRel(P){
+  const at = ["년","월","일"].concat(P.hour?["시"]:[]);
+  const brs = [P.year.b, P.month.b, P.day.b].concat(P.hour?[P.hour.b]:[]);
+  const out = { chung:[], hap:[], samhap:[], hyeong:[], jahyeong:[] };
+  for(let i=0;i<brs.length;i++) for(let j=i+1;j<brs.length;j++){
+    const a=brs[i], b=brs[j], nm=at[i]+"지·"+at[j]+"지";
+    if(CHUNG.some(([x,y])=>(a===x&&b===y)||(a===y&&b===x)))
+      out.chung.push({ nm, a, b, t:BRANCH[a][0]+BRANCH[b][0]+" 충("+nm+")" });
+    if(YUKHAP.some(([x,y])=>(a===x&&b===y)||(a===y&&b===x)))
+      out.hap.push({ nm, a, b, t:BRANCH[a][0]+BRANCH[b][0]+" 합("+nm+")" });
+    if(a===b && JAHYEONG.indexOf(a)>=0)
+      out.jahyeong.push({ nm, t:BRANCH[a][0]+" 자형" });
+  }
+  /* 형은 셋이 모이면 삼형으로 한 번만 셉니다. 짝만 걸리면 그 짝으로 셉니다. */
+  HYEONG.forEach(h=>{
+    const have = h.filter(v=>brs.indexOf(v)>=0);
+    if(h.length===3 && have.length===3)
+      out.hyeong.push({ full:true, t:h.map(v=>BRANCH[v][0]).join("")+" 삼형" });
+    else if(have.length>=2)
+      out.hyeong.push({ full:false, t:have.slice(0,2).map(v=>BRANCH[v][0]).join("")+" 형" });
+  });
+  SAMHAP.forEach(([x,y,z,el])=>{
+    const have = [x,y,z].filter(v=>brs.indexOf(v)>=0);
+    if(have.length>=2) out.samhap.push({ el, full:have.length===3,
+      t:have.map(v=>BRANCH[v][0]).join("")+(have.length===3?" 삼합":" 반합")+"("+el+")" });
+  });
+  return out;
+}
+
+/* ── 공망 ─────────────────────────────────────── */
+function gongmang(P){
+  const b0 = SMOD(P.day.b - P.day.s, 12);
+  const g  = [SMOD(b0+10,12), SMOD(b0+11,12)];
+  const at = [];
+  [["년",P.year.b],["월",P.month.b]].concat(P.hour?[["시",P.hour.b]]:[])
+    .forEach(([n,b])=>{ if(g.indexOf(b)>=0) at.push(n); });
+  return { br:g, t:g.map(b=>BRANCH[b][0]).join("·"), at };
+}
+
+/* ── 그 해의 기둥 ─────────────────────────────── */
+function yearPillar(Y){
+  /* 그 해 입춘 뒤의 간지 */
+  return { s:SMOD(Y-4,10), b:SMOD(Y-4,12) };
+}
+/* 세운이 원국을 건드리는 자리 */
+function seunRel(P, Y){
+  const sp = yearPillar(Y);
+  const me = P.ilgan;
+  const god = tenGod(me, sp.s), grp = GROUP[god];
+  const hits = [];
+  [["년",P.year.b],["월",P.month.b],["일",P.day.b]].concat(P.hour?[["시",P.hour.b]]:[])
+    .forEach(([n,b])=>{
+      if(CHUNG.some(([x,y])=>(b===x&&sp.b===y)||(b===y&&sp.b===x)))
+        hits.push({ n, kind:"충", t:n+"지와 충" });
+      else if(YUKHAP.some(([x,y])=>(b===x&&sp.b===y)||(b===y&&sp.b===x)))
+        hits.push({ n, kind:"합", t:n+"지와 합" });
+    });
+  return { p:sp, god, grp, hits,
+           gm: (gongmang(P).br.indexOf(sp.b)>=0) };
+}
+/* 그 해 열두 달 — 쓸 달과 쉴 달 */
+function monthLuck(P, Y, YS){
+  const yp = yearPillar(Y);
+  const first = SMOD(SMOD(yp.s,5)*2+2,10);        /* 오호둔 — 인월의 천간 */
+  const me = P.ilgan;
+  const good = [], bad = [];
+  const rows = [];
+  for(let i=0;i<12;i++){
+    const br = SMOD(2+i,12), st = SMOD(first+i,10);
+    const label = (i+1<=10) ? (i+2) : (i+2-12);   /* 인월 ≒ 양력 2월 */
+    const mth = ((i+1)%12)+1;
+    const gS = GROUP[tenGod(me, st)], gB = GROUP[tenGod(me, JIJANG[br])];
+    const score = (YS.want.indexOf(gS)>=0?1:0) + (YS.want.indexOf(gB)>=0?1.2:0)
+                - (YS.avoid.indexOf(gS)>=0?1:0) - (YS.avoid.indexOf(gB)>=0?1.2:0);
+    rows.push({ mth, st, br, score, gS, gB });
+  }
+  rows.sort((a,b)=>b.score-a.score);
+  return { good: rows.slice(0,2).filter(r=>r.score>0).map(r=>r.mth).sort((a,b)=>a-b),
+           bad : rows.slice(-2).filter(r=>r.score<0).map(r=>r.mth).sort((a,b)=>a-b),
+           rows };
+}
