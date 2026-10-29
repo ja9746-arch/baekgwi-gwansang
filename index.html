@@ -1007,6 +1007,10 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick" style="margin-top:24px">셋째 · 머리</p>
   <div class="panel" style="border-top:1px solid rgba(201,162,74,.3);margin-top:0" id="hairOut"></div>
 
+  <p class="kick" style="margin-top:24px">넷째 · 차례와 기한</p>
+  <h3 class="sect">무엇부터, 얼마 동안</h3>
+  <div class="scroll" style="margin-top:12px" id="cureOrder"></div>
+
   <button class="btn" id="cureGo">백귀도를 받겠습니다</button>
 </section>
 
@@ -1242,12 +1246,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029k"></script>
-<script src="js/gungsang.js?v=20261029k"></script>
-<script src="js/engine.js?v=20261029k"></script>
-<script src="js/saju.js?v=20261029k"></script>
-<script src="js/cross.js?v=20261029k"></script>
-<script src="js/sound.js?v=20261029k"></script>
+<script src="js/baekgwi.js?v=20261029m"></script>
+<script src="js/gungsang.js?v=20261029m"></script>
+<script src="js/engine.js?v=20261029m"></script>
+<script src="js/saju.js?v=20261029m"></script>
+<script src="js/cross.js?v=20261029m"></script>
+<script src="js/sound.js?v=20261029m"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1626,9 +1630,9 @@ function showReadOut(){
       <div class="vrow"><span class="vk">형상</span>
         <span class="vv">${oh.nm}<em>${oh.sul}</em></span></div>
       <div class="vrow"><span class="vk">기색</span>
-        <span class="vv">${R.gisaek}기(${gi.ja}氣)<em>${gi.mal}</em></span></div>
+        <span class="vv">${R.gisaek}기(${gi.ja}氣)<em>${gi.mal}${gi.ttae?" "+gi.ttae:""}</em></span></div>
       <div class="vrow"><span class="vk">삼정</span>
-        <span class="vv">${sj.nm} 두터움<em>${sj.gi}에 무게가 실린 얼굴입니다</em></span></div>
+        <span class="vv">${sj.nm} 두터움<em>${sj.gi}에 무게가 실린 얼굴입니다. ${sj.dae||""}</em></span></div>
       <div class="vrow bind"><span class="vk">맞물림</span>
         <span class="vv">${R.gyo.dan}<em>${R.gyo.mal}</em></span></div>
     </div>`+
@@ -1637,7 +1641,10 @@ function showReadOut(){
       : "사진에 빛이 세게 들었습니다. 기색은 빛을 타서, 그늘진 데서 한 번 더 비추시면 더 맞습니다."}</p>` : "")+
    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
-      <p>${oh.seong}</p>${gyeol}
+      <p>${oh.seong}</p>
+      <p>${oh.il}</p>
+      <p><em>다만</em> ${oh.mu}</p>
+      <p>${oh.saram}</p>${gyeol}
       ${(()=>{
         const b1=R.brightest, w1=R.darkest;
         if(!b1 && !w1) return "";
@@ -1682,8 +1689,14 @@ function showHit(){
   const y=R.hitYun, gu=GUNG.find(g=>g.k===y.g)||GUNG[0];
   $("hitTitle").innerHTML=`${num(R.hitAge)} 살,<br>${y.bu} 자리를 지날 때요…`;
   $("hitSay").innerHTML=
-    `<p>얼굴은 나이마다 자리가 정해져 있습니다. ${num(R.hitAge)} 살은 <em>${y.bu}</em>, ${gu.n}에 걸려요.</p>`+
+    `<p>얼굴은 나이마다 자리가 정해져 있습니다. ${num(R.hitAge)} 살은 <em>${y.bu}</em>, ${gu.n}에 걸려요. ${gu.d}을 보는 자리입니다.</p>`+
     `<p>${JINAN[y.g]}</p>`+
+    `<p>${(JINAN2&&JINAN2[y.g])||""}</p>`+
+    `<p>${(()=>{const j=R.jari.find(x=>x.g.k===y.g);
+      if(!j) return "";
+      return j.lv===2 ? `그 자리는 지금도 막혀 있습니다. 그때 일이 아직 안 끝난 거예요.`
+           : j.lv===0 ? `다행히 그 자리는 지금 트여 있습니다. 그때 일은 거기서 끝났어요.`
+                      : `그 자리는 지금 반반입니다. 끝난 것도 아니고 아주 걸린 것도 아니에요.`;})()}</p>`+
     `<p>…맞으면, 하나만 더 여쭐게요.</p>`;
   const fw=mountFace("faceHit");
   fw.querySelectorAll(".pt,.tapmark").forEach(n=>n.remove());
@@ -1997,6 +2010,36 @@ function buildCure(){
     fw.appendChild(d);
   });
   $("moleSlide").value=0; setMoles(0);
+  /* 셋을 한꺼번에 하면 무엇이 들었는지 모릅니다. 차례와 기한을 적어 드립니다. */
+  (function(){
+    const el=$("cureOrder"); if(!el) return;
+    const lv=R.boss.lv, bn=bgName(R.boss.bg), g=R.boss.g;
+    const first = lv>=2 ? "머리" : (lv===1 ? "색" : "점자리");
+    const GIHAN = {
+      "적":["보름","붉은 기는 오래 안 갑니다. 짧게 보고 빨리 접으셔야 해요."],
+      "황":["한 달","누런 기는 서너 달 갑니다. 그 가운데 한 달이면 됩니다."],
+      "백":["두 달","흰 기는 천천히 걷힙니다. 급히 보면 안 보여요."],
+      "청":["한 철","푸른 기는 계절과 같이 바뀝니다. 계절이 넘어갈 때까지 보세요."],
+      "흑":["열흘 쉬고 한 달","검은 기는 먼저 쉬어야 걷힙니다. 열흘은 아무것도 하지 마시고요."]
+    };
+    const order = { "머리":["머리 모양","오늘 바로 됩니다. 돈도 안 듭니다. 가장 급한 자리를 먼저 틔우는 쪽입니다."],
+                    "색":  ["길한 색","이번 주 안에 하나만 바꾸세요. 늘 지니는 작은 것 하나면 됩니다."],
+                    "점자리":["점 자리","먹이나 화장으로 한 달. 몸에 새기는 건 그 뒤에 정하셔도 늦지 않습니다."] };
+    const rest = ["머리","색","점자리"].filter(x=>x!==first);
+    el.innerHTML =
+      `<div class="srow bind"><span class="sk">먼저</span><span class="sv">`+
+        `<span class="verd">${order[first][0]}</span>${order[first][1]}</span></div>`+
+      `<div class="srow"><span class="sk">그다음</span><span class="sv">`+
+        rest.map(x=>`<b class="go">${order[x][0]}</b> — ${order[x][1]}`).join("<br>")+`</span></div>`+
+      `<div class="srow when"><span class="sk">기한</span><span class="sv">`+
+        `<b class="go">${GIHAN[R.gisaek][0]}</b>만 지켜 보세요. ${GIHAN[R.gisaek][1]}`+
+        `<br>그 안에 ${g.n} 자리의 결이 바뀌는지 손님이 먼저 압니다. `+
+        `바뀌지 않으면 손님 탓이 아니라 때가 아직 안 온 겁니다.</span></div>`+
+      `<div class="srow"><span class="sk">조심</span><span class="sv">`+
+        `셋을 한꺼번에 바꾸지 마세요. 무엇이 들었는지 모르게 됩니다.`+
+        `<br>${OH[R.hyeong].mu}`+
+        `<br>${bn}${batchim(bn)?"은":"는"} 손님이 서두를 때를 기다립니다.</span></div>`;
+  })();
   $("moleOut").innerHTML=RX.jeom.map(m=>
     `<div class="colrow" style="border-color:rgba(192,54,42,.3)">`+
     `<span class="chip molechip"></span>`+
@@ -2396,7 +2439,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.11";
+const BUILD = "2026-10-29.13";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
