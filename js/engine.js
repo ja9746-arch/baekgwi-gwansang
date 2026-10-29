@@ -234,22 +234,25 @@ function pickGisaek(m){
   /* 얼굴 열일곱을 재어 얻은 자리입니다.
      절대 눈금으로 끊으면 살빛은 평생 그 눈금을 넘지 못해
      다섯 기색 중 황기 하나만 나옵니다. 그래서 무리 안에서의 치우침으로 가립니다. */
-  const zL    = (L    - 178.2) / 18.9;
   const zChae = (chae - 0.281) / 0.059;
   const zWarm = (warm - 0.187) / 0.046;
   const zGb   = (gb   - 0.135) / 0.039;
 
-  /* 네 쪽으로 얼마나 치우쳤는가. 그늘은 흑기에만 거듭니다. */
+  /* 밝기 그 자체는 쓰지 않습니다. 기색은 살빛이 아니라 살빛 위에 도는 빛이라,
+     밝기를 그대로 쓰면 살빛이 짙은 분이 그대로 흑기가 됩니다.
+     그래서 흑기는 한쪽에만 진 그늘로만 봅니다 — 손님도 사진에서 함께 보는 것이라
+     말이 섭니다. 사진이 어두운 것은 사진 이야기라 따로 여쭙니다. */
+  if (geuneul > 0.09) return "흑";
+
   const sc = {
-    "흑": -zL * 0.78 + Math.min(geuneul / 0.14, 2.2) * 0.42,
     "백": -zChae,
     "적":  zWarm * 0.82 - zGb * 0.34,
-    "청": -zGb * 0.86 - zChae * 0.30
+    "청": -zGb * 1.15          /* 푸른 기는 핏기가 아니라 빛깔로만 봅니다 */
   };
   /* 어지간한 얼굴은 황기입니다. 기색마다 넘어야 할 문턱이 달라서,
      흔한 흑·적보다 드문 청기의 문턱을 높게 둡니다.
      문턱을 가장 많이 넘어선 쪽이 그 얼굴에 도는 빛입니다. */
-  const need = { "흑":0.95, "백":1.05, "적":0.90, "청":1.45 };
+  const need = { "백":1.05, "적":0.90, "청":1.50 };
   let best = "황", bv = 0;
   for (const k in sc) { const over = sc[k] - need[k]; if (over > bv) { bv = over; best = k; } }
   return best;
@@ -384,7 +387,9 @@ function divine(m, age, sex){
   const blocked = jari.filter(j=>j.lv===2).length;
   const opened  = jari.filter(j=>j.lv===0).length;
 
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, pick3,
+  /* 기색은 빛을 탑니다. 어둡거나 날아간 사진이면 그 사실을 숨기지 않습니다. */
+  const light = (m.meanL < 118) ? "어둠" : (m.meanL > 228 ? "날림" : "");
+  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, pick3, light,
            brightest, darkest,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }
@@ -461,9 +466,10 @@ function summarize(R){
   }
 
   /* 피할 것은 막힌 데에서. 할 일과 겹치지 않는 자리를 먼저 씁니다. */
+  /* 후보를 먼저 둘로 자르면, 거기서 같은 자리가 겹쳤을 때 하나만 남습니다.
+     겹치는 것을 먼저 거르고 그다음에 둘을 집습니다. */
   const avoidPool = block.concat(mid).filter(j=>!todo.some(x=>x.k===j.g.k));
-  const avoidSrc = (avoidPool.length>=2 ? avoidPool
-                    : avoidPool.concat(block, mid)).slice(0,2);
+  const avoidSrc = avoidPool.concat(block, mid, R.jari);
   const avoid = [];
   for(const j of avoidSrc){
     if(avoid.length>=2) break;

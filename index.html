@@ -663,6 +663,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
 .foot{margin-top:26px;padding-top:14px;border-top:1px solid rgba(201,162,74,.14);
   font-size:11.5px;line-height:1.85;color:rgba(196,183,167,.82);text-align:center}
+.lightnote{margin:10px 0 0;padding:9px 12px;border:1px solid rgba(201,162,74,.3);
+  background:rgba(26,16,13,.6);color:rgba(222,200,160,.9)}
 .toast{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;
   background:rgba(14,8,10,.96);border:1px solid var(--line);color:#f0e4d2;
   padding:11px 18px;font-size:13px;font-family:var(--serif);opacity:0;transition:opacity .3s;pointer-events:none}
@@ -1144,12 +1146,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029e"></script>
-<script src="js/gungsang.js?v=20261029e"></script>
-<script src="js/engine.js?v=20261029e"></script>
-<script src="js/saju.js?v=20261029e"></script>
-<script src="js/cross.js?v=20261029e"></script>
-<script src="js/sound.js?v=20261029e"></script>
+<script src="js/baekgwi.js?v=20261029f"></script>
+<script src="js/gungsang.js?v=20261029f"></script>
+<script src="js/engine.js?v=20261029f"></script>
+<script src="js/saju.js?v=20261029f"></script>
+<script src="js/cross.js?v=20261029f"></script>
+<script src="js/sound.js?v=20261029f"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1534,6 +1536,9 @@ function showReadOut(){
       <div class="vrow bind"><span class="vk">맞물림</span>
         <span class="vv">${R.gyo.dan}<em>${R.gyo.mal}</em></span></div>
     </div>`+
+   (R.light ? `<p class="hint center lightnote">${R.light==="어둠"
+      ? "사진이 어두운 편입니다. 기색은 빛을 타서, 밝은 데서 한 번 더 비추시면 더 맞습니다."
+      : "사진에 빛이 세게 들었습니다. 기색은 빛을 타서, 그늘진 데서 한 번 더 비추시면 더 맞습니다."}</p>` : "")+
    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>${oh.seong}</p>${gyeol}
@@ -2157,7 +2162,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.5";
+const BUILD = "2026-10-29.6";
 (function(){ const b=$("buildNo"); if(b) b.textContent=BUILD; })();
 
 /* 배경음 — 처음에는 꺼져 있고, 눌러야 켜집니다 */
