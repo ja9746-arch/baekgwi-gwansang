@@ -913,11 +913,33 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   filter:var(--tang-fx-dim)}
 .tang .slot::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.12),transparent 70%)}
-.tang .slot.on{opacity:1;transform:none;transition:opacity .5s,transform .5s}
+/* 열두 칸이 가운데에서 날아와 제자리에 박힙니다.
+   그냥 흐려지다 나타나면 무엇이 일어난 건지 알 수 없습니다. */
+.tang .slot.on{animation:slotfly .72s cubic-bezier(.16,.9,.3,1.08) both}
+@keyframes slotfly{
+  0%  {opacity:0; transform:translate(var(--dx),var(--dy)) scale(.18) rotate(var(--rot))}
+  55% {opacity:1}
+  78% {transform:translate(0,0) scale(1.1) rotate(0deg)}
+  100%{opacity:1; transform:none}
+}
+/* 박히는 순간의 빛 */
+.tang .slot .hit{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;
+  box-shadow:inset 0 0 0 2px rgba(255,248,230,.95),0 0 22px rgba(255,236,190,.9)}
+.tang .slot.on .hit{animation:slothit .5s .56s ease-out both}
+@keyframes slothit{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+/* 다 박히면 금빛이 한 번 쓸고 지나갑니다 */
+.tang .sweep{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;
+  background:linear-gradient(104deg,rgba(255,236,190,0) 36%,rgba(255,240,200,.5) 48%,rgba(255,236,190,0) 60%)}
+.tang .sweep.go{animation:tangsweep 1.05s ease-out both}
+@keyframes tangsweep{0%{opacity:0;transform:translateX(-62%)}22%{opacity:1}100%{opacity:0;transform:translateX(62%)}}
 .tang .slot.on:not(.boss) img{filter:var(--tang-fx-dim)}
 .tang .slot.on:not(.boss)::after{background:
   radial-gradient(ellipse at 50% 38%,rgba(255,206,130,.1),transparent 70%),
   linear-gradient(180deg,rgba(8,4,5,.1),rgba(8,4,5,.22))}
+/* 우두머리 칸은 bossglow 가 slotfly 를 덮어써서 투명한 채로 남아 있었습니다.
+   날아와 박힌 뒤에 불이 붙도록 둘을 이어 붙입니다. */
+.tang .slot.on.boss{animation:slotfly .72s cubic-bezier(.16,.9,.3,1.08) both,
+                              bossglow 2.2s .72s ease-in-out infinite}
 .tang .slot.boss{box-shadow:inset 0 0 0 3px rgba(255,238,200,1),inset 0 0 14px rgba(190,24,14,.55),
   0 0 0 3px rgba(255,62,34,1),0 0 30px rgba(255,84,54,1),0 0 64px rgba(255,44,24,.85);
   animation:bossglow 2.2s ease-in-out infinite}
@@ -1220,8 +1242,11 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <div class="tang" id="tang">
     <img class="bg" src="img/tanghwa.webp" alt="백귀도" loading="lazy" decoding="async">
   </div>
-  <p class="hint center" style="margin-top:12px">붉게 도는 칸이 올해를 쥔 우두머리입니다.</p>
-  <button class="btn" id="saveTang">한 장으로 합치기</button>
+  <p class="hint center" id="tangHead" style="margin-top:12px">…열두 자리에 선 것을 한 칸씩 옮겨 담습니다.</p>
+  <p class="sectsub center" style="margin-top:var(--s4)">
+    올해 손님 얼굴 열두 자리에 선 것을 한 장에 모은 그림입니다.
+    머리맡이나 지갑에 두시고, 한 해 지나 다시 보실 때 견주어 보세요.</p>
+  <button class="btn" id="saveTang">한 장으로 받기</button>
   <div id="tangOut"></div>
   <button class="btn ghost" id="shareTang" hidden>이 그림 나누기</button>
   <button class="btn ghost" id="tangGo">법사의 맺음말을 듣겠습니다</button>
@@ -1444,12 +1469,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261030c"></script>
-<script src="js/gungsang.js?v=20261030c"></script>
-<script src="js/engine.js?v=20261030c"></script>
-<script src="js/saju.js?v=20261030c"></script>
-<script src="js/cross.js?v=20261030c"></script>
-<script src="js/sound.js?v=20261030c"></script>
+<script src="js/baekgwi.js?v=20261030e"></script>
+<script src="js/gungsang.js?v=20261030e"></script>
+<script src="js/engine.js?v=20261030e"></script>
+<script src="js/saju.js?v=20261030e"></script>
+<script src="js/cross.js?v=20261030e"></script>
+<script src="js/sound.js?v=20261030e"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1752,6 +1777,23 @@ function flash(){
   setTimeout(()=>f.remove(),520);
 }
 let actx;
+/* 칸이 박히는 소리 — 나무판에 도장 찍듯 짧게 */
+function tick(big){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==="suspended") return;
+    const t=actx.currentTime;
+    const o=actx.createOscillator(), g=actx.createGain(), f=actx.createBiquadFilter();
+    o.type="triangle"; o.frequency.setValueAtTime(big?210:330,t);
+    o.frequency.exponentialRampToValueAtTime(big?72:128,t+0.14);
+    f.type="lowpass"; f.frequency.value=big?1400:2200;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(big?0.10:0.045,t+0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+(big?0.5:0.22));
+    o.connect(f).connect(g).connect(actx.destination);
+    o.start(t); o.stop(t+(big?0.55:0.26));
+  }catch(e){}
+}
 function chime(){
   try{
     actx=actx||new (window.AudioContext||window.webkitAudioContext)();
@@ -2307,16 +2349,30 @@ function buildTang(){
   $("tang").hidden=false; $("tangOut").innerHTML="";
   const sb=$("saveTang"); sb.hidden=false; sb.disabled=false; sb.textContent="한 장으로 합치기";
   $("shareTang").hidden=true; S.tangUrl=null;
-  R.jari.forEach((j,i)=>{
+  /* 우두머리는 맨 마지막에 — 그래야 그 칸이 눈에 남습니다 */
+  const order = R.jari.map((j,i)=>({j,i}))
+    .sort((a,b)=>(a.j.g.k===R.boss.g.k?1:0)-(b.j.g.k===R.boss.g.k?1:0));
+  order.forEach(({j,i},n)=>{
     const s=SLOT[i], d=document.createElement("div");
-    d.className="slot"+(j.g.k===R.boss.g.k?" boss":"");
+    const isBoss = j.g.k===R.boss.g.k;
+    d.className="slot"+(isBoss?" boss":"");
     d.style.left=(s[0]/TW*100)+"%"; d.style.top=(s[1]/TH*100)+"%";
     d.style.width=(s[2]/TW*100)+"%"; d.style.height=(s[3]/TH*100)+"%";
-    d.innerHTML=`<img src="img/baekgwi/${BG[j.bg][2]}.webp" alt="${BG[j.bg][0]}" loading="lazy" decoding="async">`;
+    /* 그림 한가운데에서 날아오도록 벡터를 미리 넣어 둡니다 */
+    const cxp=(s[0]+s[2]/2)/TW*100, cyp=(s[1]+s[3]/2)/TH*100;
+    d.style.setProperty("--dx", ((50-cxp)*TW/100).toFixed(0)+"px");
+    d.style.setProperty("--dy", ((50-cyp)*TH/100*0.42).toFixed(0)+"px");
+    d.style.setProperty("--rot", ((i%2?-1:1)*(18+i*3))+"deg");
+    d.innerHTML=`<img src="img/baekgwi/${BG[j.bg][2]}.webp" alt="${BG[j.bg][0]}" loading="lazy" decoding="async"><span class="hit"></span>`;
     d.title=j.g.n+" · "+BG[j.bg][0];
     t.appendChild(d);
-    setTimeout(()=>d.classList.add("on"),180+i*110);
+    setTimeout(()=>{ d.classList.add("on"); tick(isBoss); }, 320 + n*190 + (isBoss?420:0));
   });
+  /* 다 박히면 금빛이 한 번 쓸고 지나갑니다 */
+  const sw=document.createElement("span"); sw.className="sweep"; t.appendChild(sw);
+  setTimeout(()=>{ sw.classList.add("go"); const h=$("tangHead");
+    if(h) h.textContent="붉게 도는 칸이 올해를 쥔 우두머리입니다."; },
+    320 + 12*190 + 980);
 }
 $("saveTang").addEventListener("click",async()=>{
   const btn=$("saveTang"); btn.disabled=true; btn.textContent="합치는 중…";
@@ -2661,7 +2717,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-30.3";
+const BUILD = "2026-10-30.5";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
