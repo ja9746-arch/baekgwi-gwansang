@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0507">
 <meta name="description" content="원안법사가 얼굴에 새겨진 기운을 읽습니다. 삼정과 십이궁, 유년운기부위로 타고난 그릇과 올해의 흐름을 살핍니다.">
 <title>백귀관상 — 원안법사</title>
-<link rel="icon" href="img/title.png">
+<link rel="icon" href="img/title.webp">
 <link rel="apple-touch-icon" href="img/og.jpg">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="백귀관상">
@@ -60,8 +60,6 @@ html,body{height:100%;margin:0}
   --lift: 0 14px 34px rgba(0,0,0,.55), 0 0 28px rgba(150,70,26,.10);
   --lift-sm: 0 8px 22px rgba(0,0,0,.5), 0 0 20px rgba(150,70,26,.08);
 }
-.panelish{position:relative;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
-  box-shadow:var(--feather),var(--lift-sm)}
 /* ───────── 토대 ─────────
    글자와 여백을 눈금 위에 올립니다. 앞서 글자 크기가 스물한 가지,
    여백이 열아홉 가지로 제각각이라 화면마다 결이 달랐습니다. */
@@ -156,7 +154,6 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   margin:0 0 13px;display:flex;align-items:center;gap:9px;
   text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.85)}
 .kick::before{content:"";width:16px;height:1px;background:var(--geum-dim);flex:none}
-.rule{width:54px;height:1px;margin:16px auto;background:linear-gradient(90deg,transparent,var(--geum-dim),transparent)}
 .hint{font-size:var(--fs-sm);color:#cbbda9;line-height:1.85;
   text-shadow:0 1px 5px rgba(6,3,5,.95),0 0 14px rgba(6,3,5,.85)}
 .center{text-align:center}
@@ -189,8 +186,6 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
     linear-gradient(168deg,var(--hanji) 0%,#eae0cc 46%,var(--hanji2) 100%) #e9dfca;
   box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.4),
              inset 0 0 44px rgba(160,130,86,.14)}
-.say .por::after{content:"";position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);
-  width:30px;height:15px;background:var(--lotus-b) center/contain no-repeat;opacity:.7}
 .say .por{position:relative;width:52px;height:52px;flex:none;border-radius:50%;
   border:1px solid #b89a5e;background:#1a120c;
   box-shadow:0 0 0 2px rgba(239,230,212,.85),0 2px 10px rgba(0,0,0,.4)}
@@ -261,11 +256,6 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(20px,5.6vw,24px);
   filter:drop-shadow(0 3px 14px rgba(0,0,0,.95)) drop-shadow(0 0 26px rgba(255,120,40,.3))}
 .tagline2{margin:11px 0 0;font-family:var(--serif);font-size:var(--fs-sm);line-height:1.9;color:#e8dbc6;
   text-shadow:0 2px 10px #000,0 0 20px rgba(0,0,0,.9)}
-.hero .cap{position:absolute;left:0;right:0;bottom:4px;text-align:center;z-index:2}
-.hero .cap .s{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.3em;color:var(--geum-dim)}
-.hero .cap .b{font-family:var(--serif);font-weight:700;font-size:var(--fs-display);letter-spacing:.04em;margin-top:4px;
-  background:linear-gradient(180deg,#f6e3b6,#c9a24a 58%,#8a6f33);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.9))}
 .intro-body{position:relative;padding:0 20px 0}
 /* 바닥 전각 — 백귀사주의 야경을 띠로 깝니다 */
 .footbank{position:relative;margin:18px -20px 0;height:152px;overflow:hidden}
@@ -749,10 +739,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .card.dim img{filter:sepia(.18) grayscale(.5) brightness(1.44) contrast(1.16)}
 .card.dim{opacity:.82}
 
-.seal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;
-  width:52px;height:52px;display:grid;place-items:center;
-  border:1.5px solid rgba(192,54,42,.85);color:#e8705f;font-family:var(--serif);font-size:var(--fs-h1);
-  background:rgba(10,4,5,.5);box-shadow:0 0 18px rgba(192,54,42,.4)}
+
 
 /* 열두 자리 목록 */
 .gungs{display:grid;gap:8px;margin-top:4px}
@@ -876,7 +863,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <div class="hero keyvis">
     <img src="img/hero.webp" alt="원안법사">
     <div class="titlewrap">
-      <img class="titleimg" src="img/title.png" alt="백귀관상">
+      <img class="titleimg" src="img/title.webp" alt="백귀관상">
       <p class="eyebrow">원광법사의 제자 · 圓安法師</p>
       <p class="tagline2">얼굴에 새겨진 기운을 읽어<br>타고난 성향과 운의 흐름을 살핍니다</p>
       <div class="tags"><span>성향운</span><span>재물운</span><span>인연운</span><span>건강운</span><span>말년운</span></div>
@@ -902,7 +889,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
       <button class="flink" data-go="s-biz">사업자 정보</button>
     </p>
     <div class="footbank" aria-hidden="true">
-      <img src="img/panorama.webp" alt="">
+      <img src="img/panorama.webp" alt="" loading="lazy" decoding="async">
       <span class="lo l"></span><span class="lo r"></span>
     </div>
   </div>
@@ -914,7 +901,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">첫째 마디 · 묻기</p>
   <h2 class="t">나이와 성별부터<br>여쭙겠습니다…</h2>
   <div class="say">
-    <div class="por"><img src="img/seer-read.webp" alt=""></div>
+    <div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt">
       <div class="nm">원안법사</div>
       <p>얼굴에는 나이마다 자리가 정해져 있어요. <em>유년운기부위</em>라고 하는데… 몇 살인지를 알아야 올해 운이 어느 자리에 걸렸는지 짚을 수 있어서요.</p>
@@ -972,7 +959,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
         </g>
       </svg>
     </div>
-    <img class="frame" src="img/bronze.png" alt="청동경">
+    <img class="frame" src="img/bronze.webp" alt="청동경" loading="lazy" decoding="async">
   </div>
   <div class="order" id="order">비추거나 올리시면, 법사가 자세를 잡아드려요.</div>
   <div class="zoom" id="zoomRow" hidden>
@@ -1009,7 +996,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">셋째 마디 · 지나간 자리</p>
   <h2 class="t" id="hitTitle"></h2>
   <div class="say">
-    <div class="por"><img src="img/seer-read.webp" alt=""></div>
+    <div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div><div id="hitSay"></div></div>
   </div>
   <div class="facewrap" id="faceHit">
@@ -1030,7 +1017,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">넷째 마디 · 고르기</p>
   <h2 class="t">셋 중에 하나를<br>골라보시겠어요…?</h2>
   <div class="say">
-    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="por"><img src="img/seer-deal.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>…그냥, 보시고 제일 마음이 걸리는 쪽으로요. 틀려도 괜찮아요. 아니, 틀리는 게 더 나을지도…</p>
     </div>
@@ -1061,7 +1048,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">다섯째 마디 · 복채</p>
   <h2 class="t">열한 자리가<br>아직 봉해져 있어요…</h2>
   <div class="say">
-    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="por"><img src="img/seer-deal.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>…제가 저것들하고 말을 좀 섞어야 하는데요. 그게, 그냥은 안 비켜줘서…</p>
       <p>이거까지만 봐드릴 테니, 손님도 마음을 정하셔야 해요…</p>
@@ -1091,7 +1078,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">여섯째 마디 · 흥정</p>
   <h2 class="t" id="cureTitle"></h2>
   <div class="say">
-    <div class="por"><img src="img/seer-deal.webp" alt=""></div>
+    <div class="por"><img src="img/seer-deal.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div><div id="cureSay"></div></div>
   </div>
 
@@ -1128,7 +1115,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <p class="kick">맺음 · 백귀도</p>
   <h2 class="t">열두 칸이<br>손님의 자리로 채워졌어요.</h2>
   <div class="tang" id="tang">
-    <img class="bg" src="img/tanghwa.png" alt="백귀도">
+    <img class="bg" src="img/tanghwa.webp" alt="백귀도" loading="lazy" decoding="async">
   </div>
   <p class="hint center" style="margin-top:12px">붉게 도는 칸이 올해를 쥔 우두머리입니다.</p>
   <button class="btn" id="saveTang">한 장으로 합치기</button>
@@ -1144,7 +1131,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   <h2 class="t" id="endTitle"></h2>
 
   <div class="say">
-    <div class="por"><img src="img/seer-end.webp" alt=""></div>
+    <div class="por"><img src="img/seer-end.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div><div id="endSay"></div></div>
   </div>
 
@@ -1152,7 +1139,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
   <p class="kick" style="margin-top:26px">얼굴은 그릇, 때는 사주</p>
   <div class="say">
-    <div class="por"><img src="img/seer-end.webp" alt=""></div>
+    <div class="por"><img src="img/seer-end.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>…여기까지가 얼굴입니다. 그릇은 다 봤어요.</p>
       <p>그런데 <em>때는 얼굴에 적혀 있지 않아서요.</em> 몇 월에 움직이고 몇 월에 멈출지까지는 위에 적어드렸지만, 올해가 손님 인생에서 어느 대목인지는 생년월일을 봐야 압니다.</p>
@@ -1354,12 +1341,12 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/baekgwi.js?v=20261029s"></script>
-<script src="js/gungsang.js?v=20261029s"></script>
-<script src="js/engine.js?v=20261029s"></script>
-<script src="js/saju.js?v=20261029s"></script>
-<script src="js/cross.js?v=20261029s"></script>
-<script src="js/sound.js?v=20261029s"></script>
+<script src="js/baekgwi.js?v=20261029t"></script>
+<script src="js/gungsang.js?v=20261029t"></script>
+<script src="js/engine.js?v=20261029t"></script>
+<script src="js/saju.js?v=20261029t"></script>
+<script src="js/cross.js?v=20261029t"></script>
+<script src="js/sound.js?v=20261029t"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1752,7 +1739,7 @@ function showReadOut(){
    (R.light ? `<p class="hint center lightnote">${R.light==="어둠"
       ? "사진이 어두운 편입니다. 기색은 빛을 타서, 밝은 데서 한 번 더 비추시면 더 맞습니다."
       : "사진에 빛이 세게 들었습니다. 기색은 빛을 타서, 그늘진 데서 한 번 더 비추시면 더 맞습니다."}</p>` : "")+
-   `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>
+   `<div class="say"><div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="txt"><div class="nm">원안법사</div>
       <p>${oh.seong}</p>
       <p>${oh.il}</p>
@@ -1850,7 +1837,7 @@ function onMark(e){
   $("markHint").hidden=true;
   $("markHint").innerHTML="…얼굴에 점이나 흉, 파인 자리가 있으면<br>사진 위에서 그 자리를 한 번 짚어주세요.";
   $("markOut").innerHTML=
-    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
+    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>`+
     `<div class="txt"><div class="nm">원안법사</div>`+
     `<p>거기는 <em>${best.bu}</em>, ${best.n}입니다.</p>`+
     `<p>${JAGUK[best.k]}</p>`+
@@ -1862,7 +1849,7 @@ function onMark(e){
 $("markSkip").addEventListener("click",()=>{
   $("markHint").hidden=true; $("markSkip").hidden=true; $("hitGo").hidden=false;
   $("markOut").innerHTML=
-    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt=""></div>`+
+    `<div class="say"><div class="por"><img src="img/seer-read.webp" alt="" loading="lazy" decoding="async"></div>`+
     `<div class="txt"><div class="nm">원안법사</div>`+
     `<p>…없으면 다행입니다. 아직 손을 안 댄 거니까요.</p></div></div>`;
 });
@@ -1871,7 +1858,7 @@ $("hitGo").addEventListener("click",()=>{ go("s-pick"); buildPick(); });
 /* ── 5. 고르기 ────────────────────────────── */
 function bgCard(i,cls){
   const c=BG[i];
-  return `<div class="card${cls||""}"><img src="img/baekgwi/${c[2]}.webp" alt="${c[0]}">`+
+  return `<div class="card${cls||""}"><img src="img/baekgwi/${c[2]}.webp" alt="${c[0]}" loading="lazy" decoding="async">`+
          `<div class="nm">${c[0]}</div></div>`;
 }
 function buildPick(){
@@ -1880,7 +1867,7 @@ function buildPick(){
     const g=BG[c.i];
     const b=document.createElement("button");
     b.className="card"; b.setAttribute("aria-pressed","false");
-    b.innerHTML=`<img src="img/baekgwi/${g[2]}.webp" alt="${g[0]}"><div class="nm">${g[0]}</div>`;
+    b.innerHTML=`<img src="img/baekgwi/${g[2]}.webp" alt="${g[0]}" loading="lazy" decoding="async"><div class="nm">${g[0]}</div>`;
     b.addEventListener("click",()=>choose(c,b));
     w.appendChild(b);
   });
@@ -1900,7 +1887,7 @@ function choose(c,btn){
   });
   const b=R.boss, bg=BG[b.bg];
   $("pickOut").innerHTML=
-   `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-deal.webp" alt=""></div>`+
+   `<div class="say" style="margin-top:18px"><div class="por"><img src="img/seer-deal.webp" alt="" loading="lazy" decoding="async"></div>`+
    `<div class="txt"><div class="nm">원안법사</div>`+
    `<p>${c.q}</p>`+
    `<p>…그런데요. 그건 <em>무서워하는 얼굴</em>이지, 손님 앞에 서 있는 건 아닙니다.</p>`+
@@ -1990,7 +1977,7 @@ function renderGungs(){
     const row=document.createElement("div");
     row.innerHTML=
       `<button class="gung${open?" opened":""}${boss&&open?" boss":""}" data-k="${j.g.k}">`+
-      `<span class="th${open?" lv"+j.lv:" lock"}"><img src="img/baekgwi/${bg[2]}.webp" alt="">${open?"":'<span class="lk">封</span>'}</span>`+
+      `<span class="th${open?" lv"+j.lv:" lock"}"><img src="img/baekgwi/${bg[2]}.webp" alt="" loading="lazy" decoding="async">${open?"":'<span class="lk">封</span>'}</span>`+
       `<span class="mid"><span class="nm2">${j.g.n}<small>${j.g.bu}</small></span>`+
       `<span class="sub${open?"":" blur"}">${open?j.g.lv[j.lv].dx:"자리를 막고 선 것이 아직 비키지 않았습니다"}</span></span>`+
       `<span class="st${open?" g"+j.lv:""}">${open?(boss?"우두머리":LVNM[j.lv]):"封"}</span></button>`+
@@ -2012,7 +1999,7 @@ function panelHTML(j){
    `<h4>자리</h4><p>${t.dx}</p><p>${t.rd}</p>`+
    `<p class="byline">${BY[g.k][R.hyeong]}</p>`+
    `<h4>${se.st} — ${bgName(j.bg)}</h4>`+
-   `<div class="bgrow"><img src="img/baekgwi/${bg[2]}.webp" alt="${bg[0]}">`+
+   `<div class="bgrow"><img src="img/baekgwi/${bg[2]}.webp" alt="${bg[0]}" loading="lazy" decoding="async">`+
    `<span><b>${bg[3]}</b><br>${se.mal}</span></div>`+
    `<p>${se.pre?`<span class="pre">${se.pre}</span> `:""}${bg[4]}</p>`+
    `<h4>때</h4><p>${SI[g.k][j.lv]}</p>`+
@@ -2205,7 +2192,7 @@ function buildTang(){
     d.className="slot"+(j.g.k===R.boss.g.k?" boss":"");
     d.style.left=(s[0]/TW*100)+"%"; d.style.top=(s[1]/TH*100)+"%";
     d.style.width=(s[2]/TW*100)+"%"; d.style.height=(s[3]/TH*100)+"%";
-    d.innerHTML=`<img src="img/baekgwi/${BG[j.bg][2]}.webp" alt="${BG[j.bg][0]}">`;
+    d.innerHTML=`<img src="img/baekgwi/${BG[j.bg][2]}.webp" alt="${BG[j.bg][0]}" loading="lazy" decoding="async">`;
     d.title=j.g.n+" · "+BG[j.bg][0];
     t.appendChild(d);
     setTimeout(()=>d.classList.add("on"),180+i*110);
@@ -2229,7 +2216,7 @@ $("saveTang").addEventListener("click",async()=>{
   };
   const boss0=i=>R.jari[i].g.k===R.boss.g.k;
   x.fillStyle="#0a0507"; x.fillRect(0,0,1536,1024);
-  const bg=await load("img/tanghwa.png");
+  const bg=await load("img/tanghwa.webp");
   if(bg)x.drawImage(bg,0,0,1536,1024);
   for(let i=0;i<R.jari.length;i++){
     const s2=SLOT[i], im=await load("img/baekgwi/"+BG[R.jari[i].bg][2]+".webp");
@@ -2272,7 +2259,7 @@ $("saveTang").addEventListener("click",async()=>{
   $("tang").hidden=true;
   S.tangUrl=url;
   if(navigator.share) $("shareTang").hidden=false;
-  $("tangOut").innerHTML=`<img src="${url}" alt="백귀도" style="width:100%;border:1px solid rgba(201,162,74,.35);box-shadow:0 14px 40px rgba(0,0,0,.7)">`+
+  $("tangOut").innerHTML=`<img src="${url}" alt="백귀도" style="width:100%;border:1px solid rgba(201,162,74,.35);box-shadow:0 14px 40px rgba(0,0,0,.7)" loading="lazy" decoding="async">`+
     `<p class="hint center" style="margin-top:10px">그림을 길게 눌러 사진첩에 저장하세요.</p>`;
   btn.hidden=true;
 });
@@ -2552,7 +2539,7 @@ function buildCross(C,P){
 $("again").addEventListener("click",()=>{stopLive();location.reload();});
 
 /* 어느 판인지 — 캐시에 묶였는지 손님이 바로 알 수 있게 */
-const BUILD = "2026-10-29.19";
+const BUILD = "2026-10-29.20";
 
 /* 백귀도 — 화면과 합친 그림이 같은 값을 쓰도록 한 곳에서만 정합니다.
    앞서 캔버스 쪽 값이 CSS 보다 뒤처져, 저장한 그림이 화면보다 어둡게 나왔습니다. */
