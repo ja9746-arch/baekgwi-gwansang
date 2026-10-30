@@ -48,7 +48,7 @@ buildBoard=function(palaces=false){
  const tab=document.createElement('button');tab.dataset.region=a.key;tab.innerHTML=a.name+(!S.paid&&!a.free?'<span>封</span>':'');tab.onclick=tap;tabs.append(tab);});
  $('boardTail').innerHTML='<button class="btn" onclick="openBook()">'+(S.paid?'내 관상첩 다시 펼치기':'여덟 첩의 이야기 살펴보기')+'</button><button class="btn ghost" onclick="go(\'s-mirror\')">사진 다시 선택</button>';
 };
-function openBook(){if(!R){go('s-mirror');return;}go('s-book');$('bookContent').innerHTML=`<div class="book-cover"><p>원안법사의 비밀 기록</p><h2>나만의<br>관상첩</h2><span class="seal-label">${S.paid?'개봉 · 여덟 첩':'봉인 · 아직 남은 이야기'}</span><p>얼굴 한 장에서 시작된 여덟 개의 기록</p></div><div class="chapters">${ATELIER_CHAPTERS.map((c,i)=>`<button class="chapter-row" onclick="openChapter(${i})"><span class="number">${String(i+1).padStart(2,'0')}</span><span><strong>${c[1]}</strong><small>${c[2]}</small></span><span class="status">${!i?'무료':S.paid?'펼침':'封'}</span></button>`).join('')}</div><button class="btn ghost" onclick="go('s-board');buildBoard()">내 얼굴 관상도로</button>${S.paid?'<label class="name-field">관상첩에 남길 이름 (선택)<input id="bookName" maxlength="40" placeholder="나의 관상첩" autocomplete="off" oninput="atelierName=this.value"></label><div class="book-actions"><button class="btn ghost" onclick="printAtelier()">관상첩 PDF 저장</button><button class="btn ghost" onclick="shareAtelier()">공유 카드 저장</button></div>':''}`;}
+function openBook(){if(!R){go('s-mirror');return;}go('s-book');$('bookContent').innerHTML=`<div class="book-cover"><p>원안법사의 비밀 기록</p><h2>나만의<br>관상첩</h2><span class="seal-label">${S.paid?'개봉 · 여덟 첩':'봉인 · 아직 남은 이야기'}</span><p>얼굴 한 장에서 시작된 여덟 개의 기록</p></div><div class="chapters">${ATELIER_CHAPTERS.map((c,i)=>`<button class="chapter-row" onclick="openChapter(${i})"><span class="number">${String(i+1).padStart(2,'0')}</span><span><strong>${c[1]}</strong><small>${c[2]}</small></span><span class="status">${!i?'무료':S.paid?'펼침':'封'}</span></button>`).join('')}</div><button class="btn ghost" onclick="go('s-board');buildBoard()">내 얼굴 관상도로</button>${S.paid?'<label class="name-field">관상첩에 남길 이름 (선택)<input id="bookName" maxlength="40" placeholder="나의 관상첩" autocomplete="off" oninput="atelierName=this.value"></label><div class="book-actions"><button class="btn ghost" onclick="printAtelier()">관상첩 PDF 저장</button><button class="btn ghost" onclick="shareAtelier()">공유 카드 저장</button></div>':''}`;if($('bookName'))$('bookName').value=atelierName;}
 function chapterBody(i){
  if(i===0)return firstPaper();
  const sets={1:[3,0,5],2:[2,1,4],4:[0,3,5],5:[0,2,3]};
@@ -58,7 +58,26 @@ function chapterBody(i){
  return '';
 }
 function openChapter(i){if(i>0&&!S.paid){go('s-pay');return;}if(i===6){go('s-board');buildBoard(true);return;}atelierChapter=i;$('bookContent').innerHTML=`<button class="btn ghost" onclick="openBook()">← 여덟 첩 목차</button><div class="chapter-detail">${chapterBody(i)}</div><button class="btn" onclick="${i===7?'openBook()':'openChapter('+(i+1)+')'}">${i===7?'내 관상첩으로':'다음 관상첩 펼치기'}</button>`;if($('selfNote'))$('selfNote').value=atelierNote;if(i===7){const letter=$('bookContent').querySelector('.letter');letter.hidden=true;const seal=document.createElement('button');seal.className='btn';seal.textContent='붉은 봉인 풀기';seal.onclick=()=>{letter.hidden=false;letter.classList.add('unsealed');seal.remove();};letter.before(seal);}window.scrollTo(0,0);}
-function printAtelier(){const name=atelierName.trim()||'나의';printBook.innerHTML=`<article class="print-page"><h1>${escapeText(name)} 관상첩</h1><p>백귀관상 · 원안법사의 비밀 관상소</p><p>${new Date().toLocaleDateString('ko-KR')}</p><p>전통 관상을 소재로 한 문화적 읽을거리</p><p>원안법사 圓安</p></article>`+ATELIER_CHAPTERS.map((c,i)=>`<article class="print-page"><h2>${c[0]} · ${c[1]}</h2>${i===6?'<p>얼굴 열두 자리는 서비스의 내 얼굴 관상도에서 다시 탐색할 수 있습니다.</p>':chapterBody(i)}</article>`).join('');window.print();}
+function printAtlasImage(){
+  if(!S.url||!phM.complete||!R)return '';
+  const r=hole.getBoundingClientRect();
+  const width=r.width||320, height=r.height||width*604/694;
+  const original=captureMirror(phM,S,width,height);if(!original)return '';
+  const c=document.createElement('canvas');c.width=640;c.height=800;
+  const ctx=c.getContext('2d');ctx.fillStyle='#dfc7a1';ctx.fillRect(0,0,640,800);
+  const faceWidth=original.width*FW/100,faceHeight=original.height*FH/100;
+  const outW=520,outH=outW*faceHeight/faceWidth;
+  ctx.drawImage(original,original.width*FX/100,original.height*FY/100,faceWidth,faceHeight,60,35,outW,outH);
+  ctx.font='20px serif';ctx.textAlign='center';
+  R.jari.forEach((j,i)=>{const x=60+j.g.x/100*outW,y=35+j.g.y/100*outH;ctx.fillStyle='#671f18';ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff3d9';ctx.fillText(String(i+1),x,y-12);});
+  return c.toDataURL('image/png');
+}
+function printAtelier(){
+ const name=atelierName.trim()||'나의';const atlas=printAtlasImage();
+ printBook.innerHTML=`<article class="print-page print-cover"><img src="img/title.webp" alt="백귀관상"><h1>${escapeText(name)} 관상첩</h1><p>원안법사의 비밀 관상소</p><p>${new Date().toLocaleDateString('ko-KR')}</p><span class="seal-label">圓安 · 원안법사</span><p>전통 관상을 소재로 한 문화적 읽을거리</p></article>`+
+ ATELIER_CHAPTERS.map((c,i)=>`<article class="print-page"><h2>${c[0]} · ${c[1]}</h2>${i===6?`${atlas?`<img class="print-atlas" src="${atlas}" alt="내 얼굴 열두 자리 관상도">`:'<p>사진이 없어 관상도를 포함하지 못했습니다.</p>'}<div class="print-palaces">${R.jari.map((j,k)=>`<p>${k+1}. ${escapeText(j.g.n)} · ${escapeText(j.g.bu)}</p>`).join('')}</div>`:i===3?`<div class="paper"><h3>세상에 보이는 얼굴</h3><p>사진 속 표정과 스스로 느끼는 나를 함께 돌아봅니다.</p><h4>내가 남긴 이야기</h4><p>${escapeText(atelierNote||'남긴 이야기가 없습니다.').replace(/\n/g,'<br>')}</p></div>`:chapterBody(i)}</article>`).join('');
+ window.print();
+}
 function shareAtelier(){const c=document.createElement('canvas');c.width=900;c.height=1200;const x=c.getContext('2d');x.fillStyle='#17120f';x.fillRect(0,0,900,1200);x.strokeStyle='#9c8155';x.strokeRect(50,50,800,1100);x.textAlign='center';x.fillStyle='#dbc5a0';x.font='32px serif';x.fillText('원안법사가 먼저 살펴본 세 곳',450,250);x.font='64px serif';x.fillText('이마 · 눈 · 코',450,500);x.font='27px serif';x.fillText('내 얼굴에서 시작된 관상 이야기',450,620);x.fillStyle='#a94c3b';x.fillRect(392,760,116,116);x.fillStyle='#f3e2c5';x.font='38px serif';x.fillText('圓安',450,832);x.font='36px serif';x.fillText('백귀관상',450,1000);x.font='24px serif';x.fillText('원안법사의 비밀 관상소',450,1050);const a=document.createElement('a');a.download='백귀관상-공유카드.png';a.href=c.toDataURL('image/png');a.click();}
 // Missing character assets leave the usable scene and controls in place.
 document.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.style.visibility='hidden';}));

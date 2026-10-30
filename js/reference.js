@@ -13,3 +13,5 @@ captureControls.append($('order'),$('zoomRow'));['getrow','shotLive','shot','red
 const details=document.createElement('details');details.className='traditional-details';details.innerHTML='<summary>전통 연령표 정보 (선택)</summary>';details.append($('s-ask').querySelector('.fields'));captureControls.after(details);
 $('mirrorHint').textContent='사진은 관상도 표시를 위해 이 브라우저에서만 사용합니다. 서버에 전송하지 않으며, 창을 닫으면 원본 사진은 사라집니다.';
 $('live').textContent='사진 촬영';$('pickLbl').textContent='앨범에서 선택';$('shot').textContent='이 얼굴로 관상 보기';$('redo').textContent='다시 선택';
+// File labels remain usable from a keyboard as well as touch.
+['pickLbl','redo'].forEach(id=>{const label=$(id);label.setAttribute('role','button');label.tabIndex=0;label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('filePick').click();}});});
