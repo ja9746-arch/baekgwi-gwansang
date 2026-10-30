@@ -26,3 +26,5 @@
 @media(max-width:375px){.scene-brand{font-size:16px;padding:15px 18px}.scene-brand small{font-size:9px}.entrance-content{padding:6px 20px 16px}.welcome-speech{font-size:15px}.art-button,.btn:not(.ghost){font-size:15px!important}.capture-heading h1{font-size:20px}}
 /* Capture actions stay reachable while the integrated mirror scene scrolls. */
 #s-mirror{padding-bottom:250px}.capture-controls{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(390px,calc(100% - 40px));z-index:30;padding:22px 0 max(14px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#0b0704 18px)}.capture-controls::before{content:'';position:absolute;inset:0 -20px;background:linear-gradient(transparent,#0b0704 18px);z-index:-1;pointer-events:none}.capture-controls #order{margin-bottom:8px;font-size:11px}.capture-controls .btn:not(.ghost){min-height:56px}.capture-controls #getrow{gap:5px}.capture-controls .btn.ghost{min-height:47px}.capture-controls .zoom{margin:4px 7px 9px}#s-mirror .traditional-details{margin-top:18px}
+/* A transformed screen creates a containing block for fixed controls. */
+#s-mirror{transform:none!important;animation:none!important}
