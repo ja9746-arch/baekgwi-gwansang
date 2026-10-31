@@ -1,0 +1,313 @@
+/* 백귀관상 — 얼굴 실측(實測)
+   얼굴에 점 468개를 찍고, 관상이 보는 자리를 실제로 잽니다.
+
+   예전에는 얼굴 위에 타원 하나를 올려놓고 그 안의 밝기만 보았습니다.
+   그러면 누가 찍어도 비슷한 수가 나옵니다. 이마가 넓은지 좁은지,
+   눈꼬리가 올랐는지 내렸는지, 턱이 각졌는지 둥근지를 보지 않으니까요.
+
+   여기서는 점 468개를 찍어 다음을 직접 잽니다.
+     삼정(三停)   발제—인당—준두—지각의 세 마디
+     오악(五岳)   이마·좌우 광대·코·턱의 솟음
+     이마         높이와 넓이, 양 끝의 기울기
+     눈썹         길이·두께·꺾임·눈과의 사이
+     눈           길이·높이·눈머리와 눈꼬리의 높낮이·두 눈 사이
+     코           산근의 좁음, 콧대 길이, 준두 크기, 난대정위(콧방울)
+     인중         길이와 또렷함
+     입           너비·입술 두께·입꼬리 방향
+     턱           넓이·길이·각짐·지각의 두터움
+     좌우         짝이 있는 자리의 어긋남
+
+   모든 길이는 얼굴 너비로 나눠 둡니다. 사진이 크든 작든 같은 수가 나옵니다. */
+
+/* ── 점 번호 ────────────────────────────────────────
+   얼굴 점 468개 중 관상이 보는 자리만 추립니다.
+   왼쪽/오른쪽은 사진에서 본 쪽입니다. 거울을 마주한 사람의 몸으로는 반대입니다. */
+const P = {
+  /* 한가운데 세로줄 */
+  이마꼭지: 10, 이마중간: 151, 인당: 9, 산근: 168, 콧대중간: 197,
+  준두: 1, 인중위: 2, 윗입술: 0, 입중앙: 13, 아랫입술안: 14,
+  아랫입술: 17, 승장: 18, 턱끝: 152,
+
+  /* 얼굴 가장자리 — 위에서 아래로 */
+  관자왼: 54, 관자오른: 284,
+  귀앞왼: 234, 귀앞오른: 454,
+  광대왼: 116, 광대오른: 345,
+  볼왼: 192, 볼오른: 416,
+  턱선왼: 172, 턱선오른: 397,
+  아래턱왼: 149, 아래턱오른: 378,
+
+  /* 이마 */
+  이마왼: 103, 이마오른: 332,
+  발제왼: 67, 발제오른: 297,
+  이마끝왼: 21, 이마끝오른: 251,
+
+  /* 눈썹 */
+  미두왼: 107, 미중왼: 105, 미미왼: 70,
+  미두오른: 336, 미중오른: 334, 미미오른: 300,
+  미상왼: 52, 미상오른: 282,
+  미하왼: 55, 미하오른: 285,
+
+  /* 눈 */
+  눈머리왼: 133, 눈꼬리왼: 33, 눈위왼: 159, 눈아래왼: 145,
+  눈머리오른: 362, 눈꼬리오른: 263, 눈위오른: 386, 눈아래오른: 374,
+  와잠왼: 23, 와잠오른: 253,
+  눈두덩왼: 29, 눈두덩오른: 259,
+  산근왼: 193, 산근오른: 417,
+
+  /* 코 */
+  콧방울왼: 98, 콧방울오른: 327,
+  난대: 115, 정위: 344,
+  콧볼왼: 48, 콧볼오른: 278,
+
+  /* 입 */
+  입꼬리왼: 61, 입꼬리오른: 291,
+  윗입술왼: 37, 윗입술오른: 267,
+  아랫입술왼: 84, 아랫입술오른: 314
+};
+
+/* ── 점 읽기 ──────────────────────────────────────── */
+let _mesh = null, _meshBusy = null;
+
+function meshBase(){
+  if (typeof window !== "undefined" && window.__MESH_BASE__) return window.__MESH_BASE__;
+  return "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/";
+}
+
+function loadScript(src){
+  return new Promise((ok, no)=>{
+    const s = document.createElement("script");
+    s.src = src; s.crossOrigin = "anonymous";
+    s.onload = ()=>ok(true);
+    s.onerror = ()=>no(new Error("못 받음: "+src));
+    document.head.appendChild(s);
+  });
+}
+
+/* 얼굴 점을 찍는 기계를 한 번만 깨웁니다. */
+async function wakeMesh(){
+  if (_mesh) return _mesh;
+  if (_meshBusy) return _meshBusy;
+  _meshBusy = (async ()=>{
+    const base = meshBase();
+    if (typeof FaceMesh === "undefined") await loadScript(base + "face_mesh.js");
+    const fm = new FaceMesh({ locateFile: (f)=> base + f });
+    fm.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,     /* 눈동자와 입술을 한 번 더 다듬습니다 */
+      minDetectionConfidence: 0.4,
+      minTrackingConfidence: 0.4
+    });
+    await fm.initialize();
+    _mesh = fm;
+    return fm;
+  })();
+  return _meshBusy;
+}
+
+/* 그림 한 장에서 점 468개를 받습니다. */
+async function findLandmarks(srcEl){
+  const fm = await wakeMesh();
+  return await new Promise((done)=>{
+    let settled = false;
+    const t = setTimeout(()=>{ if(!settled){ settled=true; done(null); } }, 12000);
+    fm.onResults((res)=>{
+      if (settled) return;
+      settled = true; clearTimeout(t);
+      const ls = res.multiFaceLandmarks;
+      done(ls && ls.length ? ls[0] : null);
+    });
+    fm.send({ image: srcEl }).catch(()=>{ if(!settled){ settled=true; clearTimeout(t); done(null); } });
+  });
+}
+
+/* ── 자 ────────────────────────────────────────────
+   점은 0~1 사이로 옵니다. 그림의 가로세로가 다르니 실제 길이로 돌려놓습니다. */
+function mk(pts, W, H){
+  const g = (i)=>({ x: pts[i].x*W, y: pts[i].y*H, z: (pts[i].z||0)*W });
+  return g;
+}
+const dist = (a,b)=> Math.hypot(a.x-b.x, a.y-b.y);
+const midp = (a,b)=>({ x:(a.x+b.x)/2, y:(a.y+b.y)/2, z:((a.z||0)+(b.z||0))/2 });
+/* 수평에서 몇 도 기울었는가 — 위로 오르면 양수 */
+const ang = (a,b)=> Math.atan2(a.y-b.y, Math.abs(b.x-a.x)) * 180/Math.PI;
+
+/* ── 재기 ──────────────────────────────────────────
+   돌려주는 수는 모두 얼굴 너비(FW)로 나눈 값입니다. */
+function measure(pts, W, H){
+  const g = mk(pts, W, H);
+  const p = {}; for (const k in P) p[k] = g(P[k]);
+
+  /* 얼굴 너비 — 광대 바깥, 얼굴에서 가장 넓은 자리 */
+  const FW = dist(p.귀앞왼, p.귀앞오른);
+  if (!(FW > 4)) return null;
+  const n = (v)=> v / FW;
+
+  /* 얼굴을 바로 세웁니다 — 고개가 기울어도 같은 수가 나오게 */
+  const eyeL = midp(p.눈머리왼, p.눈꼬리왼), eyeR = midp(p.눈머리오른, p.눈꼬리오른);
+  const roll = Math.atan2(eyeR.y - eyeL.y, eyeR.x - eyeL.x);
+  const cs = Math.cos(-roll), sn = Math.sin(-roll);
+  const o = midp(eyeL, eyeR);
+  const rot = (q)=>({ x:(q.x-o.x)*cs - (q.y-o.y)*sn, y:(q.x-o.x)*sn + (q.y-o.y)*cs, z:q.z });
+  /* 돌려놓은 자리를 그림 자리로 되돌립니다 — 빛을 잴 때 씁니다 */
+  const unrot = (q)=>({ x: q.x*cs + q.y*sn + o.x, y: -q.x*sn + q.y*cs + o.y });
+  const r = {}; for (const k in p) r[k] = rot(p[k]);
+  const rawAll = pts.map(q=>({ x:q.x*W, y:q.y*H }));
+
+  /* 고개를 돌린 정도 — 코끝이 양 귀 가운데에서 얼마나 비켜 있는가 */
+  const earMid = (r.귀앞왼.x + r.귀앞오른.x)/2;
+  const yaw = (r.준두.x - earMid) / FW;
+  /* 고개를 든 정도 — 콧구멍이 보이는 만큼 */
+  const pitch = (r.준두.y - midp(r.콧방울왼, r.콧방울오른).y) / FW;
+
+  /* ── 삼정 ──
+     발제는 점으로 잡히지 않습니다. 이마꼭지 위로 이마 높이의 몫만큼 올려
+     발제 자리를 어림합니다. 옛 자와 어긋나지 않는 몫입니다. */
+  const 인당y = r.인당.y, 준두y = r.준두.y, 턱끝y = r.턱끝.y;
+  const 이마꼭y = r.이마꼭지.y;
+  const 발제y = 이마꼭y - (인당y - 이마꼭y) * 0.92;
+  const 상정 = 인당y - 발제y, 중정 = 준두y - 인당y, 하정 = 턱끝y - 준두y;
+  const 전장 = 턱끝y - 발제y;
+  const sam = [상정/전장, 중정/전장, 하정/전장];
+
+  /* ── 윤곽 ── */
+  const 얼굴높이 = 전장;
+  const 상폭 = dist(r.관자왼, r.관자오른);        /* 관자놀이 — 이마 너비 */
+  const 중폭 = dist(r.광대왼, r.광대오른);        /* 광대 너비 */
+  const 하폭 = dist(r.아래턱왼, r.아래턱오른);    /* 턱 너비 */
+  const 턱선폭 = dist(r.턱선왼, r.턱선오른);
+
+  /* ── 이마 ── */
+  const 이마높이 = 인당y - 발제y;
+  const 이마폭 = dist(r.이마왼, r.이마오른);
+  /* 이마 양 끝이 깎였는가 — 발제 모서리가 가운데보다 얼마나 내려와 있는가 */
+  const 이마모서리 = ((r.이마끝왼.y + r.이마끝오른.y)/2 - 이마꼭y) / FW;
+
+  /* ── 눈썹 ── */
+  const 미길왼 = dist(r.미두왼, r.미미왼), 미길오 = dist(r.미두오른, r.미미오른);
+  const 미길 = (미길왼 + 미길오)/2;
+  /* 눈썹 꺾임 — 눈썹 가운데가 두 끝을 이은 줄보다 얼마나 솟았는가 */
+  const 꺾왼 = ((r.미두왼.y + r.미미왼.y)/2 - r.미중왼.y) / FW;
+  const 꺾오 = ((r.미두오른.y + r.미미오른.y)/2 - r.미중오른.y) / FW;
+  const 미꺾 = (꺾왼 + 꺾오)/2;
+  /* 눈썹과 눈 사이 — 전택궁의 넓이 */
+  const 미안왼 = (r.눈위왼.y - r.미상왼.y)/FW, 미안오 = (r.눈위오른.y - r.미상오른.y)/FW;
+  const 미안 = (미안왼 + 미안오)/2;
+  /* 눈썹 기울기 — 미미가 미두보다 높으면 오른 눈썹 */
+  const 미각 = (ang(r.미미왼, r.미두왼) + ang(r.미미오른, r.미두오른))/2;
+  /* 두 눈썹 사이 — 인당의 너비 */
+  const 미간 = dist(r.미하왼, r.미하오른);
+
+  /* ── 눈 ── */
+  const 눈길왼 = dist(r.눈머리왼, r.눈꼬리왼), 눈길오 = dist(r.눈머리오른, r.눈꼬리오른);
+  const 눈길 = (눈길왼 + 눈길오)/2;
+  const 눈높왼 = Math.abs(r.눈위왼.y - r.눈아래왼.y), 눈높오 = Math.abs(r.눈위오른.y - r.눈아래오른.y);
+  const 눈높 = (눈높왼 + 눈높오)/2;
+  /* 눈꼬리 — 눈머리보다 높으면 오른 눈 */
+  const 눈각왼 = ang(r.눈꼬리왼, r.눈머리왼) * -1;
+  const 눈각오 = ang(r.눈꼬리오른, r.눈머리오른);
+  const 눈각 = (눈각왼 + 눈각오)/2;
+  /* 두 눈 사이 — 산근의 너비. 눈 하나 길이와 견줍니다. */
+  const 눈사이 = dist(r.눈머리왼, r.눈머리오른);
+  /* 와잠 — 눈 아래 도톰한 자리 */
+  const 와잠 = ((r.와잠왼.y - r.눈아래왼.y) + (r.와잠오른.y - r.눈아래오른.y)) / 2 / FW;
+
+  /* ── 코 ── */
+  const 콧대길 = 준두y - r.산근.y;
+  const 산근폭 = dist(r.산근왼, r.산근오른);
+  const 코폭 = dist(r.콧방울왼, r.콧방울오른);
+  const 콧볼폭 = dist(r.콧볼왼, r.콧볼오른);
+  /* 준두 크기 — 코끝이 콧방울 줄에서 얼마나 내려와 솟았는가 */
+  const 준두 = Math.abs(r.준두.y - midp(r.콧방울왼, r.콧방울오른).y) / FW;
+  /* 콧대가 곧은가 — 산근·중간·준두 셋이 한 줄에 서는가 */
+  const 콧대휨 = Math.abs(r.콧대중간.x - (r.산근.x + r.준두.x)/2) / FW;
+
+  /* ── 인중 ── */
+  const 인중길 = r.윗입술.y - r.인중위.y;
+
+  /* ── 입 ── */
+  const 입폭 = dist(r.입꼬리왼, r.입꼬리오른);
+  const 윗술 = Math.abs(r.입중앙.y - r.윗입술.y);
+  const 아술 = Math.abs(r.아랫입술.y - r.아랫입술안.y);
+  const 입술 = 윗술 + 아술;
+  /* 입꼬리 — 가운데보다 높으면 오른 입 */
+  const 입각 = (( r.입중앙.y - r.입꼬리왼.y ) + ( r.입중앙.y - r.입꼬리오른.y )) / 2 / FW;
+
+  /* ── 턱 ── */
+  const 턱길 = 턱끝y - r.아랫입술.y;
+  /* 턱이 각진 정도 — 턱선에서 턱끝까지 꺾이는 각 */
+  const 턱각왼 = ang(r.턱끝, r.아래턱왼), 턱각오 = ang(r.턱끝, r.아래턱오른);
+  const 턱각 = (Math.abs(턱각왼) + Math.abs(턱각오))/2;
+  /* 지각(地閣)이 두터운가 — 아래턱 너비를 턱선 너비로 */
+  const 지각 = 하폭 / Math.max(턱선폭, 1);
+
+  /* ── 광대 ── */
+  /* 광대가 솟았는가 — 광대 너비를 관자·턱 너비의 가운데와 견줍니다 */
+  const 광대 = 중폭 / Math.max((상폭 + 하폭)/2, 1);
+
+  /* ── 좌우 ──
+     짝이 있는 자리들이 얼마나 어긋났는가. 하나하나는 작아도 쌓이면 보입니다. */
+  const sym = [
+    Math.abs(눈길왼 - 눈길오)/Math.max(눈길,1),
+    Math.abs(눈높왼 - 눈높오)/Math.max(눈높,1),
+    Math.abs(미길왼 - 미길오)/Math.max(미길,1),
+    Math.abs(미안왼 - 미안오)/Math.max(미안,0.01),
+    Math.abs(r.미상왼.y - r.미상오른.y)/FW*6,
+    Math.abs(r.입꼬리왼.y - r.입꼬리오른.y)/FW*6
+  ];
+  const 어긋남 = sym.reduce((a,b)=>a+b,0)/sym.length;
+
+  /* 얼굴 한가운데 줄에서 코와 입이 얼마나 비켜 섰는가.
+     가운데 줄은 이마·인당·턱끝을 이은 줄로 잡습니다. */
+  const 축 = (r.이마중간.x + r.인당.x + r.턱끝.x) / 3;
+  const 쏠림 = (Math.abs(r.준두.x-축) + Math.abs(r.입중앙.x-축)) / 2 / FW;
+
+  return {
+    ok: true, FW, W, H, yaw, pitch, roll: roll*180/Math.PI,
+    pts: r, raw: p, rawAll, unrot,
+
+    /* 틀 */
+    sam, 전장: n(전장), 세로: 얼굴높이/FW,
+    ratio: FW / Math.max(얼굴높이,1),              /* 넓이 ÷ 길이 — 클수록 넓은 얼굴 */
+    taper: 하폭 / Math.max(중폭,1),                /* 아래가 좁아지는 정도 */
+    boxy: 턱선폭 / Math.max(중폭,1),               /* 네모진 정도 */
+    상폭: n(상폭), 중폭: n(중폭), 하폭: n(하폭),
+
+    /* 자리마다 */
+    이마높: 이마높이/Math.max(전장,1), 이마폭: n(이마폭), 이마모서리,
+    미길: n(미길), 미꺾, 미안, 미각, 미간: n(미간),
+    눈길: n(눈길), 눈높: 눈높/Math.max(눈길,1), 눈각, 눈사이: 눈사이/Math.max(눈길,1), 와잠,
+    콧대길: 콧대길/Math.max(전장,1), 산근폭: n(산근폭), 코폭: n(코폭),
+    콧볼폭: n(콧볼폭), 준두, 콧대휨,
+    인중길: 인중길/Math.max(전장,1),
+    입폭: n(입폭), 입술: 입술/Math.max(입폭,1), 윗술: 윗술/Math.max(입술,1), 입각,
+    턱길: 턱길/Math.max(전장,1), 턱각, 지각,
+    광대, 어긋남, 쏠림,
+
+    /* 세 마디의 폭 — 예전 엔진이 쓰던 자리 */
+    bandW: [상폭, 중폭, 하폭]
+  };
+}
+
+/* ── 열두 자리의 자리값 ────────────────────────────
+   십이궁을 타원 위의 백분율이 아니라 실제 점에서 끌어냅니다.
+   기색을 잴 때 이 자리의 살빛을 봅니다. */
+function gungSpots(F){
+  const r = F.pts, FW = F.FW;
+  const mid = (a,b)=>midp(a,b);
+  const up = (q,d)=>({ x:q.x, y:q.y - FW*d });
+  return {
+    명:    r.인당,
+    관록:  r.이마중간,
+    /* 천창·역마는 얼굴 가장자리라 머리카락이 걸립니다. 안쪽으로 당겨 잽니다. */
+    복덕:  { x: r.이마왼.x*0.42 + r.이마중간.x*0.58, y: r.이마왼.y*0.6 + r.미미왼.y*0.4 },
+    천이:  { x: r.이마오른.x*0.42 + r.이마중간.x*0.58, y: r.이마오른.y*0.72 + r.이마중간.y*0.28 },
+    부모:  mid(r.이마왼, r.이마오른),
+    형제:  mid(r.미중왼, r.미중오른),
+    전택:  mid(r.눈두덩왼, r.눈두덩오른),
+    처첩:  mid(r.눈꼬리왼, r.눈꼬리오른),
+    질액:  r.산근,
+    남녀:  mid(r.와잠왼, r.와잠오른),
+    재백:  r.준두,
+    노복:  mid(r.아래턱왼, r.아래턱오른)
+  };
+}

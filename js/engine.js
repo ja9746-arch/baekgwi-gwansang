@@ -1,236 +1,62 @@
 /* 백귀관상 — 판정 엔진
-   사진에서 실제로 수치를 재고, 그 수치로 관상을 가립니다.
+   얼굴 점 468개를 찍어 실제로 재고(face.js),
+   그 자리의 빛을 재고(measure.js), 백가지 단서를 가린 다음(clues.js),
+   여기서 오행형상·기색·십이궁·유년운기로 묶습니다.
 
    재는 것
-     삼정(三停)    이마·중앙·턱 세 구간의 밝기와 두께
+     삼정(三停)    발제·인당·준두·지각 네 자리로 가른 세 마디의 길이와 폭
      오악(五岳)    이마·좌우 광대·코·턱의 솟음
-     윤곽          얼굴의 가로세로비와 하정이 좁아지는 정도 → 오행형상
-     기색(氣色)    전체 색이 어느 쪽으로 기울었는가 → 청적황백흑
-     십이궁        궁마다 그 자리의 밝기를 얼굴 평균과 견주어 등급
+     윤곽          얼굴의 가로세로비, 하정이 좁아지는 정도, 턱선의 각짐
+     기색(氣色)    눈·눈썹·입을 뺀 살빛이 어느 쪽으로 기울었는가
+     십이궁        열두 자리에서 바로 잰 빛과 결
 
    가리는 것
      오행형상 → 타고난 그릇
      기색     → 지금의 기운
      둘의 상생상극 → 왜 지금 되고 안 되는가
      궁별 등급 → 열두 자리의 트임과 막힘
-     유년운기 → 올해를 쥔 자리와 그 자리의 우두머리 */
+     유년운기 → 올해를 쥔 자리와 그 자리의 우두머리
+     백가지 단서 → 모든 풀이의 근거 */
 
-/* 얼굴 틀 — 거울면 안에서 길잡이 타원이 차지하는 자리 (백분율) */
-const FACE = { x:28, y:19, w:44, h:62 };
-
-/* ── 1. 거울에 비친 그대로를 화폭에 옮긴다 ───────────── */
-function captureMirror(srcEl, st, holeW, holeH){
-  const CW = 320, CH = Math.max(1, Math.round(CW * holeH / holeW));
-  const c = document.createElement("canvas");
-  c.width = CW; c.height = CH;
-  const g = c.getContext("2d", { willReadFrequently:true });
-  g.fillStyle = "#070406"; g.fillRect(0,0,CW,CH);
-  const cover = Math.max(holeW/st.natW, holeH/st.natH);
-  const w = st.natW*cover*st.scale, h = st.natH*cover*st.scale;
-  const k = CW/holeW;
-  const dx = (holeW - w)/2 + st.x*holeW/100;
-  const dy = (holeH - h)/2 + st.y*holeH/100;
-  try { g.drawImage(srcEl, dx*k, dy*k, w*k, h*k); } catch(e){ return null; }
-  return c;
+/* ── 0. 자세를 봅니다 ─────────────────────────────
+   관상의 자는 정면을 두고 잰 자입니다. 고개를 돌리거나 들면
+   이마가 줄고 턱이 늘어 다른 사람의 수가 나옵니다.
+   그래서 비뚤면 재지 않고 다시 비추시게 합니다. */
+function poseCheck(F){
+  if (Math.abs(F.roll) > 8)
+    return { k:"roll", msg: (F.roll>0 ? "고개가 오른쪽으로 기울었습니다" : "고개가 왼쪽으로 기울었습니다"),
+             tip:"어깨를 펴고 고개를 똑바로 세워 주세요." };
+  if (F.yaw > 0.048)
+    return { k:"yaw", msg:"고개가 한쪽으로 돌아갔습니다", tip:"코끝이 화면 한가운데에 오게 하세요." };
+  if (F.yaw < -0.048)
+    return { k:"yaw", msg:"고개가 한쪽으로 돌아갔습니다", tip:"코끝이 화면 한가운데에 오게 하세요." };
+  if (F.pitch < 0.012)
+    return { k:"up", msg:"고개를 드셨습니다", tip:"턱을 조금 당기고 눈높이로 보세요." };
+  if (F.pitch > 0.090)
+    return { k:"down", msg:"고개를 숙이셨습니다", tip:"턱을 조금 들고 눈높이로 보세요." };
+  return null;
 }
 
-/* ── 2. 수치를 뽑는다 ──────────────────────────────── */
-function readMetrics(canvas, sex){
-  const CW = canvas.width, CH = canvas.height;
-  let px;
-  try { px = canvas.getContext("2d").getImageData(0,0,CW,CH).data; }
-  catch(e){ return null; }
+/* ── 1. 사진 한 장을 읽습니다 ────────────────────── */
+async function readFace(srcEl){
+  const cv = toCanvas(srcEl, 720);
+  if(!cv) return { err:"그림을 열지 못했습니다" };
 
-  const fx = CW*FACE.x/100, fy = CH*FACE.y/100;
-  const fw = CW*FACE.w/100, fh = CH*FACE.h/100;
-  const cx = fx+fw/2, cy = fy+fh/2, rx = fw/2, ry = fh/2;
+  let pts = null;
+  try { pts = await findLandmarks(cv); }
+  catch(e){ return { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
+  if(!pts) return { err:"얼굴을 못 찾았습니다" };
 
-  const lum = (i)=> (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114);
-  const inFace = (x,y)=>{ const a=(x-cx)/rx, b=(y-cy)/ry; return a*a+b*b <= 1; };
-  const X0=Math.max(0,Math.floor(fx)), X1=Math.min(CW,Math.ceil(fx+fw));
-  const Y0=Math.max(0,Math.floor(fy)), Y1=Math.min(CH,Math.ceil(fy+fh));
+  const F = measure(pts, cv.width, cv.height);
+  if(!F) return { err:"얼굴이 너무 작습니다" };
 
-  /* 1) 타원 안을 한 번 훑어 조명색을 가늠합니다 */
-  let aN=0,aR=0,aG=0,aB=0;
-  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
-    if(!inFace(x,y)) continue;
-    const i=(y*CW+x)*4; aN++; aR+=px[i]; aG+=px[i+1]; aB+=px[i+2];
-  }
-  if(aN<400) return null;
-  aR/=aN; aG/=aN; aB/=aN;
-  const avg0=(aR+aG+aB)/3;
-  /* 흰 것이 비치면 그것을 흰 기준으로 삼습니다. 찬 전등·누런 전등을 먼저 걷어내야
-     살빛을 제대로 가려낼 수 있습니다. */
-  let wN0=0,wR0=0,wG0=0,wB0=0;
-  for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
-    if(!inFace(x,y)) continue;
-    const i=(y*CW+x)*4, r=px[i], g=px[i+1], b=px[i+2];
-    const mx2=Math.max(r,g,b), mn2=Math.min(r,g,b);
-    if(mx2>148 && mx2<252 && (mx2-mn2)/mx2 < 0.14){ wN0++; wR0+=r; wG0+=g; wB0+=b; }
-  }
-  let wR,wG,wB;
-  if(wN0 > aN*0.004){
-    const rm=wR0/wN0, gm=wG0/wN0, bm=wB0/wN0, wl=(rm+gm+bm)/3;
-    const lim=v=>Math.max(0.76,Math.min(1.30,v));
-    wR=lim(wl/Math.max(rm,1)); wG=lim(wl/Math.max(gm,1)); wB=lim(wl/Math.max(bm,1));
-  }else{
-    const nd=v=>Math.max(.88,Math.min(1.14,1+(avg0/Math.max(v,1)-1)*0.55));
-    wR=nd(aR); wG=nd(aG); wB=nd(aB);
-  }
-  /* 살빛인가 — 얼굴 찾을 때와 같은 잣대입니다 */
-  const isSkin=(i)=>{
-    const r=Math.min(255,px[i]*wR), g=Math.min(255,px[i+1]*wG), b=Math.min(255,px[i+2]*wB);
-    const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
-    return r>52 && g>30 && b>14 && (mx-mn)>11 &&
-           r>=g && g>=b-16 && (r-g)>5 && (r-b)>10 && mx<253;
-  };
+  const bad = (typeof window!=='undefined' && window.__NO_POSE__) ? null : poseCheck(F);
+  if (bad) return { err: bad.msg, tilt: bad.k, F, canvas:cv };
 
-  /* 2) 살빛만 셉니다 — 뒷배경과 머리카락은 기색이 아닙니다 */
-  let n=0,sumL=0,sumL2=0,sumR=0,sumG=0,sumB=0;
-  const band=[{n:0,s:0},{n:0,s:0},{n:0,s:0}];
-  let ln=0,ls=0,rn=0,rs=0;
-  const rowMin=new Array(CH).fill(1e9), rowMax=new Array(CH).fill(-1);
-  let hi=[];
-  function gather(skinOnly){
-    n=0;sumL=0;sumL2=0;sumR=0;sumG=0;sumB=0;
-    for(let k=0;k<3;k++){ band[k].n=0; band[k].s=0; }
-    ln=ls=rn=rs=0; hi=[];
-    rowMin.fill(1e9); rowMax.fill(-1);
-    for(let y=Y0;y<Y1;y++) for(let x=X0;x<X1;x++){
-      if(!inFace(x,y)) continue;
-      const i=(y*CW+x)*4;
-      if(skinOnly && !isSkin(i)) continue;
-      const L=lum(i);
-      n++; sumL+=L; sumL2+=L*L; sumR+=px[i]; sumG+=px[i+1]; sumB+=px[i+2];
-      const t=(y-fy)/fh, bi = t<0.34 ? 0 : (t<0.67 ? 1 : 2);
-      band[bi].n++; band[bi].s+=L;
-      if(x<cx){ ln++; ls+=L; } else { rn++; rs+=L; }
-      if(x<rowMin[y]) rowMin[y]=x;
-      if(x>rowMax[y]) rowMax[y]=x;
-      hi.push(L,px[i],px[i+1],px[i+2]);
-    }
-  }
-  gather(true);
-  /* 살빛이 너무 적으면 타원 전체로 물러섭니다 */
-  if(n < aN*0.12) gather(false);
-  if(n<300) return null;
+  const m = readSkin(cv, F, null);
+  if(!m) return { err:"빛이 모자랍니다", F, canvas:cv };
 
-  const meanL = sumL/n;
-  const sd = Math.sqrt(Math.max(0, sumL2/n - meanL*meanL));
-  let mR = sumR/n, mG = sumG/n, mB = sumB/n;
-
-  /* 살빛 가릴 때 쓴 보정을 색 평균에도 그대로 적용합니다 */
-  mR = Math.min(255, mR*wR);
-  mG = Math.min(255, mG*wG);
-  mB = Math.min(255, mB*wB);
-
-  function widthAt(t0,t1){
-    let w=0,c=0;
-    for(let y=Math.floor(fy+fh*t0); y<Math.ceil(fy+fh*t1); y++){
-      if(y<0||y>=CH||rowMax[y]<0) continue;
-      w += rowMax[y]-rowMin[y]; c++;
-    }
-    return c ? w/c : 0;
-  }
-  let top=-1, bot=-1;
-  for(let y=0;y<CH;y++){ if(rowMax[y]>=0){ if(top<0) top=y; bot=y; } }
-  const faceH = (bot>top) ? bot-top : fh;
-  const wUp = widthAt(0.10,0.34), wMid = widthAt(0.34,0.67), wLow = widthAt(0.70,0.95);
-  const wMax = Math.max(wUp,wMid,wLow,1);
-  /* 네모진 정도 — 폭이 위아래로 얼마나 고른가.
-     네모꼴이면 1 에 가깝고, 아래로 뾰족하면 작아집니다. */
-  let wSum=0, wCnt=0, wPeak=0;
-  for(let y=Math.floor(fy); y<Math.ceil(fy+fh); y++){
-    if(y<0||y>=CH||rowMax[y]<0) continue;
-    const w=rowMax[y]-rowMin[y];
-    wSum+=w; wCnt++; if(w>wPeak) wPeak=w;
-  }
-  const boxy = wCnt ? (wSum/wCnt)/Math.max(wPeak,1) : 0.78;
-
-  /* 궁별 자리 */
-  /* 짝이 있는 자리는 양쪽을 다 봅니다.
-     다만 남좌여우로 본인 쪽에 무게를 더 둡니다 — 남자는 몸의 왼쪽(사진의 오른쪽). */
-  const gung = {};
-  function patch(gxp, gy, hw, hh){
-    const gx = fx + fw*gxp/100;
-    let gn=0, gs=0, gs2=0;
-    for(let y=Math.round(gy-hh); y<=Math.round(gy+hh); y++){
-      if(y<0||y>=CH) continue;
-      for(let x=Math.round(gx-hw); x<=Math.round(gx+hw); x++){
-        if(x<0||x>=CW) continue;
-        const L=lum((y*CW+x)*4); gn++; gs+=L; gs2+=L*L;
-      }
-    }
-    if(!gn) return null;
-    const m0=gs/gn;
-    return { L:m0, sd:Math.sqrt(Math.max(0,gs2/gn-m0*m0)) };
-  }
-  for(const G of GUNG){
-    const gy = fy + fh*G.y/100, hw = fw*G.sx/200, hh = fh*G.sy/200;
-    if(G.x === 50){
-      gung[G.k] = patch(50, gy, hw, hh) || { L:meanL, sd:sd };
-      continue;
-    }
-    const mine = gungX(G, sex), other = 100 - mine;
-    const a1 = patch(mine, gy, hw, hh), a2 = patch(other, gy, hw, hh);
-    if(a1 && a2){
-      const w1 = 0.68, w2 = 0.32;
-      gung[G.k] = { L:a1.L*w1 + a2.L*w2, sd:a1.sd*w1 + a2.sd*w2 };
-    } else gung[G.k] = a1 || a2 || { L:meanL, sd:sd };
-  }
-
-  /* 얼굴이 맞는지 ──────────────────────────────
-     결과 밝기만 보면 절 사진에도 "화형 흑기" 를 내놓습니다.
-     얼굴이라면 반드시 지켜지는 세 가지를 같이 봅니다.
-       살빛 비율  — 떼어낸 상자가 대체로 살빛인가
-       좌우 대칭  — 왼쪽과 오른쪽을 뒤집어 포갰을 때 맞는가
-       눈자리 그늘 — 눈·눈썹 띠가 볼 띠보다 어두운가 */
-  let rows=0;
-  for(let y=0;y<CH;y++) if(rowMax[y]>=0) rows++;
-
-  const bx0=Math.max(0,Math.round(fx)), bx1=Math.min(CW,Math.round(fx+fw));
-  const by0=Math.max(0,Math.round(fy)), by1=Math.min(CH,Math.round(fy+fh));
-  let skinN=0, boxN=0;
-  for(let y=by0;y<by1;y+=2) for(let x=bx0;x<bx1;x+=2){ boxN++; if(isSkin((y*CW+x)*4)) skinN++; }
-  const skinRate = boxN ? skinN/boxN : 0;
-
-  /* 좌우 대칭 — 가운데 선 기준으로 포개어 밝기 차를 봅니다 */
-  let symD=0, symN=0;
-  const midX=(bx0+bx1)/2;
-  for(let y=by0;y<by1;y+=3) for(let d=2; d<(bx1-bx0)/2; d+=3){
-    const xa=Math.round(midX-d), xb=Math.round(midX+d);
-    if(xa<0||xb>=CW) continue;
-    symD += Math.abs(lum((y*CW+xa)*4) - lum((y*CW+xb)*4)); symN++;
-  }
-  const sym = symN ? 1 - Math.min(1, (symD/symN) / Math.max(meanL*0.55, 1)) : 0;
-
-  /* 눈자리가 볼보다 어두운가 — band 는 위에서 삼정으로 쪼갠 것 */
-  const eyeY0=fy+fh*0.30, eyeY1=fy+fh*0.46;   /* 눈·눈썹 띠 */
-  const chkY0=fy+fh*0.56, chkY1=fy+fh*0.72;   /* 볼 띠 */
-  function bandL(y0,y1){
-    let s2=0,n2=0;
-    for(let y=Math.max(0,Math.round(y0)); y<Math.min(CH,Math.round(y1)); y+=2)
-      for(let x=bx0;x<bx1;x+=2){ const i2=(y*CW+x)*4; if(!isSkin(i2)) continue; s2+=lum(i2); n2++; }
-    return n2 ? s2/n2 : -1;
-  }
-  const eL=bandL(eyeY0,eyeY1), cL=bandL(chkY0,chkY1);
-  const eyeDark = (eL>0 && cL>0) ? (cL-eL)/Math.max(cL,1) : -1;
-
-  const ok = sd >= 10 && meanL > 16 && meanL < 243 && rows >= fh*0.35
-           && skinRate >= 0.42 && sym >= 0.45 && eyeDark >= 0.008;
-
-  return {
-    ok, meanL, sd, mR, mG, mB,
-    skinRate, sym, eyeDark,
-    sam: band.map(b=> b.n ? b.s/b.n : meanL),
-    left: ln?ls/ln:meanL, right: rn?rs/rn:meanL,
-    ratio: wMax/Math.max(faceH,1),      /* 가로세로비 */
-    taper: wLow/Math.max(wMid,1),       /* 하정이 좁아지는 정도 */
-    brow:  wUp/Math.max(wMid,1),        /* 상정 폭 */
-    boxy,                               /* 네모진 정도 */
-    bandW: [wUp, wMid, wLow],           /* 삼정의 폭 */
-    gung
-  };
+  return { ok:true, F, m, canvas:cv, pts };
 }
 
 /* ── 3. 오행형상을 가린다 ──────────────────────────
@@ -538,134 +364,6 @@ function summarize(R){
     go, stop, dow, nur,
     openN: open.length, blockN: block.length
   };
-}
-
-/* ── 12. 얼굴 자리를 스스로 찾습니다 ─────────────
-   살빛이 도는 자리를 모아 가장 큰 덩어리의 테두리를 잡습니다.
-   찾으면 거울 안에서 얼굴이 길잡이 타원에 맞게 저절로 놓입니다. */
-function findFace(srcEl, natW, natH){
-  const W = 180, H = Math.max(1, Math.round(W*natH/natW));
-  if (!natW || !natH) return null;
-  const c = document.createElement("canvas");
-  c.width = W; c.height = H;
-  const g = c.getContext("2d", { willReadFrequently:true });
-  try { g.drawImage(srcEl, 0, 0, W, H); } catch(e){ return null; }
-  let px;
-  try { px = g.getImageData(0,0,W,H).data; } catch(e){ return null; }
-
-  /* 조명색을 먼저 고릅니다. 푸른 전등이나 노란 전등 아래서도 살빛이 잡히게. */
-  let aR=0,aG=0,aB=0;
-  for(let p=0;p<px.length;p+=4){ aR+=px[p]; aG+=px[p+1]; aB+=px[p+2]; }
-  const tot=px.length/4; aR/=tot; aG/=tot; aB/=tot;
-  const avg=(aR+aG+aB)/3;
-  const nd=(v)=>Math.max(.88,Math.min(1.14,1+(avg/Math.max(v,1)-1)*0.55));
-  const wR=nd(aR), wG=nd(aG), wB=nd(aB);
-
-  /* 살빛 판정 — 밝기에 덜 끌리도록 색의 치우침으로 봅니다 */
-  const mask = new Uint8Array(W*H);
-  let cnt = 0;
-  for(let i=0,p=0; i<W*H; i++, p+=4){
-    const r=Math.min(255,px[p]*wR), gg=Math.min(255,px[p+1]*wG), b=Math.min(255,px[p+2]*wB);
-    const mx=Math.max(r,gg,b), mn=Math.min(r,gg,b);
-    const ok = r>52 && gg>30 && b>14 && (mx-mn)>11 &&
-               r>=gg && gg>=b-16 && (r-gg)>5 && (r-b)>10 && mx<253;
-    if(ok){ mask[i]=1; cnt++; }
-  }
-  if(cnt < W*H*0.02) return null;
-
-  /* 가장 큰 덩어리 */
-  const lab = new Int32Array(W*H).fill(-1);
-  const stack = new Int32Array(W*H);
-  let best=-1, bestN=0, cur=0;
-  for(let i=0;i<W*H;i++){
-    if(!mask[i] || lab[i]>=0) continue;
-    let sp=0, n=0; stack[sp++]=i; lab[i]=cur;
-    while(sp){
-      const q=stack[--sp]; n++;
-      const x=q%W, y=(q/W)|0;
-      for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
-        const nx=x+dx, ny=y+dy;
-        if(nx<0||ny<0||nx>=W||ny>=H) continue;
-        const k=ny*W+nx;
-        if(mask[k] && lab[k]<0){ lab[k]=cur; stack[sp++]=k; }
-      }
-    }
-    if(n>bestN){ bestN=n; best=cur; }
-    cur++;
-  }
-  if(best<0 || bestN < W*H*0.02) return null;
-
-  /* 가로줄마다 폭을 재서 가장자리 잡티를 걷어냅니다 */
-  let x0=W, x1=-1, y0=H, y1=-1;
-  const rowW = new Int32Array(H);
-  for(let y=0;y<H;y++){
-    let a=-1,b2=-1;
-    for(let x=0;x<W;x++) if(lab[y*W+x]===best){ if(a<0)a=x; b2=x; }
-    if(a>=0){ rowW[y]=b2-a+1; if(y<y0)y0=y; y1=y; if(a<x0)x0=a; if(b2>x1)x1=b2; }
-  }
-  const widths = Array.from(rowW).filter(v=>v>0).sort((p,q)=>p-q);
-  if(!widths.length) return null;
-  const medW = widths[(widths.length/2)|0];
-  /* 턱 아래 — 목과 어깨는 얼굴이 아닙니다.
-     광대에서 가장 넓어졌다가 턱으로 좁아지고, 목에서 다시 가늘어집니다.
-     좁아지는 목을 찾아 턱을 끊고, 어깨처럼 넓어지는 데서도 끊습니다. */
-  let yEnd = y1;
-  /* 1) 광대 — 위쪽 7할 안에서 가장 넓은 줄 */
-  let yWide = y0, maxW = 0;
-  const yLook = y0 + Math.round((y1-y0)*0.72);
-  for(let y=y0; y<=yLook; y++) if(rowW[y] > maxW){ maxW = rowW[y]; yWide = y; }
-  /* 2) 목 — 광대 아래에서 많이 좁아진 채 이어지는 자리 */
-  if(maxW > 0){
-    const thin = maxW * 0.62;
-    let run = 0;
-    for(let y=yWide+Math.round((y1-yWide)*0.12); y<=y1; y++){
-      if(rowW[y] > 0 && rowW[y] < thin){
-        if(++run >= 3){ yEnd = y - run + 1; break; }
-      } else run = 0;
-    }
-  }
-  /* 3) 어깨 — 아래로 다시 넓게 퍼지는 자리 */
-  for(let y=y0+Math.round((y1-y0)*0.55); y<=yEnd; y++){
-    if(rowW[y] > medW*1.32){ yEnd = y-1; break; }
-  }
-  /* 너무 짧게 끊겼으면 믿지 않습니다 */
-  if(yEnd - y0 < (y1-y0)*0.38) yEnd = Math.min(y1, y0 + Math.round((y1-y0)*0.72));
-
-  let lx=W, rx=-1;
-  for(let y=y0;y<=yEnd;y++)
-    for(let x=0;x<W;x++) if(lab[y*W+x]===best){ if(x<lx)lx=x; if(x>rx)rx=x; }
-  if(rx<=lx) return null;
-
-  /* 얼굴 틀은 이마 위부터 턱 끝까지입니다.
-     머리카락을 얹으면 열두 자리가 통째로 위로 밀려 엉뚱한 데를 읽습니다. */
-  const fh0 = yEnd - y0 + 1;
-  const top = Math.max(0, y0 - fh0*0.03);
-  const bot = Math.min(H-1, yEnd + fh0*0.03);
-
-  return {
-    cx: ((lx+rx)/2) / W,
-    cy: ((top+bot)/2) / H,
-    w:  (rx-lx+1) / W,
-    h:  (bot-top+1) / H
-  };
-}
-
-/* 찾은 얼굴을 길잡이 타원에 맞춰 크기와 자리를 셈합니다 */
-function fitFace(face, natW, natH, holeW, holeH){
-  if(!face) return null;
-  const cover = Math.max(holeW/natW, holeH/natH);
-  const tw = holeW * (FACE.w/100) * 0.98;
-  const th = holeH * (FACE.h/100) * 0.98;
-  const sW = tw / (natW * cover * face.w);
-  const sH = th / (natH * cover * face.h);
-  let scale = Math.min(sW, sH);
-  /* 얼굴이 길잡이보다 크게 잡힌 사진은 줄여서도 맞춥니다.
-     줄어든 자리는 거울의 어둠이 메웁니다. */
-  scale = Math.max(0.55, Math.min(2.6, scale));
-  const dispW = natW*cover*scale, dispH = natH*cover*scale;
-  const x = -((face.cx - 0.5) * dispW) / holeW * 100;
-  const y = -((face.cy - 0.5) * dispH) / holeH * 100;
-  return { scale, x, y };
 }
 
 /* ── 13. 지난번과 견주기 ──────────────────────────
