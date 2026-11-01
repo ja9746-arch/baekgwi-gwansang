@@ -1997,6 +1997,15 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent);
   mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent)}
 
+
+/* ── 결과 화면 머리띠 — 시안의 잰 얼굴 그림 ────── */
+.band{position:relative;margin:0 0 20px;width:100%;overflow:hidden}
+.band img{display:block;width:100%;aspect-ratio:412/248;object-fit:cover;
+  object-position:50% 46%}
+.band i{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(9,5,6,.55) 0%,rgba(9,5,6,.12) 34%,
+    rgba(9,5,6,.62) 82%,rgba(9,5,6,.99) 100%)}
+
 </style>
 </head>
 <body>
@@ -2167,6 +2176,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 
 <!-- ── 무료로 보여 드리는 것 ───────────────────── -->
 <section id="s-free" class="screen" hidden>
+  <div class="band"><img src="img/ui/band-read.webp" alt="" loading="eager"><i></i></div>
   <p class="eyebrow">원안법사가 읽은 것</p>
   <h2 class="sect">자네 얼굴에서 <b id="free-count">—</b> 자리가 섰네.</h2>
   <p class="sectsub" id="free-head"></p>

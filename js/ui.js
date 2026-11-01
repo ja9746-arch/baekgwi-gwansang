@@ -382,7 +382,7 @@ function renderVerdict(box, R, C){
   ];
   box.innerHTML =
     `<span class="ink" aria-hidden="true"></span>
-     <div class="vhead"><i></i><span>원안법사가 읽은 것</span><i></i></div>
+     <div class="vhead"><i></i><span>한눈에 보는 자네 얼굴</span><i></i></div>
      <div class="vgrid">` +
     칸.map(([k,b,ja,sub])=>
       `<div class="vcell"><em>${esc(k)}</em>
