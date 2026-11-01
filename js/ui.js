@@ -42,6 +42,53 @@ function toast(msg){
 }
 
 /* ── 들머리 ───────────────────────────────────── */
+/* ── 배경음 ──────────────────────────────────────
+   처음에는 꺼져 있습니다. 소리를 손님이 먼저 청하지 않았는데
+   울리는 것은 무례합니다. 켜고 끈 것은 기기에 적어 둡니다. */
+function bindSound(){
+  const b = $("#snd");
+  if (!b || typeof Sound === "undefined") { if(b) b.hidden = true; return; }
+  const 적기 = (on)=>{ try{ localStorage.setItem("baekgwi-gwansang-snd", on?"1":"0"); }catch(e){} };
+  b.addEventListener("click", ()=>{
+    const on = Sound.toggle();
+    b.setAttribute("aria-pressed", String(!!on));
+    b.setAttribute("aria-label", on ? "배경음 끄기" : "배경음 켜기");
+    적기(!!on);
+  });
+}
+
+/* ── 따라다니는 복채 띠 ───────────────────────────
+   무료 구간이 깁니다. 끝까지 내려가야 단추가 나오면, 중간에서
+   마음이 선 손님이 그 자리에서 열 수가 없습니다.
+   첫 첩을 지나면 올라오고, 아래 봉인 상자가 보이면 물러납니다. */
+function bindPaybar(){
+  const bar = $("#paybar"), 단추 = $("#paybar-go");
+  if (!bar || !단추) return;
+  let 켜짐 = false;
+  단추.addEventListener("click", ()=>{
+    bar.classList.remove("on"); bar.hidden = true; 켜짐 = false;
+    go("s-pay");                       /* go 는 화면을 넘기는 함수입니다 */
+  });
+  const 보기 = ()=>{
+    const free = $("#s-free");
+    if (!free || free.hidden){ if(켜짐){ bar.classList.remove("on"); bar.hidden = true; 켜짐=false; } return; }
+    const 첫첩 = $("#free-cheop .cp");
+    const 상자 = $(".sealbox");
+    if (!첫첩 || !상자) return;
+    const 지났나 = 첫첩.getBoundingClientRect().bottom < innerHeight * 0.6;
+    const 닿았나 = 상자.getBoundingClientRect().top < innerHeight * 0.92;
+    const 켤까 = 지났나 && !닿았나;
+    if (켤까 === 켜짐) return;
+    켜짐 = 켤까;
+    if (켤까){ bar.hidden = false; requestAnimationFrame(()=> bar.classList.add("on")); }
+    else { bar.classList.remove("on"); setTimeout(()=>{ if(!켜짐) bar.hidden = true; }, 340); }
+  };
+  addEventListener("scroll", 보기, { passive:true });
+  addEventListener("resize", 보기, { passive:true });
+  const free = $("#s-free");
+  if (free) free.addEventListener("enter", ()=> setTimeout(보기, 60));
+}
+
 function bindIntro(){
   $("#go-ask").addEventListener("click", ()=> go("s-ask"));
 }
@@ -332,6 +379,11 @@ function renderFree(){
     </div>`;
   };
 
+  {
+    const n = list.filter(c=>c.sealed).length;
+    const el = $("#paybar-n");
+    if (el) el.textContent = n + "장이 봉인되어 있습니다";
+  }
   $("#free-cheop").innerHTML = list.map((c)=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     const tag = c.sealed
@@ -530,6 +582,8 @@ function bindMisc(){
 
 /* ── 시작 ─────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", ()=>{
+  bindSound();
+  bindPaybar();
   bindIntro(); bindAsk(); bindMirror(); bindPay(); bindMisc();
   /* 얼굴 읽는 기계를 미리 깨워 둡니다 — 손님이 사진을 고르는 동안 */
   setTimeout(()=>{ try { wakeMesh(); } catch(e){} }, 1200);

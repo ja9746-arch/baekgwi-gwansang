@@ -157,10 +157,18 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
   right:14px;background:rgba(10,5,7,.55);backdrop-filter:blur(3px);
   border-color:rgba(201,162,74,.4);color:rgba(230,205,160,.85)}
 .top .brand{margin-right:auto}
-.snd[aria-pressed="true"]{color:#f3dca6;border-color:rgba(243,220,166,.55)}
-.snd .off{position:absolute;width:14px;height:1.1px;background:currentColor;
-  transform:rotate(-40deg);opacity:.85}
-.snd[aria-pressed="true"] .off{display:none}
+.snd{color:rgba(222,190,126,.55);border-color:rgba(201,162,74,.26)}
+.snd[aria-pressed="true"]{color:#f3dca6;border-color:rgba(243,220,166,.6);
+  background:radial-gradient(circle at 50% 42%,rgba(96,62,24,.6),rgba(10,5,7,0) 72%);
+  box-shadow:0 0 14px rgba(232,195,119,.22)}
+/* 꺼져 있을 때는 울림 줄을 걷고 빗금을 긋습니다 */
+.snd svg path:nth-child(2),.snd svg path:nth-child(3){opacity:0;transition:opacity .2s}
+.snd[aria-pressed="true"] svg path:nth-child(2),
+.snd[aria-pressed="true"] svg path:nth-child(3){opacity:1}
+.snd .off{position:absolute;left:50%;top:50%;width:17px;height:1.3px;
+  margin:-0.65px 0 0 -8.5px;background:currentColor;border-radius:1px;
+  transform:rotate(-38deg);opacity:.9}
+.snd[aria-pressed="true"] .off{opacity:0}
 
 /* 화면의 목소리 — 가장 밝고 가장 크게. 행간 1.8 은 본문 값이라
    두 줄짜리 제목이 덩어리로 안 뭉쳤습니다. */
@@ -1491,6 +1499,31 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
 .rollfoot{margin:14px 0 0;text-align:center;font-size:var(--fs-sm);color:var(--jae-dim)}
 
+/* ───────── 따라다니는 복채 띠 ─────────
+   무료 구간이 길어, 끝까지 내려가야 복채 단추가 나옵니다.
+   읽다가 마음이 선 자리에서 바로 열 수 있어야 합니다.
+   첫 첩을 지나면 올라오고, 아래 봉인 상자에 닿으면 물러납니다. */
+.paybar{position:fixed;left:0;right:0;bottom:0;z-index:40;
+  padding:10px 14px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+  display:flex;align-items:center;gap:12px;box-sizing:border-box;
+  background:linear-gradient(180deg,rgba(10,5,7,0),rgba(10,5,7,.9) 14%,rgba(8,4,6,.985) 34%,rgba(8,4,6,.995));
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  padding-top:18px;
+  transform:translateY(130%);transition:transform .32s cubic-bezier(.3,.8,.3,1);
+  pointer-events:none}
+.paybar.on{transform:none;pointer-events:auto}
+.paybar::before{content:"";position:absolute;left:14px;right:14px;top:13px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.4),transparent)}
+.paybar .pbt{flex:1;min-width:0;line-height:1.45}
+.paybar .pbt b{display:block;font-family:var(--serif);font-weight:400;
+  font-size:var(--fs-sm);color:#f3e5cb}
+.paybar .pbt span{display:block;font-size:var(--fs-label);color:var(--jae-dim);margin-top:2px}
+.paybar .btn,.paybar .btn.hot{margin:0;width:auto;flex:0 0 auto;
+  min-height:50px;padding:0 20px;font-size:var(--fs-sm);white-space:nowrap}
+.paybar .pbt b,.paybar .pbt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:339px){ .paybar .pbt span{display:none} }
+
 /* ───────── 봉인 상자 ───────── */
 .sealbox{margin-top:28px;padding:0 0 20px;text-align:center;overflow:hidden;
   box-shadow:0 16px 36px rgba(0,0,0,.6)}
@@ -1639,7 +1672,15 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 </head>
 <body>
 <div id="stage">
-<div class="top"><span class="brand">백귀야행도 · 백귀관상</span></div>
+<div class="top"><span class="brand">백귀야행도 · 백귀관상</span>
+  <button class="snd" id="snd" aria-pressed="false" aria-label="배경음 켜기" title="배경음">
+    <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 7.5h3L11 4v12L7 12.5H4z" fill="currentColor" stroke="none"/>
+      <path d="M13.6 7.2a4 4 0 0 1 0 5.6"/><path d="M15.8 5a7 7 0 0 1 0 10"/>
+    </svg><i class="off" aria-hidden="true"></i>
+  </button>
+</div>
 
 <!-- ── 관상소 입장 ─────────────────────────────── -->
 <section id="s-intro" class="screen">
@@ -1879,6 +1920,11 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   <p>상호 온미라이프 · 고객센터 1866-0423 · 전자우편 ja9746@naver.com</p>
   <button class="btn ghost" data-go="s-intro">닫기</button>
 </section>
+<div class="paybar" id="paybar" hidden>
+  <p class="pbt"><b id="paybar-n">여덟 장이 봉인되어 있습니다</b><span>복채 9,900원 · 한 번만</span></p>
+  <button class="btn hot" id="paybar-go">전부 열기</button>
+</div>
+
 </div>
 <script src="js/baekgwi.js?v=20261101a"></script>
 <script src="js/gungsang.js?v=20261101a"></script>
