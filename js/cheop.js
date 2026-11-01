@@ -1163,36 +1163,43 @@ function makeCheop(R, C, age, sex){
 
   for (const c of out){
     const 같 = a => String(a||"").replace(/\s+/g,"").replace(/[.!?·]/g,"");
+    /* 줄 단위로만 견주면 "눈썹을 다듬되 꼬리는 자르지 마세요. 형제궁은 꼬리에 모입니다."와
+       "눈썹을 다듬되 꼬리는 자르지 마세요. 거기가 손님 사람입니다."가 서로 다른 줄로 보입니다.
+       손님 눈에는 같은 말이 두 번 보이고요. 그래서 문장 단위로 견줍니다. */
+    const 쪼 = t => String(t||"").split(/(?<=[.!?])\s+/).map(같).filter(k=>k.length>8);
     const 선말 = new Set();
-    if (c.si)  선말.add(같(c.si));
-    if (c.act) 선말.add(같(c.act));
+    쪼(c.si).forEach(k=> 선말.add(k));
+    쪼(c.act).forEach(k=> 선말.add(k));
     for (const b of (c.body||[])){
-      String(b.p||"").split(/(?<=[.!?])\s+/).forEach(x=>{ const k=같(x); if(k.length>12) 선말.add(k); });
-      (b.list||[]).forEach(x=> 선말.add(같(x.d)));
+      쪼(b.p).forEach(k=> 선말.add(k));
+      (b.list||[]).forEach(x=> 쪼(x.d).forEach(k=> 선말.add(k)));
     }
+    /* 제7첩의 열두 자리 표에는 자리마다 "풀 길"이 한 줄씩 적혀 있습니다 */
+    for (const j of (c.jari||[])) [j.dx, j.rd, j.ac].forEach(t=> 쪼(t).forEach(k=> 선말.add(k)));
     /* 백귀마다 붙은 넘기는 법·쓰는 법도 손님이 그 첩에서 읽는 글입니다.
        그리고 이것은 뒤에 오는 첩의 할 것에서도 다시 쓰면 안 됩니다 —
        제8첩에서 "윗대에 안부 한 줄"을 읽고 제10첩에서 또 읽게 됩니다. */
     for (const w of (c.gwi||[])){
-      if (w.말) 선말.add(같(w.말));
-      if (w.처방 && w.처방.l) w.처방.l.forEach(t=>{ 선말.add(같(t)); 쓴할것.add(같(t)); });
+      쪼(w.말).forEach(k=> 선말.add(k));
+      if (w.처방 && w.처방.l) w.처방.l.forEach(t=> 쪼(t).forEach(k=>{ 선말.add(k); 쓴할것.add(k); }));
     }
     /* 제10첩의 올해 할 일·피할 것도 마찬가지입니다 */
-    (c.todo||[]).forEach(t=> 선말.add(같(t.t)));
-    (c.avoid||[]).forEach(t=> 선말.add(같(t.t)));
+    (c.todo||[]).forEach(t=> 쪼(t.t).forEach(k=> 선말.add(k)));
+    (c.avoid||[]).forEach(t=> 쪼(t.t).forEach(k=> 선말.add(k)));
     /* 제9첩의 점·색·머리도 마찬가지입니다 */
     (c.jeom||[]).forEach(j=>{ 선말.add(같(j.t)); 선말.add(같(j.w)); });
     (c.gil||[]).forEach(g=> g.forEach(x=> 선말.add(같(x))));
     (c.hyung||[]).forEach(x=> 선말.add(같(x)));
     (c.mori||[]).forEach(x=> 선말.add(같(x)));
-    if (c.할것 && c.할것.length){
-      c.할것 = c.할것.filter(x=>{
-        if (!x || !x.d) return false;
-        const k = 같(x.d);
-        if (!k || 선말.has(k) || 쓴할것.has(k)) return false;
-        쓴할것.add(k); return true;
-      });
-    }
+    const 쓸까 = x => {
+      if (!x || !x.d) return false;
+      const ks = 쪼(x.d);
+      if (!ks.length) return false;
+      if (ks.some(k=> 선말.has(k) || 쓴할것.has(k))) return false;
+      ks.forEach(k=>{ 선말.add(k); 쓴할것.add(k); });
+      return true;
+    };
+    if (c.할것 && c.할것.length) c.할것 = c.할것.filter(쓸까);
     /* 걷어내고 나니 한 줄도 안 남는 첩이 생깁니다. 그 첩이 맡은
        다른 자리에서 아직 안 쓴 줄을 끌어다 세 줄까지 채웁니다. */
     if (c.할것 && c.할것.length < 3){
@@ -1201,10 +1208,7 @@ function makeCheop(R, C, age, sex){
         if (c.할것.length >= 3) break;
         for (const x of 할것(R, k)){
           if (c.할것.length >= 3) break;
-          if (!x || !x.d) continue;
-          const kk = 같(x.d);
-          if (!kk || 선말.has(kk) || 쓴할것.has(kk)) continue;
-          c.할것.push(x); 쓴할것.add(kk);
+          if (쓸까(x)) c.할것.push(x);
         }
       }
     }
