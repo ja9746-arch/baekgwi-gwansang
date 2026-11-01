@@ -151,8 +151,21 @@ function readSkin(canvas, F, sex){
     gung[k] = patch(px, W, H, b.x*W/F.W, b.y*H/F.H, rad);
   }
 
+  /* 앞머리·모자가 덮은 자리는 살빛이 아니라 머리카락을 읽습니다.
+     그 자리를 그대로 두면 관록·복덕·부모가 거짓으로 "막힘"이 됩니다.
+     살이 분명한 자리(산근)와 견주어, 훨씬 어둡거나 결이 거칠면 가린 것으로 봅니다. */
+  const ref = Math.max(gung["질액"] ? gung["질액"].L : 0, meanL, 1);
+  const refSd = Math.max(gung["질액"] ? gung["질액"].sd : 10, 5);
+  const covered = {};
+  for(const k in gung){
+    const g = gung[k];
+    if(!g.n){ covered[k] = false; continue; }
+    const r = g.L / ref;
+    covered[k] = (r < 0.70) || (g.sd > refSd*2.2 && r < 0.92);
+  }
+
   return {
-    meanL, sd,
+    meanL, sd, covered,
     mR:sR/n, mG:sG/n, mB:sB/n,
     sam: band.map(b=> b.n ? b.s/b.n : meanL),
     left: ln?ls/ln:meanL, right: rn?rs/rn:meanL,

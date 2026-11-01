@@ -376,7 +376,9 @@ const CHART = [
   { i:[116],        nm:"광대",  sub:"조력", no:6, side:"l", out:14 },
   { i:[1],          nm:"코",    sub:"재물", no:2, side:"r", out:64 },
   { i:[13],         nm:"입",    sub:"표현", no:3, side:"l", out:64 },
-  { i:[152],        nm:"턱",    sub:"말년", no:5, side:"c", out:0 }
+  /* 152 는 턱 끝이라 그 자리에 불을 켜면 목으로 내려갑니다.
+     승장(18)과 가운데를 잡아 턱 한복판에 올립니다. */
+  { i:[152,18],     nm:"턱",    sub:"말년", no:5, side:"c", out:0 }
 ];
 function renderChart(box, src, F, R){
   if (!box) return;
@@ -480,6 +482,10 @@ function renderGung12(box, R){
          <b>${esc(j.g.n)}</b><em>${esc(j.g.bu)}</em>
          <i>${말[j.lv]}</i><span>${esc(j.g.d)}</span></li>`).join("") +
     `</ul>
+     ${(R.가린자리 && R.가린자리.length)
+        ? `<p class="more cov">${esc(R.가린자리.map(k=>{
+             const j=R.jari.find(x=>x.g.k===k); return j?j.g.n:k; }).join("·"))}은(는) 머리카락이나 그늘에 덮여 있어
+            빛을 빼고 모양으로만 보았습니다. 이마를 내고 다시 비추시면 더 또렷해집니다.</p>` : ""}
      <p class="more">트인지 막힌지는 여기까지 보여 드립니다.
       자리마다 선 백귀와 푸는 길은 제7첩에 적혀 있습니다.</p>`;
 }
@@ -757,18 +763,20 @@ function realFace(marks, opt){
     return `<i class="${cls}" style="left:${mx(m.x).toFixed(2)}%;top:${my(m.y).toFixed(2)}%">` +
            (m.no ? `<u>${m.no}</u>` : "") + `</i>`;
   }).join("");
+  /* 불은 반드시 그림 칸 안에 넣습니다. figure 에 바로 걸면
+     아래 범례 높이까지 더해진 자로 퍼센트를 재어 불이 통째로 내려앉습니다. */
+  const slot = (window.__rmQ = (window.__rmQ||[]), window.__rmQ.push(cv), window.__rmQ.length-1);
   return `<figure class="rmap${o.wide?" wide":""}">
-    <div class="rmwrap"></div>${dots}
+    <div class="rmwrap" data-cv="${slot}">${dots}</div>
     ${o.legend ? `<figcaption class="fmleg">${o.legend}</figcaption>` : ""}
-  </figure>`.replace('<div class="rmwrap"></div>',
-    '<div class="rmwrap" data-cv="'+(window.__rmQ = (window.__rmQ||[]), window.__rmQ.push(cv), window.__rmQ.length-1)+'"></div>');
+  </figure>`;
 }
 /* 캔버스는 글로 못 넣으니, 붙인 뒤에 끼워 넣습니다 */
 function rmFill(root){
   const q = window.__rmQ || [];
   (root||document).querySelectorAll(".rmwrap[data-cv]").forEach(w=>{
     const cv = q[+w.dataset.cv];
-    if (cv && !w.firstChild) w.appendChild(cv);
+    if (cv && !w.querySelector("canvas")) w.insertBefore(cv, w.firstChild);
     w.removeAttribute("data-cv");
   });
 }

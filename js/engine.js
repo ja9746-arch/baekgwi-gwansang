@@ -208,9 +208,14 @@ function gradeAll(m){
     const sd = Math.max(0.055, Math.min(0.20, bs[1]));
     return (rel[i] - bs[0]) / sd;
   });
+  /* 가린 자리는 빛으로 가릴 수 없습니다. 어둡다고 막혔다 하면 거짓입니다.
+     모양으로만 보고 반반으로 둡니다. */
+  const cov = m.covered || {};
+  ks.forEach((k,i)=>{ if(cov[k]) z[i] = 0; });
   const out = {}, zz = {};
   ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); zz[k]=z[i]; });
   out.__z = zz;
+  out.__cov = ks.filter(k=>cov[k]);
   /* 어느 얼굴에도 가진 것과 고칠 것이 함께 있어야 풀이가 섭니다.
      고르게 뭉친 얼굴이면 높은 차례·낮은 차례로 조금 벌려 줍니다. */
   const order = ks.map((k,i)=>({k, z:z[i]})).sort((a,b)=>b.z-a.z);
@@ -291,6 +296,7 @@ function divine(m, age, sex){
   const 보류 = pick3.map(x=>x.i);
   const lvAll = gradeAll(m);
   const zAll = lvAll.__z || {};
+  const 가린자리 = lvAll.__cov || [];
   const jari = GUNG.map((G, i) => {
     const lv = lvAll[G.k];
     const pool = G.pool.filter(x=>보류.indexOf(x)<0);
@@ -316,7 +322,7 @@ function divine(m, age, sex){
 
   /* 기색은 빛을 탑니다. 어둡거나 날아간 사진이면 그 사실을 숨기지 않습니다. */
   const light = (m.meanL < 118) ? "어둠" : (m.meanL > 228 ? "날림" : "");
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, age, pick3, light,
+  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, age, pick3, light, 가린자리,
            brightest, darkest,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }
