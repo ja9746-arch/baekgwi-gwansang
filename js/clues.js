@@ -312,11 +312,14 @@ function readClues(F){
 
   /* 서로 맞버티는 것은 약한 쪽을 물립니다 —
      같은 자리에서 반대 방향이 함께 설 수는 없습니다. */
+  /* 한 자리에서는 하나만 섭니다. 같은 자리의 반대쪽은 함께 설 수 없고,
+     같은 쪽이 둘이면 센 쪽만 씁니다 — "눈이 크다"와 "눈이 크게 드러난다"를
+     나란히 적으면 같은 말을 두 번 하는 것이 됩니다. */
   const seen = new Set(), out = [];
   for (const h of hit){
     const key = h.c.k + "|" + (h.c.d>0 ? "+" : "-");
     const anti = h.c.k + "|" + (h.c.d>0 ? "-" : "+");
-    if (seen.has(anti)) continue;
+    if (seen.has(anti) || seen.has(key)) continue;
     seen.add(key); out.push(h);
   }
 
@@ -335,7 +338,7 @@ function readClues(F){
     for (const r of rest){
       if (out.length >= 14) break;
       const key = r.c.k + "|" + (r.c.d>0 ? "+" : "-");
-      if (seen.has(r.c.k + "|" + (r.c.d>0 ? "-" : "+"))) continue;
+      if (seen.has(key) || seen.has(r.c.k + "|" + (r.c.d>0 ? "-" : "+"))) continue;
       seen.add(key); out.push(r);
     }
   }

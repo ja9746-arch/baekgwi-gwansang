@@ -22,10 +22,18 @@ const won = (n)=> n.toLocaleString("ko-KR") + "원";
 
 function go(id){
   $$(".screen").forEach(s=> s.hidden = (s.id !== id));
+  document.documentElement.setAttribute("data-scene", id);
   window.scrollTo({ top:0, behavior:"instant" });
   const s = $("#"+id);
-  if (s) s.dispatchEvent(new CustomEvent("enter"));
+  if (!s) return;
+  /* 화면이 넘어갈 때마다 스미는 결을 다시 틉니다.
+     이걸 안 하면 다음 일이 무거울 때(얼굴 읽기 같은) 결이 틔지 못하고
+     화면이 투명한 채로 멈춥니다. */
+  s.style.animation = "none"; void s.offsetHeight; s.style.animation = "";
+  s.dispatchEvent(new CustomEvent("enter"));
 }
+/* 그림이 한 번 그려질 틈을 줍니다 */
+const breathe = ()=> new Promise(r=> requestAnimationFrame(()=> requestAnimationFrame(()=> setTimeout(r, 30))));
 function toast(msg){
   let t = $("#toast");
   if(!t){ t = document.createElement("div"); t.id="toast"; t.className="toast"; document.body.appendChild(t); }
@@ -79,6 +87,7 @@ function bindMirror(){
   async function look(){
     note.textContent = "";
     go("s-read");
+    await breathe();          /* 화면이 먼저 떠야 합니다 */
     await read();
   }
 }
@@ -89,6 +98,7 @@ async function read(){
   const step = (t, p)=>{ say.textContent = t; bar.style.width = p + "%"; };
 
   step("거울을 닦고 있습니다…", 8);
+  await breathe();
   let r;
   try { r = await readFace(ST.img); }
   catch(e){ r = { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
@@ -245,11 +255,15 @@ function renderFree(){
   $("#free-cheop").innerHTML = list.map((c, i)=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     if (!c.sealed){
+      const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
+        (b.list ? `<ul class="jari">` + b.list.map(x=>
+          `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
+        ).join("") + `</ul>` : "");
       return `<article class="cp open">
         <div class="cph"><img src="${art}" alt="" loading="lazy">
           <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
           <span class="free">무료</span></div>
-        <div class="cpb">${c.body.map(b=>`<h4>${esc(b.h)}</h4><p>${esc(b.p)}</p>`).join("")}
+        <div class="cpb">${c.body.map(fpara).join("")}
         ${c.more ? `<div class="sealrow"><span class="glock" aria-hidden="true"></span><p>이 첩에 ${c.more} 마디가 더 있습니다.</p></div>` : ""}
         </div></article>`;
     }
@@ -295,7 +309,11 @@ function renderCheop(){
   const wrap = $("#cheop-all");
   wrap.innerHTML = ST.cheop.map(c=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
-    let inner = c.body.map(b=>`<h4>${esc(b.h)}</h4><p>${esc(b.p)}</p>`).join("");
+    const para = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
+      (b.list ? `<ul class="jari">` + b.list.map(x=>
+        `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
+      ).join("") + `</ul>` : "");
+    let inner = c.body.map(para).join("");
 
     if (c.key === "십이궁" && c.jari){
       inner += `<div class="ggungs">` + c.jari.map(j=>`
@@ -349,7 +367,7 @@ function renderCheop(){
     }
 
     const ev = (c.ev||[]).length
-      ? `<div class="evid"><span class="t">이 첩의 근거 — 자네 얼굴에서 잡힌 자리</span><ul class="cls">` +
+      ? `<div class="evid"><span class="gt">이 첩의 근거</span><ul class="cls">` +
         c.ev.map(clueChip).join("") + `</ul></div>`
       : "";
 

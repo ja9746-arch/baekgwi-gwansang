@@ -81,7 +81,7 @@ function gwiTwo(g, 길){
 function 첩(no, key, title, sub, free){
   return { no, key, title, sub, free: !!free, ev:[], body:[], si:null, act:null };
 }
-function 단락(h, p, ev){ return { h, p, ev: ev || [] }; }
+function 단락(h, p, ev, list){ return { h, p, ev: ev || [], list: list || null }; }
 
 /* ── 열 장을 짭니다 ─────────────────────────────── */
 function makeCheop(R, C, age, sex){
@@ -129,29 +129,30 @@ function makeCheop(R, C, age, sex){
   {
     const c = 첩(1, "타고난", "내 타고난 얼굴", "얼굴에 새겨진, 자네가 가지고 난 결", true);
     const oh = OH[R.hyeong];
-    const 본 = 뽑기(byT.본성, 4);
+    /* 윤곽과 삼정은 바로 앞에서 오행형상·삼정으로 말했습니다.
+       같은 말을 두 번 하지 않도록 여기서는 빼고 뽑습니다. */
+    const 본 = 뽑기(byT.본성.filter(h=> h.c.bu!=="윤곽" && h.c.bu!=="삼정"), 4);
     c.ev = ev(본, 4);
 
     c.body.push(단락(
       "타고난 그릇",
       `손님 얼굴은 ${R.hyeong}(${{"목":"木","화":"火","토":"土","금":"金","수":"水"}[R.hyeong]})의 꼴입니다. ` +
-      oh.seong + " " + (본[0] ? clueLine(본[0], 0, seed, 11) : ""),
-      본[0] ? [본[0].c.id] : []
+      oh.sul + "이지요. " + oh.seong + " " + oh.il,
+      []
     ));
 
     const 삼 = SAMJEONG[R.samjeong];
     c.body.push(단락(
       "세 마디의 흐름",
-      `삼정(三停) 가운데 ${R.samjeong}정이 도드라집니다. ` + (삼 ? 삼.dae : "") +
-      (본[1] ? " " + clueLine(본[1], 1, seed, 23, 본[0]) : ""),
-      본[1] ? [본[1].c.id] : []
+      `삼정(三停) 가운데 ${R.samjeong}정이 도드라집니다. ` + (삼 ? 삼.mal + " " + 삼.dae : ""),
+      []
     ));
 
     c.body.push(단락(
-      "숨은 결",
-      (본[2] ? clueLine(본[2], 0, seed, 31) : "") +
-      (본[3] ? " " + clueLine(본[3], 1, seed, 37, 본[2]) : ""),
-      [본[2], 본[3]].filter(Boolean).map(h=>h.c.id)
+      "얼굴이 말하는 결",
+      "이제 손님 얼굴에서 실제로 선 자리를 하나씩 짚겠습니다.",
+      본.slice(0,4).map(h=>h.c.id),
+      본.slice(0,4).map(h=>({ t: h.c.s, d: h.c.m }))
     ));
 
     const gi = GISAEK[R.gisaek];
@@ -174,9 +175,13 @@ function makeCheop(R, C, age, sex){
 
     c.body.push(단락(
       "돈이 들어오는 길",
-      (재[0] ? clueLine(재[0], 0, seed, 41) + " " : "") +
-      `재백궁(財帛宮)은 준두 — 코끝입니다. ${j.g.lv[j.lv].dx} ${j.g.lv[j.lv].rd}` + 부위말("재백", 1),
-      재[0] ? [재[0].c.id] : []
+      `재백궁(財帛宮)은 준두 — 코끝입니다. ${j.g.lv[j.lv].dx} ${j.g.lv[j.lv].rd}`,
+      []
+    ));
+    if (재[0]) c.body.push(단락(
+      "얼굴이 말하는 재물",
+      clueLine(재[0], 0, seed, 41) + 부위말("재백", 1),
+      [재[0].c.id]
     ));
 
     c.body.push(단락(
@@ -222,9 +227,11 @@ function makeCheop(R, C, age, sex){
 
     c.body.push(단락(
       "배우자의 자리",
-      `처첩궁(妻妾宮)은 눈꼬리 바깥 어미(魚尾)입니다. ${ch.g.lv[ch.lv].dx} ${ch.g.lv[ch.lv].rd}` + 부위말("처첩", 2),
+      `처첩궁(妻妾宮)은 눈꼬리 바깥 어미(魚尾)입니다. ${ch.g.lv[ch.lv].dx} ${ch.g.lv[ch.lv].rd}`,
       []
     ));
+    { const bw = 부위말("처첩", 2);
+      if (bw) c.body.push(단락("눈이 말하는 인연", bw.replace(/^ /,""), [])); }
 
     /* 맞는 사람 — 손님 그릇을 생해 주는 오행의 꼴 */
     const 도움 = OH_SAENG_ME[R.hyeong], 눌림 = OH_GEUK_ME[R.hyeong];
@@ -283,9 +290,11 @@ function makeCheop(R, C, age, sex){
 
     c.body.push(단락(
       "직장과 사업의 자리",
-      `관록궁(官祿宮)은 이마 가운데 중정(中正)입니다. ${gw.g.lv[gw.lv].dx} ${gw.g.lv[gw.lv].rd}` + 부위말("관록", 3),
+      `관록궁(官祿宮)은 이마 가운데 중정(中正)입니다. ${gw.g.lv[gw.lv].dx} ${gw.g.lv[gw.lv].rd}`,
       []
     ));
+    { const bw = 부위말("관록", 3);
+      if (bw) c.body.push(단락("이마가 말하는 자리", bw.replace(/^ /,""), [])); }
 
     c.body.push(단락(
       "손님에게 맞는 길",
@@ -377,18 +386,18 @@ function makeCheop(R, C, age, sex){
 
     c.body.push(단락(
       "가장 좋은 자리 셋",
-      길.length
-        ? 길.map((h,i)=>`${i+1}. ${h.c.s} — ${h.c.m}`).join(" ")
-        : "크게 솟은 자리는 없습니다. 대신 고르게 섰습니다. 고른 얼굴은 무너지지 않습니다.",
-      길.map(h=>h.c.id)
+      길.length ? "손님 얼굴에서 가장 세게 선 자리입니다. 올해는 여기를 쓰세요."
+                : "크게 솟은 자리는 없습니다. 대신 고르게 섰습니다. 고른 얼굴은 무너지지 않습니다.",
+      길.map(h=>h.c.id),
+      길.length ? 길.map(h=>({ t: h.c.s, d: h.c.m, g:1 })) : null
     ));
 
     c.body.push(단락(
       "지켜야 할 자리 둘",
-      흉.length
-        ? 흉.map((h,i)=>`${i+1}. ${h.c.s} — ${h.c.m}`).join(" ")
-        : "크게 깎인 자리는 없습니다. 다만 고른 얼굴은 큰 것을 한 번에 쥐기 어렵습니다.",
-      흉.map(h=>h.c.id)
+      흉.length ? "여기는 그냥 두면 깎입니다. 알고만 계셔도 덜 상합니다."
+                : "크게 깎인 자리는 없습니다. 다만 고른 얼굴은 큰 것을 한 번에 쥐기 어렵습니다.",
+      흉.map(h=>h.c.id),
+      흉.length ? 흉.map(h=>({ t: h.c.s, d: h.c.m, g:-1 })) : null
     ));
 
     const 막 = R.jari.filter(j=>j.lv===2);
