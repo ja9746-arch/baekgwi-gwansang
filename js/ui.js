@@ -378,15 +378,21 @@ function renderFree(){
     if (!c.veil || !c.veil.length) return "";
     const inner = c.veil.map(fpara).join("");
     const n = c.more || c.veil.length;
-    /* 소제목은 그대로 보이고 본문만 흐립니다.
-       무슨 이야기가 적혀 있는지는 보여야 다음이 궁금해집니다. */
-    const 목 = c.veil.map(b=>b.h).filter(Boolean).slice(0,3).join(" · ");
+    /* 무엇이 적혀 있는지는 다 보이고, 글만 안 읽힙니다.
+       적힌 것을 감추면 궁금해지는 것이 아니라 없는 줄 압니다. */
+    const 차례 = (c.mok && c.mok.length)
+      ? `<div class="mok"><span class="mt">이 첩에 적힌 것</span><ul>` +
+        c.mok.map(h=>`<li>${esc(h)}</li>`).join("") + `</ul>` +
+        (c.glyph ? `<p class="mn">모두 ${c.glyph.toLocaleString()}자</p>` : "") + `</div>`
+      : "";
+    const 목 = c.veil.map(b=>b.h).filter(Boolean).slice(0,2).join(" · ");
     return `<div class="veil">
+      ${차례}
       <div class="veiled" aria-hidden="true">${inner}</div>
       <div class="veilsay"><i class="vlock" aria-hidden="true"></i>
         <div class="vt">
-          <b>${c.sealed ? "봉인된 첩입니다" : "이 뒤로 " + n + "마디가 더 있습니다"}</b>
-          <span>${목 ? 목 : (c.sealed ? "복채를 내시면 이 첩이 풀립니다" : "복채를 내시면 끝까지 읽힙니다")}</span>
+          <b>${c.sealed ? "봉인되어 있습니다" : "이 뒤로 " + n + "마디가 더 있습니다"}</b>
+          <span>${c.sealed ? "복채를 내시면 이 첩이 통째로 풀립니다" : (목 || "복채를 내시면 끝까지 읽힙니다")}</span>
         </div>
         <button class="vopen" type="button" data-pay="1">열기</button>
       </div>
@@ -398,7 +404,12 @@ function renderFree(){
     const el = $("#paybar-n");
     if (el) el.textContent = n + "장이 봉인되어 있습니다";
   }
+  let 봉인첫 = true;
   $("#free-cheop").innerHTML = list.map((c)=>{
+    let 금 = "";
+    if (c.sealed && 봉인첫){ 봉인첫 = false;
+      금 = `<div class="sealgate"><i></i><b>여기서부터 봉인입니다</b>
+        <span>남은 여덟 장에 무엇이 적혀 있는지는 아래에 그대로 보입니다. 글만 아직 안 읽힐 뿐입니다.</span></div>`; }
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     const tag = c.sealed
       ? `<span class="jbadge lock" aria-label="봉인"></span>`
@@ -406,7 +417,7 @@ function renderFree(){
     /* 첫 마디는 한지 위에 올립니다 — 열 장이 다 같은 검은 바탕이면 눈이 쉴 데가 없습니다 */
     const 머리 = c.body.length ? `<div class="lead juru">${fpara(c.body[0])}</div>` : "";
     const 나머지 = c.body.slice(1).map(fpara).join("");
-    return `<article class="cp ${c.sealed ? "shut" : "open"}">
+    return 금 + `<article class="cp ${c.sealed ? "shut" : "open"}">
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
       <div class="cpt juru${c.sealed ? " shut" : ""}">${tag}
         <span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
