@@ -563,6 +563,16 @@ function renderParts(box, src, F, C){
   }
 }
 
+/* ── 오늘부터 할 것 ──────────────────────────────
+   "자네는 이렇다"로 끝나면 손님은 읽고 나서 할 일이 없습니다. */
+function halBlock(list){
+  if (!list || !list.length) return "";
+  return `<div class="halt"><span class="gt">오늘부터 할 것</span><ul>` +
+    list.filter(x=>x && x.d).map(x=>
+      `<li><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`).join("") +
+    `</ul></div>`;
+}
+
 /* ── 단서 한 줄 ───────────────────────────────── */
 function clueChip(e){
   const g = e.g > 0 ? "ok" : (e.g < 0 ? "bad" : "mid");
@@ -651,7 +661,7 @@ function renderFree(){
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
       <div class="cpt juru${c.sealed ? " shut" : ""}">${tag}
         <span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-      <div class="cpb">${머리}${나머지}${veilBlock(c)}</div>
+      <div class="cpb">${머리}${나머지}${c.sealed ? "" : halBlock(c.할것)}${veilBlock(c)}</div>
     </article>`;
   }).join("");
 
@@ -859,6 +869,8 @@ function faceMap(marks, opt){
           <h5>${esc(g.g.n)}${g.g.h?` <i>${esc(g.g.h)}</i>`:""}</h5>
           <p class="why">${esc(g.근거)}</p>
           <p class="gsay">${esc(g.말)}</p>
+          ${g.처방 && g.처방.l.length ? `<div class="gfix"><b>${esc(g.처방.t)}</b><ul>` +
+            g.처방.l.map(t=>`<li>${esc(t)}</li>`).join("") + `</ul></div>` : ""}
           <div class="two">
             <div class="gt gok"><b>복(福)</b><span>${esc(g.두얼굴[0].t)}</span></div>
             <div class="gt gbad"><b>흉(凶)</b><span>${esc(g.두얼굴[1].t)}</span></div>
@@ -902,6 +914,7 @@ function faceMap(marks, opt){
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
       <div class="cpt juru"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
       <div class="cpb">${inner}
+        ${halBlock(c.할것)}
         ${c.si ? `<div class="si"><span>시기</span><p>${esc(c.si)}</p></div>` : ""}
         ${c.act ? `<div class="act"><span>풀 길</span><p>${esc(c.act)}</p></div>` : ""}
         ${ev}

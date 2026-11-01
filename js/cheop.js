@@ -119,6 +119,20 @@ function gwiTwo(g, 길, 자리k){
 }
 
 /* ── 첩 하나의 틀 ─────────────────────────────── */
+/* 첩마다 오늘 할 수 있는 것을 답니다 — 몸으로 할 것, 표정으로 할 것.
+   풀이만 적고 끝내면 손님은 읽고 나서 할 일이 없습니다. */
+function 할것(R, 자리k, 더){
+  const 몸 = (typeof GUNG_MOM !== "undefined" && GUNG_MOM[자리k]) || null;
+  const j = (R.jari || []).find(x=>x.g.k===자리k);
+  const 쓰 = (typeof GUNG_USE !== "undefined" && GUNG_USE[자리k]) || "";
+  const out = [];
+  if (몸) out.push({ t:"몸으로", d:몸.몸 });
+  if (몸) out.push({ t:"표정으로", d:몸.표 });
+  if (j && j.lv === 0 && 쓰) out.push({ t:"올해 안에", d:쓰 });
+  else if (j && j.lv === 2 && j.g.lv[2] && j.g.lv[2].ac) out.push({ t:"풀 길", d:j.g.lv[2].ac });
+  if (더) out.push(더);
+  return out.slice(0, 4);
+}
 function 첩(no, key, title, sub, free){
   return { no, key, title, sub, free: !!free, ev:[], body:[], si:null, act:null };
 }
@@ -290,6 +304,7 @@ function makeCheop(R, C, age, sex){
       `타고난 ${R.hyeong}의 그릇과 지금 도는 ${R.gisaek}기가 ${R.gyo.dan}의 사이입니다. ${R.gyo.mal}`,
       []
     ));
+    c.할것 = 할것(R, "명", { t:"얼굴로", d:(typeof OH_PYO !== "undefined" && OH_PYO[R.hyeong]) || "" });
     c.si = 시기말(R, "명", G["명"] ? G["명"].lv : 1);
     out.push(c);
   }
@@ -403,6 +418,9 @@ function makeCheop(R, C, age, sex){
       ));
     }
 
+    c.할것 = 할것(R, "재백", { t:"쌓는 쪽", d:(G["전택"] && G["전택"].lv===2)
+      ? "버는 자리보다 쌓는 자리가 눌렸습니다. 올해는 더 버는 쪽이 아니라 새는 쪽을 먼저 막으세요."
+      : "들어온 것 가운데 한 몫을 손 닿지 않는 데로 옮겨 두세요. 같은 통장에 두면 전택이 못 잡습니다." });
     c.si = 시기말(R, "재백", j.lv);
     c.act = j.g.lv[j.lv].ac;
     out.push(c);
@@ -504,6 +522,7 @@ function makeCheop(R, C, age, sex){
       인[3] ? [인[3].c.id] : []
     ));
 
+    c.할것 = 할것(R, "처첩", { t:"말로", d:`${꼴말[도움]} 사람에게 이번 달 안에 먼저 연락하세요. 인연은 기다린 쪽이 아니라 먼저 연 쪽으로 붙습니다.` });
     c.si = 시기말(R, "처첩", ch.lv);
     c.act = ch.g.lv[ch.lv].ac;
     out.push(c);
@@ -589,6 +608,7 @@ function makeCheop(R, C, age, sex){
       사[3] ? [사[3].c.id] : []
     ));
 
+    c.할것 = 할것(R, "관록", { t:"첫인상", d:(typeof OH_PYO !== "undefined" && OH_PYO[R.hyeong]) || "" });
     c.si = 시기말(R, "관록", gw.lv);
     c.act = gw.g.lv[gw.lv].ac;
     out.push(c);
@@ -719,6 +739,9 @@ function makeCheop(R, C, age, sex){
       세[2] ? [세[2].c.id] : []
     ));
 
+    c.할것 = 할것(R, R.boss.g.k, { t:"올해", d:R.boss.lv===2
+      ? `${R.age}세는 눌린 띠를 지납니다. 벌이지 말고 고르세요. 한 가지만 끝내고 해를 넘기는 것이 가장 남습니다.`
+      : `${R.age}세는 ${R.boss.g.n}이 쥡니다. 이 자리가 맡는 ${R.boss.g.d} 쪽으로 올해 한 걸음을 떼세요.` });
     c.si = 시기말(R, R.boss.g.k, R.boss.lv);
     c.act = R.boss.g.lv[R.boss.lv].ac;
     out.push(c);
@@ -803,6 +826,11 @@ function makeCheop(R, C, age, sex){
         : "손님의 더딤은 둔한 것이 아니라 두터운 것입니다. 급한 자리에 서면 손해를 보고, 오래 가는 자리에 서면 이깁니다."),
       []
     ));
+    c.할것 = 할것(R, (C.hyung[0] && C.hyung[0].c.bu==="이마") ? "관록"
+            : (R.darkest ? R.darkest.g.k : "명"),
+      { t:"지킬 자리", d: C.hyung[0]
+          ? `${C.hyung[0].c.s.replace(/\.$/,"")} — 이 자리가 움직이는 때를 알아채는 것만으로 덜 상합니다.`
+          : "크게 깎인 자리가 없으니, 올해는 지키기보다 하나를 깊이 파는 해로 쓰세요." });
     out.push(c);
   }
 
@@ -903,6 +931,10 @@ function makeCheop(R, C, age, sex){
         본.slice(0, 5).map(x=>({ t:`${x.a.g.n} ↔ ${x.b.g.n}`, d:x.글, g: x.차>=1 ? -1 : (x.a.lv===0?1:0) }))
       ));
     }
+    c.할것 = 할것(R, R.darkest ? R.darkest.g.k : "명",
+      { t:"먼저 손볼 데", d: R.darkest
+          ? `${R.darkest.g.n} 하나만 올해 손보세요. 열둘을 조금씩 건드리면 하나도 못 엽니다.`
+          : "막힌 데가 또렷하지 않으니, 가장 환한 자리를 밀어 나머지를 끌어올리세요." });
     out.push(c);
   }
 
@@ -922,8 +954,21 @@ function makeCheop(R, C, age, sex){
         g, 두얼굴: [gwiTwo(g, true, j.g.k), gwiTwo(g, false, j.g.k)],
         근거: `${j.g.bu} 자리가 ${j.lv===0?"트여":"막혀"} 있어 ${이가(g.n)} 여기 섰습니다.`,
         말: j.lv === 2
-          ? `${을를(g.n)} 그대로 두면 ${j.g.d} 쪽이 계속 막힙니다.` + (쓴처방.has(g.fix) ? "" : (쓴처방.add(g.fix), " " + g.fix))
-          : `${이가(g.n)} 손님 쪽에 서 있습니다. ${j.g.d} 쪽으로 힘이 붙습니다.`
+          ? `${을를(g.n)} 그대로 두면 ${j.g.d} 쪽이 계속 막힙니다.`
+          : `${이가(g.n)} 손님 쪽에 서 있습니다. ${j.g.d} 쪽으로 힘이 붙습니다.`,
+        /* 귀마다 넘기는 법·쓰는 법을 반드시 답니다.
+           "이런 것이 섰다"로 끝내면 손님이 할 수 있는 것이 없습니다. */
+        처방: (()=>{
+          const 몸 = (typeof GUNG_MOM !== "undefined" && GUNG_MOM[j.g.k]) || null;
+          const 쓰 = (typeof GUNG_USE !== "undefined" && GUNG_USE[j.g.k]) || "";
+          if (j.lv === 2){
+            const a = 쓴처방.has(g.fix) ? "" : (쓴처방.add(g.fix), g.fix);
+            return { t:"이렇게 넘기십시오",
+                     l:[a, 몸 ? 몸.몸 : "", 몸 ? 몸.표 : ""].filter(Boolean) };
+          }
+          return { t:"이렇게 쓰십시오",
+                   l:[쓰, 몸 ? 몸.표 : ""].filter(Boolean) };
+        })()
       };
     });
     const 막힌셋 = 셋.filter(j=>j.lv===2).length, 트인셋 = 셋.filter(j=>j.lv===0).length;
@@ -981,6 +1026,10 @@ function makeCheop(R, C, age, sex){
         []
       ));
     }
+    c.할것 = 할것(R, 셋[0] ? 셋[0].g.k : "명",
+      { t:"올해 하나만", d: 셋.filter(j=>j.lv===2).length >= 2
+          ? "셋을 다 상대하려 하면 아무것도 못 넘깁니다. 가장 위에 선 것 하나만 치르세요."
+          : "미는 쪽을 먼저 쓰고, 붙잡는 쪽은 그 힘으로 넘기는 것이 순서입니다." });
     out.push(c);
   }
 
@@ -1024,6 +1073,8 @@ function makeCheop(R, C, age, sex){
         return `자로 재면 ${높말}.${모말}`; })(),
       []
     ));
+    c.할것 = 할것(R, R.boss.g.k,
+      { t:"얼굴로", d:(typeof OH_PYO !== "undefined" && OH_PYO[R.hyeong]) || "" });
     out.push(c);
   }
 
@@ -1073,6 +1124,10 @@ function makeCheop(R, C, age, sex){
       `그게 바뀌는 첫걸음입니다. 반년쯤 뒤에 다시 오시면 어느 자리가 달라졌는지 견주어 드리지요.`,
       []
     ));
+    c.할것 = 할것(R, R.brightest ? R.brightest.g.k : "명",
+      { t:"가장 환한 데", d: R.brightest
+          ? `${R.brightest.g.n}부터 쓰세요. 트인 자리는 쓰지 않으면 닫힙니다.`
+          : "" });
     out.push(c);
   }
 
