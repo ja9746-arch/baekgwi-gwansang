@@ -158,11 +158,13 @@ async function read(){
 
   step("삼정과 오악을 재고 있습니다…", 34);
   await sleep(420);
-  ST.C = readClues(r.F);
+  /* 궁을 먼저 읽어야 맞서는 단서를 빼고 그만큼 채울 수 있습니다 */
+  ST.C = null;
 
   step("열두 자리의 빛을 보고 있습니다…", 62);
   await sleep(420);
   ST.R = divine(r.m, ST.age, ST.sex);
+  ST.C = readClues(r.F, 궁걸름(ST.R));
 
   step("백 가지 가운데 자네 얼굴의 것을 고르고 있습니다…", 84);
   await sleep(420);

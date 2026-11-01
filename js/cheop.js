@@ -100,6 +100,44 @@ function 첩(no, key, title, sub, free){
 }
 function 단락(h, p, ev, list){ return { h, p, ev: ev || [], list: list || null }; }
 
+
+/* ── 빛과 자가 맞설 때 ──────────────────────────
+   궁은 그 자리의 빛으로 읽고, 단서는 같은 자리를 자로 잽니다.
+   둘이 어긋나면 손님에게는 그냥 앞뒤가 안 맞는 말입니다 —
+   "전택궁 눈두덩이 얇고 꺼져 있습니다" 옆에 "눈두덩이 두텁게
+   열렸습니다"가 나란히 서는 식이지요. 궁 풀이가 어느 쪽 모양을
+   말하는지는 그 글에서 직접 읽습니다. 등급으로만 가리면 "반반"인
+   자리의 풀이가 "한쪽이 얇습니다" 해 놓고 단서는 "두텁습니다"
+   하는 일이 생깁니다. 어느 한쪽을 고르는 것이 아니라, 맞서는 쪽을
+   입에 올리지 않는 것입니다. */
+const 겹치는축 = {
+  코폭:"재백", 준두:"재백", 콧볼폭:"재백",
+  미길:"형제", 미안:"전택", 미간:"명",
+  이마높:"관록", 이마폭:"관록", 이마모서리:"천이",
+  산근폭:"질액", 와잠:"남녀", 지각:"노복", 광대:"노복"
+};
+function 궁걸름(R){
+  const G = {}; for (const j of R.jari) G[j.g.k] = j;
+  const 작은말 = /얇|좁|꺼져|낮|짧|작|비었|패였|주름|끊/;
+  const 큰말   = /넓|두텁|도톰|두툼|길고|솟|높|찼|고릅|크/;
+  const 향 = (j)=>{
+    const t = (j.g.lv[j.lv] && j.g.lv[j.lv].dx) || "";
+    if (작은말.test(t)) return -1;   /* 뒤에 붙는 단서가 센 말이라 작은 쪽을 먼저 봅니다 */
+    if (큰말.test(t)) return 1;
+    return 0;
+  };
+  return (c)=>{
+    const gk = 겹치는축[c.k];
+    if (!gk) return false;
+    const j = G[gk];
+    if (!j) return false;
+    const d = 향(j);
+    if (!d) return false;
+    const 큰쪽 = c.d > 0;             /* 넓다·길다·두텁다 쪽 */
+    return (d > 0 && !큰쪽) || (d < 0 && 큰쪽);
+  };
+}
+
 /* ── 열 장을 짭니다 ─────────────────────────────── */
 function makeCheop(R, C, age, sex){
   const seed = R.seed;
@@ -111,22 +149,6 @@ function makeCheop(R, C, age, sex){
   /* 한 번 쓴 단서는 다음 첩에서 다시 쓰지 않습니다.
      같은 말이 두 번 나오면 손님은 바로 알아챕니다. */
   const 썼다 = new Set();
-  /* 재백궁은 준두와 콧방울을 빛으로 읽고, 단서는 같은 자리를 자로 잽니다.
-     둘이 어긋나면 손님에게는 그냥 앞뒤가 안 맞는 말입니다.
-     궁 등급과 반대로 가는 코 단서는 열 장 어디에서도 쓰지 않습니다. */
-  {
-    const jb = G["재백"];
-    if (jb){
-      const 코축 = { 코폭:1, 준두:1, 콧볼폭:1 };
-      const 걸림 = (h)=> 코축[h.c.k] && ((jb.lv===2 && h.c.g>0) || (jb.lv<=1 && h.c.g<0 && jb.lv===0)
-                        || (jb.lv===1 && h.c.g>0));
-      C.list = C.list.filter(h=>!걸림(h));
-      for (const k in C.byT) C.byT[k] = C.byT[k].filter(h=>!걸림(h));
-      for (const k in C.byBu) C.byBu[k] = C.byBu[k].filter(h=>!걸림(h));
-      C.gil = C.gil.filter(h=>!걸림(h));
-      C.hyung = C.hyung.filter(h=>!걸림(h));
-    }
-  }
   /* 윤곽과 삼정은 제1첩에서 오행형상·삼정으로 이미 말했습니다.
      다른 첩 본문에서 또 끌어 쓰면 같은 말이 두 번 나옵니다. */
   const 본문밖 = (h)=> h.c.bu==="삼정";
@@ -588,6 +610,8 @@ function makeCheop(R, C, age, sex){
     /* 막힌 자리와 트인 자리에서 셋을 고릅니다 */
     const ord = R.jari.slice().sort((a,b)=> (b.lv - a.lv) || (a.z - b.z));
     const 셋 = [ord[0], ord[1], R.brightest].filter((x,i,a)=> a.findIndex(y=>y.g.k===x.g.k)===i).slice(0,3);
+    /* 백귀 셋이 같은 처방을 들고 서면 같은 말을 세 번 듣는 셈입니다 */
+    const 쓴처방 = new Set();
     c.gwi = 셋.map((j, i)=>{
       const g = gwiOf(j.bg);
       return {
@@ -595,11 +619,25 @@ function makeCheop(R, C, age, sex){
         g, 두얼굴: [gwiTwo(g, true, j.g.k), gwiTwo(g, false, j.g.k)],
         근거: `${j.g.bu} 자리가 ${j.lv===0?"트여":"막혀"} 있어 ${이가(g.n)} 여기 섰습니다.`,
         말: j.lv === 2
-          ? `${을를(g.n)} 그대로 두면 ${j.g.d} 쪽이 계속 막힙니다. ${g.fix}`
+          ? `${을를(g.n)} 그대로 두면 ${j.g.d} 쪽이 계속 막힙니다.` + (쓴처방.has(g.fix) ? "" : (쓴처방.add(g.fix), " " + g.fix))
           : `${이가(g.n)} 손님 쪽에 서 있습니다. ${j.g.d} 쪽으로 힘이 붙습니다.`
       };
     });
     const 막힌셋 = 셋.filter(j=>j.lv===2).length, 트인셋 = 셋.filter(j=>j.lv===0).length;
+    /* 셋이 같은 문장을 들고 서면 같은 말을 두 번 듣는 셈입니다.
+       복·흉·처방 어디에 있든, 한 첩 안에서 같은 문장은 한 번만 섭니다. */
+    {
+      const 본문장 = new Set();
+      const 솎기 = (t)=> String(t||"").split(/(?<=[.!?])\s+/)
+        .filter(x=>{ const k=x.trim(); if(!k) return false;
+          if(k.length>10 && 본문장.has(k)) return false; 본문장.add(k); return true; })
+        .join(" ").trim();
+      for (const w of c.gwi){
+        w.근거 = 솎기(w.근거); w.말 = 솎기(w.말);
+        w.두얼굴 = w.두얼굴.map(f=> Object.assign({}, f, { t: 솎기(f.t) }))
+                           .filter(f=> f.t);
+      }
+    }
     c.body.push(단락(
       "백귀는 왜 얼굴에 서는가",
       "백 가지 귀(鬼)는 열두 자리에 나뉘어 삽니다. 자리가 트이면 그 자리의 것이 손님을 받치고, " +
