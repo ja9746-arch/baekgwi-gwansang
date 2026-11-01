@@ -132,7 +132,9 @@ function 할것(R, 자리k, 더){
   const j = (R.jari || []).find(x=>x.g.k===자리k);
   const 쓰 = (typeof GUNG_USE !== "undefined" && GUNG_USE[자리k]) || "";
   const out = [];
-  if (몸) out.push({ t:"몸으로", d:몸.몸 });
+  /* 막힌 자리에만 "이러이러합니다" 하고 짚습니다.
+     트인 자리에 대고 짚으면 앞 장에서 한 말을 뒤집는 꼴이 됩니다. */
+  if (몸) out.push({ t:"몸으로", d:(j && j.lv === 2 && 몸.몸막) ? 몸.몸막 : 몸.몸 });
   if (몸) out.push({ t:"표정으로", d:몸.표 });
   if (j && j.lv === 0 && 쓰) out.push({ t:"올해 안에", d:쓰 });
   else if (j && j.lv === 2 && j.g.lv[2] && j.g.lv[2].ac) out.push({ t:"풀 길", d:j.g.lv[2].ac });
@@ -975,7 +977,8 @@ function makeCheop(R, C, age, sex){
           if (j.lv === 2){
             const a = 쓴처방.has(g.fix) ? "" : (쓴처방.add(g.fix), g.fix);
             return { t:"이렇게 넘기십시오",
-                     l:[a, 몸 ? 몸.몸 : "", 몸 ? 몸.표 : ""].filter(Boolean) };
+                     /* 여기는 막힌 자리입니다 — 짚어 주는 쪽을 씁니다 */
+                     l:[a, 몸 ? (몸.몸막 || 몸.몸) : "", 몸 ? 몸.표 : ""].filter(Boolean) };
           }
           return { t:"이렇게 쓰십시오",
                    l:[쓰, 몸 ? 몸.표 : ""].filter(Boolean) };
