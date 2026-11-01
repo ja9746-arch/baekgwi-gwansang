@@ -998,13 +998,16 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 
 :root{
   /* 글자 — 화면 폭을 따라갑니다 */
-  --fs-display:clamp(22px, 6.4vw, 30px); --lh-display:1.34;
-  --fs-h1:clamp(18px, 5.2vw, 23px);      --lh-h1:1.44;
-  --fs-h2:clamp(16.5px, 4.7vw, 19px);    --lh-h2:1.5;
-  --fs-h3:clamp(14.5px, 4.1vw, 16.5px);  --lh-h3:1.56;
-  --fs-body:clamp(13.5px, 3.8vw, 15px);  --lh-body:1.92;
-  --fs-sm:clamp(12.2px, 3.4vw, 13.5px);  --lh-sm:1.84;
-  --fs-label:clamp(10.8px, 3vw, 12px);   --lh-label:1.5;
+  /* 본문이 고딕으로 바뀌었습니다. 명조보다 작아 보이는 데다,
+     앞서 바닥값이 10.8px 라 360 폭 기기에서 한글이 안 읽혔습니다.
+     바닥을 올려 어느 기기에서도 열두 자 아래로 떨어지지 않게 합니다. */
+  --fs-display:clamp(25px, 7vw, 33px);   --lh-display:1.3;
+  --fs-h1:clamp(20px, 5.6vw, 25px);      --lh-h1:1.42;
+  --fs-h2:clamp(17.5px, 4.9vw, 20px);    --lh-h2:1.48;
+  --fs-h3:clamp(15.5px, 4.3vw, 17px);    --lh-h3:1.56;
+  --fs-body:clamp(15px, 4.1vw, 16.5px);  --lh-body:1.86;
+  --fs-sm:clamp(13.4px, 3.7vw, 14.6px);  --lh-sm:1.8;
+  --fs-label:clamp(12.2px, 3.3vw, 13.2px); --lh-label:1.55;
   /* 여백 */
   --pad:18px;
   --card:rgba(201,162,74,.24);
@@ -2057,7 +2060,7 @@ body{letter-spacing:-.004em}
 .screen > .kick{ text-align:center; display:block; margin-left:auto; margin-right:auto }
 .screen > .sectsub{ max-width:26em }
 .screen > .eyebrow::before,.screen > .eyebrow::after{ display:none }
-.screen > .eyebrow{ padding:0; letter-spacing:.26em }
+.screen > .eyebrow{ padding:0 .26em; letter-spacing:.26em }  /* 끝 글자 자간이 삐져나오던 것 */
 /* 머리글 밑에 가는 금줄 하나 — 시안의 결 */
 .screen > .sect::after{ content:""; display:block; width:46px; height:1px; margin:16px auto 0;
   background:linear-gradient(90deg,transparent,rgba(201,162,74,.75),transparent) }
