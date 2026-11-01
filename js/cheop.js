@@ -998,6 +998,9 @@ function makeCheop(R, C, age, sex){
         w.근거 = 솎기(w.근거); w.말 = 솎기(w.말);
         w.두얼굴 = w.두얼굴.map(f=> Object.assign({}, f, { t: 솎기(f.t) }))
                            .filter(f=> f.t);
+        /* 처방도 같은 자로 솎습니다 — 귀 둘이 같은 당부를 들고 서면
+           "두 주 넘게 이어지거든 의원에게도" 같은 말이 두 번 섭니다. */
+        if (w.처방 && w.처방.l) w.처방.l = w.처방.l.map(솎기).filter(Boolean);
       }
     }
     c.body.push(단락(
