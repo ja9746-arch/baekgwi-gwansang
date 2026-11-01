@@ -208,10 +208,46 @@ function gradeAll(m){
     const sd = Math.max(0.055, Math.min(0.20, bs[1]));
     return (rel[i] - bs[0]) / sd;
   });
+  /* ── 모양도 함께 잽니다 ─────────────────────────
+     빛만으로 자리를 가리면 얼굴이 아주 달라도 같은 꼴이 나옵니다.
+     살빛은 그날의 기운이고 생김은 타고난 그릇이니, 둘을 섞어야
+     사람마다 다른 자리가 섭니다. 관상이 본디 보던 것도 생김이고요.
+     자리마다 옛 관상서가 함께 보던 축을 끌어옵니다. */
+  const 모양축 = {
+    "명":   [["미간", 1]],
+    "관록": [["이마높", .6], ["이마폭", .4]],
+    "복덕": [["이마모서리", 1]],
+    "천이": [["이마모서리", .5], ["이마폭", .5]],
+    "부모": [["상정", 1]],
+    "형제": [["미길", .7], ["미안", .3]],
+    "전택": [["미안", 1]],
+    "처첩": [["눈길", .5], ["눈각", .5]],
+    "질액": [["산근폭", 1]],
+    "남녀": [["와잠", 1]],
+    "재백": [["준두", .6], ["콧볼폭", .4]],
+    "노복": [["지각", .6], ["턱길", .4]]
+  };
+  const A = (typeof axes === "function" && m.F) ? axes(m.F) : null;
+  const 모양z = ks.map(k=>{
+    if (!A || typeof zOf !== "function") return null;
+    const 축 = 모양축[k]; if (!축) return null;
+    let v = 0, w = 0;
+    for (const [ax, wt] of 축){
+      const t = zOf(A, ax);
+      if (!isFinite(t)) continue;
+      v += Math.max(-2.2, Math.min(2.2, t)) * wt; w += wt;
+    }
+    return w ? v / w : null;
+  });
+
   /* 가린 자리는 빛으로 가릴 수 없습니다. 어둡다고 막혔다 하면 거짓입니다.
-     모양으로만 보고 반반으로 둡니다. */
+     그 자리는 빛을 빼고 생김만으로 봅니다. */
   const cov = m.covered || {};
-  ks.forEach((k,i)=>{ if(cov[k]) z[i] = 0; });
+  ks.forEach((k,i)=>{
+    const sh = 모양z[i];
+    if (cov[k])      z[i] = (sh === null) ? 0 : sh;
+    else if (sh !== null) z[i] = z[i] * 0.55 + sh * 0.45;
+  });
   const out = {}, zz = {};
   ks.forEach((k,i)=>{ out[k] = z[i] > 0.58 ? 0 : (z[i] < -0.58 ? 2 : 1); zz[k]=z[i]; });
   out.__z = zz;
