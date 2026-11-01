@@ -1161,7 +1161,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .gwant li{position:relative;padding-left:1.4em;font-size:var(--fs-sm);color:#e4d8c8}
 .gwant li::before{content:"✓";position:absolute;left:0;color:var(--geum-hot)}
 .gwant.big li{font-size:var(--fs-body)}
-.sealbox .btn{margin:var(--s5) var(--s4) 0;width:auto;display:block}
+.sealbox .btn{margin:var(--s5) var(--s4) 0;width:calc(100% - var(--s4)*2);display:flex}
 
 /* 이어지는 곳 */
 .links{display:grid;gap:var(--s3);margin-top:var(--s5)}
@@ -1266,6 +1266,57 @@ html[data-scene="s-read"] body::before{
   color:#f3e7d3;margin-bottom:5px;letter-spacing:.01em}
 .jari li.gbad b{color:#f0c3b2}
 .jari li span{display:block;font-size:var(--fs-sm);line-height:1.85;color:#d8cbb9}
+
+/* ───────── 시안에서 떼어 온 것들 ─────────
+   두루마리와 붉은 버튼, 무료 딱지와 자물쇠는 보내 주신 그림에서
+   그대로 잘라 냈습니다. 가운데만 늘어나게 아홉 조각으로 씁니다. */
+.rolls{margin-top:var(--s6)}
+.rollhead{margin:0 0 var(--s4);text-align:center;font-family:var(--serif);
+  font-size:var(--fs-h3);color:#f3e7d3}
+.rolls ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s3)}
+.roll{position:relative;display:flex;align-items:center;gap:10px;
+  min-height:62px;padding:12px 44px 12px 40px;
+  border-image:url("img/ui/scroll-lock.webp") 0 34 0 30 fill / 0 34px 0 30px / 0 stretch;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.55))}
+.roll .no{font-family:var(--serif);font-size:var(--fs-label);color:#6b5330;flex:none}
+.roll b{font-family:var(--serif);font-size:var(--fs-h3);color:#3d2d18;font-weight:400;
+  letter-spacing:.01em}
+.roll .rlock{position:absolute;right:42px;top:50%;transform:translateY(-50%);
+  width:22px;height:26px;background:url("img/ui/icon-lock.webp") center/contain no-repeat;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.rollfoot{margin:var(--s4) 0 0;text-align:center;font-size:var(--fs-sm);color:var(--jae-dim)}
+
+/* 붉은 버튼 — 시안의 그것 */
+.btn.hot{border:0;background:none;box-shadow:none;padding:0;position:relative;
+  min-height:56px;display:flex;align-items:center;justify-content:center;
+  border-image:url("img/ui/btn-red.webp") 0 34 0 34 fill / 0 34px 0 34px / 0 stretch;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.5)) drop-shadow(0 0 16px rgba(192,54,42,.25));
+  color:#fff1e4;font-family:var(--serif);font-size:var(--fs-h3);letter-spacing:.02em;
+  text-shadow:0 1px 3px rgba(60,10,6,.8)}
+.btn.hot::before{display:none}
+.btn.hot:hover{filter:drop-shadow(0 10px 24px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(192,54,42,.4))}
+
+/* 무료 딱지 */
+.cph .free{background:url("img/ui/badge-free.webp") center/100% 100% no-repeat;
+  border:0;color:transparent;width:46px;height:26px;padding:0;text-indent:-999px;overflow:hidden}
+
+/* 잠금 쇠 */
+.glock{width:22px;height:26px;background:url("img/ui/icon-lock.webp") center/contain no-repeat}
+.glock::before,.glock::after{display:none}
+.cph .glock{filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+
+/* 시기·풀 길은 한지 쪽지 위에 */
+.si,.act{border-left:0;background:url("img/ui/paper.webp") center/100% 100%;
+  padding:var(--s4) var(--s4) calc(var(--s4) + 2px);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.si span,.act span{color:#8a6a3a}
+.si p,.act p{color:#3d2d18}
+.si{border-top:2px solid rgba(192,54,42,.6)}
+.act{border-top:2px solid rgba(201,162,74,.7)}
+
+.roll b{color:#33240f;font-size:17px}
+.roll .no{color:#7b6038;font-size:12px}
+.rollhead{font-size:var(--fs-sm);color:var(--geum-dim);letter-spacing:.06em}
+.btn.hot{width:100%}
 </style>
 </head>
 <body>
@@ -1389,19 +1440,21 @@ html[data-scene="s-read"] body::before{
 
   <div id="free-cheop"></div>
 
+  <div class="rolls">
+    <p class="rollhead">아직 봉인된 관상첩</p>
+    <ul id="free-rolls"></ul>
+    <p class="rollfoot">아직 열지 않은 관상첩에는 더 깊은 이야기가 기다리고 있습니다.</p>
+  </div>
+
   <div class="sealbox">
     <img src="img/obj/book.webp" alt="" loading="lazy">
     <h3>봉인된 관상첩을<br>열어보시겠나?</h3>
     <p id="free-tease"></p>
     <ul class="gwant">
-      <li>제3첩 · 인연과 사람</li>
-      <li>제4첩 · 사회적 인상과 평판</li>
-      <li>제5첩 · 세월이 남긴 흔적</li>
-      <li>제6첩 · 강점과 주의할 점</li>
-      <li>제7첩 · 얼굴 십이궁 열두 자리 전부</li>
-      <li>제8첩 · 얼굴에 깃든 백귀 셋</li>
-      <li>제9첩 · 점 찍을 자리 · 길한 색 · 머리</li>
-      <li>제10첩 · 원안법사의 마지막 밀서</li>
+      <li>봉인된 여덟 장 전부</li>
+      <li>얼굴 십이궁 열두 자리와 자리마다 선 백귀</li>
+      <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
+      <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
     </ul>
     <button class="btn hot" id="to-pay">관상첩 모두 열기</button>
   </div>

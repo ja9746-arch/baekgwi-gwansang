@@ -250,15 +250,16 @@ function renderFree(){
   })).join("");
   $("#free-clue-more").textContent = C.count > 8 ? `그 밖에 ${C.count - 8} 자리가 더 섰습니다.` : "";
 
-  /* 첩 목록 — 앞의 둘만 열고 나머지는 봉인 */
+  /* 첩 목록 — 두루마리로. 앞의 둘만 열고 나머지는 봉인합니다. */
   const list = sealCheop(ST.cheop);
-  $("#free-cheop").innerHTML = list.map((c, i)=>{
+  const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
+    (b.list ? `<ul class="jari">` + b.list.map(x=>
+      `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
+    ).join("") + `</ul>` : "");
+
+  $("#free-cheop").innerHTML = list.map((c)=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     if (!c.sealed){
-      const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
-        (b.list ? `<ul class="jari">` + b.list.map(x=>
-          `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
-        ).join("") + `</ul>` : "");
       return `<article class="cp open">
         <div class="cph"><img src="${art}" alt="" loading="lazy">
           <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
@@ -267,11 +268,16 @@ function renderFree(){
         ${c.more ? `<div class="sealrow"><span class="glock" aria-hidden="true"></span><p>이 첩에 ${c.more} 마디가 더 있습니다.</p></div>` : ""}
         </div></article>`;
     }
-    return `<article class="cp sealed">
-      <div class="cph"><img src="${art}" alt="" loading="lazy">
-        <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-        <span class="glock" aria-hidden="true"></span></div></article>`;
+    return "";
   }).join("");
+
+  /* 봉인된 것들은 두루마리로 한눈에 */
+  $("#free-rolls").innerHTML = list.filter(c=>c.sealed).map(c=>`
+    <li class="roll">
+      <span class="no">제${c.no}첩</span>
+      <b>${esc(c.title)}</b>
+      <i class="rlock" aria-hidden="true"></i>
+    </li>`).join("");
 
   $("#free-tease").textContent =
     ST.R.blocked >= 3
@@ -324,7 +330,7 @@ function renderCheop(){
           <p class="rd">${esc(j.rd)}</p>
           <p class="ac">${esc(j.ac)}</p>
           <div class="gw"><img src="${esc(j.gwi.img)}" alt="" loading="lazy">
-            <span>${esc(j.gwi.n)} <i>${esc(j.gwi.h)}</i></span></div>
+            <span>${esc(j.gwi.n)}${j.gwi.h?` <i>${esc(j.gwi.h)}</i>`:""}</span></div>
         </div>`).join("") + `</div>`;
     }
 
@@ -333,7 +339,7 @@ function renderCheop(){
         <div class="gwc">
           <div class="rk">제${g.rank}귀</div>
           <img src="${esc(g.g.img)}" alt="" loading="lazy">
-          <h5>${esc(g.g.n)} <i>${esc(g.g.h)}</i></h5>
+          <h5>${esc(g.g.n)}${g.g.h?` <i>${esc(g.g.h)}</i>`:""}</h5>
           <p class="why">${esc(g.근거)}</p>
           <p class="gsay">${esc(g.말)}</p>
           <div class="two">
