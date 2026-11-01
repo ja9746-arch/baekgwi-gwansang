@@ -1470,10 +1470,11 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 /* ───────── 처방 ───────── */
 .gcure{margin-top:14px}
 .moles,.cols{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.moles li,.cols li{display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:center;
+/* 이름 길이가 제각각이면 설명 시작점이 줄마다 달라 들쭉날쭉해 보입니다 */
+.moles li,.cols li{display:grid;grid-template-columns:132px 1fr;gap:11px;align-items:center;
   padding:12px 13px;background:rgba(8,4,5,.6);border:1px solid rgba(201,162,74,.18)}
-.cols li{grid-template-columns:18px auto 1fr}
-.moles li b,.cols li b{font-family:var(--serif);font-size:var(--fs-sm);color:#f0dcb8;
+.cols li{grid-template-columns:18px 54px 1fr}
+.moles li b,.cols li b{font-family:var(--serif);font-size:var(--fs-sm);color:#f0dcb8;word-break:keep-all;
   white-space:nowrap}
 .moles li span,.cols li span{font-size:var(--fs-sm);color:#c0b2a0;line-height:1.7}
 .cols li i{width:18px;height:18px;border:1px solid rgba(255,255,255,.26);border-radius:2px}
