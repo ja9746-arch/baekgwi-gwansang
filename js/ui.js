@@ -465,7 +465,7 @@ function renderVerdict(box, R, C){
         `자네 얼굴은 ${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴일세. ` +
         `둘 사이가 ${R.gyo.dan}이니, ${R.gyo.mal}`)}</p>
       <p class="vsay">${esc(
-        `열두 자리 가운데 트인 데가 ${R.opened}, 막힌 데가 ${R.blocked}. ` +
+        `열두 자리 가운데 트인 데가 ${R.opened}곳, 막힌 데가 ${R.blocked}곳. ` +
         `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}일세. ` +
         (센것 ? `얼굴에서 가장 세게 선 자리는 ${센것.c.n} — ${끝말(센것.c.s)}` : ""))}</p>`;
 }
@@ -596,7 +596,7 @@ function renderFree(){
   $("#free-head").innerHTML =
     `자네 얼굴은 <b>${esc(R.hyeong)}형(${esc(OH[R.hyeong].ja)})</b>의 그릇에 ` +
     `<b>${esc(R.gisaek)}기(${esc(GISAEK[R.gisaek].ja)})</b>가 도는 얼굴일세. ` +
-    `열두 자리 가운데 트인 데가 <b>${R.opened}</b>, 막힌 데가 <b>${R.blocked}</b>이고.`;
+    `열두 자리 가운데 트인 데가 <b>${R.opened}</b>곳, 막힌 데가 <b>${R.blocked}</b>곳이고.`;
 
   /* 얼굴에서 실제로 잡힌 자리 */
   /* 여덟 개만 보여 주면 "열여섯 자리가 섰다"고 해 놓고 반을 감추는 꼴입니다.

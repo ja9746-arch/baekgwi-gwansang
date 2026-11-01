@@ -143,7 +143,7 @@ function buildPoster(){
   g.fillStyle = "#e3d3bb"; g.font = `400 30px ${sans}`;
   y = drawPara(g,
     `${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴. 둘 사이는 ${R.gyo.dan}. ` +
-    `열두 자리 가운데 트인 데가 ${R.opened}, 막힌 데가 ${R.blocked}.`,
+    `열두 자리 가운데 트인 데가 ${R.opened}곳, 막힌 데가 ${R.blocked}곳.`,
     pad, y, W-pad*2, 48) + 36;
 
   /* 얼굴에서 잡힌 자리 */
@@ -252,7 +252,7 @@ function buildText(){
   const OHJ = {"목":"木","화":"火","토":"土","금":"金","수":"水"};
   const GIJ = {"청":"靑","적":"赤","황":"黃","백":"白","흑":"黑"};
   L.push(`${R.hyeong}형(${OHJ[R.hyeong]||""}) · ${R.gisaek}기(${GIJ[R.gisaek]||""}) · ${R.samjeong}정 · ${R.age}세 ${R.boss.g.n}`);
-  L.push(`열두 자리 가운데 트인 데 ${R.opened}, 막힌 데 ${R.blocked}`, "");
+  L.push(`열두 자리 가운데 트인 데 ${R.opened}곳, 막힌 데 ${R.blocked}곳`, "");
   L.push("[얼굴에서 잡힌 자리]");
   (C && C.list || []).forEach(h=> L.push(" · " + h.c.s));
   L.push("");
