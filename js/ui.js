@@ -91,7 +91,28 @@ function bindPaybar(){
 }
 
 function bindIntro(){
-  $$("#go-ask, #go-ask2").forEach(b=> b.addEventListener("click", ()=> go("s-ask")));
+  $$("#go-ask, #go-ask2, #introbar-go").forEach(b=> b.addEventListener("click", ()=> go("s-ask")));
+  /* 첫 화면도 넉 판이 넘습니다. 머리그림을 지나면 단추 띠를 올려 두어,
+     보기를 읽고 마음이 선 손님이 그 자리에서 들어가시게 합니다. */
+  (function(){
+    const bar = $("#introbar"), kv = $("#s-intro .kv"), last = $("#s-intro .lastcall");
+    if (!bar || !kv) return;
+    let 켜짐 = false;
+    const 보기 = ()=>{
+      const sc = $("#s-intro");
+      if (!sc || sc.hidden){ if(켜짐){ bar.classList.remove("on"); bar.hidden = true; 켜짐=false; } return; }
+      const 지났나 = kv.getBoundingClientRect().bottom < innerHeight * 0.3;
+      const 닿았나 = last ? last.getBoundingClientRect().top < innerHeight * 0.92 : false;
+      const 켤까 = 지났나 && !닿았나;
+      if (켤까 === 켜짐) return;
+      켜짐 = 켤까;
+      if (켤까){ bar.hidden = false; requestAnimationFrame(()=> bar.classList.add("on")); }
+      else { bar.classList.remove("on"); setTimeout(()=>{ if(!켜짐) bar.hidden = true; }, 340); }
+    };
+    addEventListener("scroll", 보기, { passive:true });
+    addEventListener("resize", 보기, { passive:true });
+    setTimeout(보기, 100);
+  })();
   /* 첫 화면에도 복채를 적습니다 — 끝까지 내려와서야 값을 묻게 두지 않습니다 */
   const w = $("#intro-won"); if (w) w.textContent = won(PRICE.now);
 }

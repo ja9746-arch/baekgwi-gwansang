@@ -2418,6 +2418,74 @@ body{letter-spacing:-.004em}
 .ten .jr:not(.shut){padding-top:11px;padding-bottom:11px}
 .ten{gap:10px}
 
+/* ── 첫 화면 다시 짜기 2 ───────────────────────────
+   센 패를 위로 올리고, 두루마리 열 줄을 눌러 줄이고,
+   내려가는 길 가운데에도 단추를 둡니다. */
+.kv.tall > img{aspect-ratio:3/3.18}
+.kvtext.on .gtitle{font-size:clamp(16.5px,4.4vw,19px);line-height:1.68}
+
+/* 두 가지 약속 — 무료 배지와 자물쇠는 시안에서 떼어 온 것입니다 */
+.vow2{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:1px;
+  background:rgba(201,162,74,.2);border:1px solid rgba(201,162,74,.22);
+  border-radius:3px;overflow:hidden}
+.vow2 li{display:grid;grid-template-columns:34px 1fr;column-gap:11px;row-gap:2px;
+  align-items:start;padding:12px 14px;background:rgba(16,8,10,.9)}
+.vow2 li i{grid-row:1/3;width:34px;height:21px;margin-top:2px;font-style:normal;
+  background:center/contain no-repeat}
+/* 떼어 온 무료 배지는 스무 자로 줄이면 글자가 뭉갭니다 — 글자로 씁니다 */
+.vow2 li i.v-free{display:grid;place-items:center;border-radius:3px;
+  font-family:var(--serif);font-weight:800;font-size:12.4px;letter-spacing:.01em;
+  color:#3b2707;background:linear-gradient(180deg,#f7e3ae,#dcb86e 52%,#c79f52);
+  box-shadow:0 1px 3px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.7)}
+.vow2 li i.v-lock{background-image:url("img/ui/icon-lock.webp");
+  background-size:15px auto;width:34px}
+.vow2 li b{font-family:var(--serif);font-weight:700;font-size:var(--fs-sm);
+  color:#f0dcb3;word-break:keep-all}
+.vow2 li span{font-size:var(--fs-label);line-height:1.7;color:#a3947c;
+  word-break:keep-all}
+
+/* 세 걸음 — 한 줄 띠로 눌러 둡니다 */
+.step3{list-style:none;margin:26px 0 0;padding:12px 4px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;
+  border-top:1px solid rgba(201,162,74,.18);
+  border-bottom:1px solid rgba(201,162,74,.18)}
+.step3 li{position:relative;display:flex;align-items:center;justify-content:center;
+  gap:7px;font-size:var(--fs-label);color:#b3a48c;white-space:nowrap}
+.step3 li + li::before{content:"";position:absolute;left:0;top:50%;
+  width:7px;height:7px;margin-top:-4px;
+  border-right:1px solid rgba(201,162,74,.5);
+  border-top:1px solid rgba(201,162,74,.5);transform:rotate(45deg)}
+.step3 li b{width:21px;height:21px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid rgba(201,162,74,.55);font-family:var(--serif);font-weight:700;
+  font-size:12.4px;color:#e8c67e;flex:none;line-height:1}
+
+/* 봉인된 여덟 장 — 작은 격자로 묶습니다 */
+.tenmid{margin:20px 0 12px;display:flex;align-items:center;gap:11px}
+.tenmid::before,.tenmid::after{content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.36))}
+.tenmid::after{background:linear-gradient(90deg,rgba(201,162,74,.36),transparent)}
+.tenmid span{flex:none;font-family:var(--serif);font-size:var(--fs-label);
+  letter-spacing:.17em;color:#9b8c76;white-space:nowrap}
+.ten8{list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ten8 li{position:relative;display:grid;grid-template-columns:34px auto 1fr;
+  align-items:center;column-gap:8px;padding:8px 9px;border-radius:3px;
+  background:linear-gradient(180deg,rgba(38,24,14,.88),rgba(20,11,9,.92));
+  border:1px solid rgba(201,162,74,.2)}
+.ten8 li img{width:34px;height:34px;border-radius:2px;object-fit:cover;
+  filter:sepia(.5) brightness(.6) contrast(1.05)}
+.ten8 li .n{font-family:var(--serif);font-weight:700;font-size:var(--fs-label);
+  color:#c0a271;width:1.35em;text-align:center;flex:none}
+.ten8 li b{font-family:var(--serif);font-weight:700;font-size:var(--fs-label);
+  line-height:1.4;color:#d9c9ae;word-break:keep-all;text-align:left;
+  padding-right:15px}
+.ten8 li i{position:absolute;right:7px;top:7px;width:11px;height:13px;
+  background:url("img/ui/icon-lock.webp") center/contain no-repeat;opacity:.85}
+@media (max-width:339px){ .ten8{grid-template-columns:1fr} }
+
+/* 머리그림을 지나면 단추 띠가 올라옵니다 */
+.introbar .pbt b{font-weight:700}
+
 </style>
 </head>
 <body>
@@ -2440,27 +2508,16 @@ body{letter-spacing:-.004em}
     <div class="kvtext on">
       <h1 class="logo"><img src="img/title.webp" alt="백귀관상"></h1>
       <p class="kvsub">원안법사의 비밀 관상소</p>
-      <p class="gtitle">얼굴에는 자네가 살아온 <em>흔적</em>이 남아 있지.</p>
+      <p class="gtitle">셀카 한 장이면 얼굴 열두 자리를 읽어<br><em>관상첩 열 장</em>을 냅니다.</p>
     </div>
   </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
-  <p class="hint small">얼굴 사진 한 장이면 됩니다 · 사진은 기기 밖으로 나가지 않습니다</p>
 
-  <ul class="howto">
-    <li><b>1</b><span>얼굴 사진<br>한 장이면</span></li>
-    <li><b>2</b><span>백 가지 자리를<br>자로 잽니다</span></li>
-    <li><b>3</b><span>관상첩 열 장이<br>나옵니다</span></li>
+  <ul class="vow2">
+    <li><i class="v-free">무료</i><b>앞의 두 장은 복채 없이</b><span>읽어 보시고 정하시면 됩니다</span></li>
+    <li><i class="v-lock"></i><b>사진은 기기 밖으로 나가지 않습니다</b><span>올리신 그 자리에서 읽고 보내지 않습니다</span></li>
   </ul>
-
-  <div class="say">
-    <span class="por"><img src="img/seer/face-mirror.webp" alt=""></span>
-    <div class="txt">
-      <p class="nm">원안법사 圓安法師</p>
-      <p>어서 오시게. 거울 앞에 앉아 보시게나.</p>
-      <p>나는 원광법사께 상(相) 보는 법을 배운 사람일세. 자네 얼굴에 새겨진 이야기를 하나씩 읽어드리지.</p>
-    </div>
-  </div>
 
   <div class="proof">
     <p class="eyebrow">이렇게 나옵니다</p>
@@ -2479,22 +2536,39 @@ body{letter-spacing:-.004em}
       누구에게나 맞는 말은 적지 않습니다.</p>
   </div>
 
+  <ol class="step3">
+    <li><b>1</b>사진 한 장</li>
+    <li><b>2</b>자로 재기</li>
+    <li><b>3</b>관상첩 열 장</li>
+  </ol>
+
   <div class="tenwrap">
     <p class="eyebrow">원안법사의 관상첩</p>
     <h2 class="sect mid">얼굴에 새겨진<br>열 가지 이야기</h2>
     <ul class="ten">
     <li class="jr juru sm"><img class="jt" src="img/cheop/t01.webp" alt="" loading="lazy"><span class="jn">一</span><b>내 타고난 얼굴</b><span class="js">오행형상·삼정·타고난 결</span><i class="jf">무료</i></li>
     <li class="jr juru sm"><img class="jt" src="img/cheop/t02.webp" alt="" loading="lazy"><span class="jn">二</span><b>재물의 자리</b><span class="js">들어오는 길·새는 자리·큰돈</span><i class="jf">무료</i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t03.webp" alt="" loading="lazy"><span class="jn">三</span><b>인연과 사람</b><span class="js">맞는 사람·피할 사람·배우자궁</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t04.webp" alt="" loading="lazy"><span class="jn">四</span><b>사회적 인상과 평판</b><span class="js">첫인상·관록궁·이마 세 칸</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t05.webp" alt="" loading="lazy"><span class="jn">五</span><b>세월이 남긴 흔적</b><span class="js">유년운기로 지나온 때와 올 때</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t06.webp" alt="" loading="lazy"><span class="jn">六</span><b>강점과 주의할 점</b><span class="js">살릴 자리 셋, 지킬 자리 둘</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t07.webp" alt="" loading="lazy"><span class="jn">七</span><b>얼굴 십이궁</b><span class="js">열두 자리 전부와 자리마다 선 백귀</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t08.webp" alt="" loading="lazy"><span class="jn">八</span><b>얼굴에 깃든 백귀</b><span class="js">가장 세게 선 셋, 복과 흉 두 얼굴</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t09.webp" alt="" loading="lazy"><span class="jn">九</span><b>원안법사의 처방</b><span class="js">점 찍을 자리·길한 색·머리</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t10.webp" alt="" loading="lazy"><span class="jn">十</span><b>마지막 밀서</b><span class="js">총평·할 일 셋·피할 것 둘·움직일 달</span><i class="jl" aria-hidden="true"></i></li>
     </ul>
-    <p class="tenfoot">앞의 두 장은 복채 없이 열어 드립니다. 읽어 보시고 정하시면 됩니다.</p>
+    <p class="tenmid"><span>그리고 봉인된 여덟 장</span></p>
+    <ul class="ten8">
+    <li><img src="img/cheop/t03.webp" alt="" loading="lazy"><span class="n">三</span><b>인연과 사람</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t04.webp" alt="" loading="lazy"><span class="n">四</span><b>인상과 평판</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t05.webp" alt="" loading="lazy"><span class="n">五</span><b>세월이 남긴 흔적</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t06.webp" alt="" loading="lazy"><span class="n">六</span><b>강점과 주의할 점</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t07.webp" alt="" loading="lazy"><span class="n">七</span><b>얼굴 십이궁</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t08.webp" alt="" loading="lazy"><span class="n">八</span><b>얼굴에 깃든 백귀</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t09.webp" alt="" loading="lazy"><span class="n">九</span><b>원안법사의 처방</b><i aria-hidden="true"></i></li>
+    <li><img src="img/cheop/t10.webp" alt="" loading="lazy"><span class="n">十</span><b>마지막 밀서</b><i aria-hidden="true"></i></li>
+    </ul>
+  </div>
+
+  <div class="say low">
+    <span class="por"><img src="img/seer/face-mirror.webp" alt=""></span>
+    <div class="txt">
+      <p class="nm">원안법사 圓安法師</p>
+      <p>나는 원광법사께 상(相) 보는 법을 배운 사람일세.</p>
+      <p>자네 얼굴에 새겨진 이야기를 하나씩 읽어드리지. 두 장 읽어 보고 정하시게나.</p>
+    </div>
   </div>
 
   <div class="lastcall">
@@ -2754,6 +2828,10 @@ body{letter-spacing:-.004em}
   <p>상호 온미라이프 · 고객센터 1866-0423 · 전자우편 ja9746@naver.com</p>
   <button class="btn ghost" data-go="s-intro">닫기</button>
 </section>
+<div class="paybar introbar" id="introbar" hidden>
+  <p class="pbt"><b>앞의 두 장은 복채 없이</b><span>셀카 한 장이면 됩니다</span></p>
+  <button class="btn hot" id="introbar-go">얼굴 보이기</button>
+</div>
 <div class="paybar" id="paybar" hidden>
   <p class="pbt"><b id="paybar-n">여덟 장이 봉인되어 있습니다</b><span>복채 9,900원 · 한 번만</span></p>
   <button class="btn hot" id="paybar-go">전부 열기</button>
