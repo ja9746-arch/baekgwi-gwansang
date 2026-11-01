@@ -715,6 +715,64 @@ async function openCheckout(amount){
   return false;
 }
 
+/* ── 손님 얼굴 위의 지도 ─────────────────────────
+   열두 자리도 점 자리도 남의 선 그림 위에 찍으면 남의 이야기입니다.
+   자리 좌표는 0~100 자로 적혀 있으니, 손님 얼굴에 맞춰 옮겨 찍습니다. */
+function realFace(marks, opt){
+  const o = opt || {};
+  const src = ST.img, F = ST.F;
+  if (!src || !F || !F.rawAll) return null;
+  const W = 620, H = Math.round(W*4/3);
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  g.fillStyle = "#0b0607"; g.fillRect(0,0,W,H);
+  const kx = (F.W ? src.width/F.W : 1), ky = (F.H ? src.height/F.H : 1);
+  const P = i => ({ x:F.rawAll[i].x*kx, y:F.rawAll[i].y*ky });
+  const ov = [10,152,234,454,103,332,172,397];
+  const xs = ov.map(i=>P(i).x), ys = ov.map(i=>P(i).y);
+  const x0f=Math.min.apply(null,xs), x1f=Math.max.apply(null,xs);
+  const y0f=Math.min.apply(null,ys), y1f=Math.max.apply(null,ys);
+  const fw=x1f-x0f, fh=y1f-y0f, cx=(x0f+x1f)/2, cy=(y0f+y1f)/2 - fh*0.04;
+  let w = fw*1.44, h = w*4/3;
+  if (h < fh*1.22){ h = fh*1.22; w = h*3/4; }
+  const sx = cx-w/2, sy = cy-h/2, k = W/w;
+  g.save(); g.translate(-sx*k,-sy*k); g.scale(k,k);
+  try { g.drawImage(src, 0, 0); } catch(e){}
+  g.restore();
+  g.fillStyle = "rgba(10,5,7,.34)"; g.fillRect(0,0,W,H);
+  const vg = g.createRadialGradient(W/2,H*.46,W*.2,W/2,H*.5,W*.8);
+  vg.addColorStop(0,"rgba(10,5,7,0)"); vg.addColorStop(1,"rgba(10,5,7,.8)");
+  g.fillStyle = vg; g.fillRect(0,0,W,H);
+
+  /* 0~100 자를 손님 얼굴에 옮깁니다. 선 그림의 테두리가
+     가로 11~89, 세로 4~96 이라, 그 네 변을 손님 얼굴의 네 변에 맞춥니다. */
+  const L=(x0f-sx)*k, R=(x1f-sx)*k;
+  const T=(P(10).y-sy)*k - (((P(152).y-P(10).y)*k)*0.05);
+  const B=(P(152).y-sy)*k + (((P(152).y-P(10).y)*k)*0.03);
+  const mx = gx => (L + (gx-11)/78*(R-L)) / W * 100;
+  const my = gy => (T + (gy-4)/92*(B-T)) / H * 100;
+  const dots = marks.map(m=>{
+    const cls = "rm" + (m.lv===undefined ? "" : " lv"+m.lv) + (m.boss ? " boss" : "");
+    return `<i class="${cls}" style="left:${mx(m.x).toFixed(2)}%;top:${my(m.y).toFixed(2)}%">` +
+           (m.no ? `<u>${m.no}</u>` : "") + `</i>`;
+  }).join("");
+  return `<figure class="rmap${o.wide?" wide":""}">
+    <div class="rmwrap"></div>${dots}
+    ${o.legend ? `<figcaption class="fmleg">${o.legend}</figcaption>` : ""}
+  </figure>`.replace('<div class="rmwrap"></div>',
+    '<div class="rmwrap" data-cv="'+(window.__rmQ = (window.__rmQ||[]), window.__rmQ.push(cv), window.__rmQ.length-1)+'"></div>');
+}
+/* 캔버스는 글로 못 넣으니, 붙인 뒤에 끼워 넣습니다 */
+function rmFill(root){
+  const q = window.__rmQ || [];
+  (root||document).querySelectorAll(".rmwrap[data-cv]").forEach(w=>{
+    const cv = q[+w.dataset.cv];
+    if (cv && !w.firstChild) w.appendChild(cv);
+    w.removeAttribute("data-cv");
+  });
+}
+
 /* ── 열 장을 모두 ─────────────────────────────── */
 function renderCheop(){
   const wrap = $("#cheop-all");
@@ -767,10 +825,12 @@ function faceMap(marks, opt){
 }
 
     if (c.key === "십이궁" && c.jari){
-      inner += faceMap(c.jari.map(j=>({ x:j.x, y:j.y, lv:j.lv, boss:j.boss })), {
-        wide:true, alt:"얼굴 열두 자리 지도",
-        legend:`<i class="k0"></i>트임 <i class="k1"></i>반반 <i class="k2"></i>막힘 <i class="kb"></i>올해 쥐는 자리`
-      });
+      {
+        const mk = c.jari.map(j=>({ x:j.x, y:j.y, lv:j.lv, boss:j.boss }));
+        const leg = `<i class="k0"></i>트임 <i class="k1"></i>반반 <i class="k2"></i>막힘 <i class="kb"></i>올해 쥐는 자리`;
+        inner += realFace(mk, { wide:true, legend:leg })
+              || faceMap(mk, { wide:true, alt:"얼굴 열두 자리 지도", legend:leg });
+      }
       inner += `<div class="ggungs">` + c.jari.map(j=>`
         <div class="gu gl${j.lv}${j.boss?" gboss":""}">
           <div class="guh"><b>${esc(j.n)}</b><span>${esc(j.bu)}</span>
@@ -801,8 +861,10 @@ function faceMap(marks, opt){
     if (c.key === "처방"){
       inner += `<div class="gcure">
         <h5>점 찍을 자리</h5>`
-        + faceMap(c.jeom.map((j,i)=>({ x:j.x, y:j.y, no:i+1, r:3.6 })), {
-            alt:"점 찍을 자리 셋", legend:"아래 셋 가운데 손님께 맞는 자리를 짚어 드립니다" })
+        + (()=>{ const mk = c.jeom.map((j,i)=>({ x:j.x, y:j.y, no:i+1, r:3.6 }));
+            const leg = "아래 셋 가운데 손님께 맞는 자리를 짚어 드립니다";
+            return realFace(mk, { legend:leg })
+                || faceMap(mk, { alt:"점 찍을 자리 셋", legend:leg }); })()
         + `<ul class="moles">` + c.jeom.map((j,i)=>`<li><b><i class="n">${i+1}</i>${esc(j.t)}</b><span>${esc(j.w)}</span></li>`).join("") + `</ul>
         <h5>길한 색</h5>
         <ul class="cols">` + c.gil.map(g=>`<li><i style="background:${esc(g[1])}"></i><b>${esc(g[0])}</b><span>${esc(g[2])} — ${esc(g[3])}</span></li>`).join("") +
@@ -837,6 +899,7 @@ function faceMap(marks, opt){
         ${ev}
       </div></article>`;
   }).join("");
+  rmFill(wrap);   /* 손님 얼굴 지도를 끼워 넣습니다 */
 }
 
 /* ── 다시 보기 ────────────────────────────────── */

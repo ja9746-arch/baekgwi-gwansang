@@ -2213,6 +2213,43 @@ body{letter-spacing:-.004em}
 .jr.shut .jt{filter:sepia(.55) brightness(.62) contrast(1.06) hue-rotate(-8deg);
   border-color:rgba(200,172,120,.24);box-shadow:0 2px 7px rgba(0,0,0,.45)}
 
+
+/* ── 손님 얼굴 위의 지도 (십이궁·점 자리) ──────── */
+.rmap{position:relative;margin:16px 0 0;border-radius:3px;overflow:hidden;
+  border:1px solid rgba(201,162,74,.22)}
+.rmap.wide{margin:18px 0 2px}
+.rmap .rmwrap{display:block}
+.rmap canvas{display:block;width:100%;height:auto}
+.rmap .rm{position:absolute;transform:translate(-50%,-50%);
+  width:11px;height:11px;border-radius:50%;z-index:2;
+  background:radial-gradient(circle,#fff3d8 0%,#e8c67e 40%,#b98c38 76%,rgba(185,140,56,0) 100%);
+  box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 10px 3px rgba(235,190,110,.45)}
+.rmap .rm.lv0{background:radial-gradient(circle,#fff6de 0%,#f2cf84 40%,#c99a2f 76%,rgba(201,154,47,0) 100%);
+  box-shadow:0 0 0 2px rgba(0,0,0,.5),0 0 13px 4px rgba(240,198,110,.6)}
+.rmap .rm.lv1{background:radial-gradient(circle,#efe2c6 0%,#bfa779 44%,#8a7343 78%,rgba(138,115,67,0) 100%);
+  box-shadow:0 0 0 2px rgba(0,0,0,.5),0 0 8px 2px rgba(190,165,110,.35)}
+.rmap .rm.lv2{background:radial-gradient(circle,#ffd9cf 0%,#e07a62 42%,#a8321f 78%,rgba(168,50,31,0) 100%);
+  box-shadow:0 0 0 2px rgba(0,0,0,.5),0 0 12px 4px rgba(214,76,52,.5)}
+.rmap .rm.boss{width:15px;height:15px}
+.rmap .rm.boss::after{content:"";position:absolute;inset:-7px;border-radius:50%;
+  border:1px solid rgba(245,214,150,.7);animation:rmhalo 2.4s ease-in-out infinite}
+@keyframes rmhalo{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.22);opacity:.35}}
+.rmap .rm u{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-decoration:none;font-family:var(--serif);font-weight:800;line-height:1;
+  font-size:var(--fs-label);color:#2a1706}
+.rmap .rm:has(u){width:23px;height:23px}
+.rmap .fmleg{position:relative;z-index:2;margin:0;padding:9px 12px;
+  background:linear-gradient(180deg,rgba(9,5,6,0),rgba(9,5,6,.92) 42%);
+  font-size:var(--fs-label);color:#cdbda4;text-align:center;line-height:1.7}
+.rmap .fmleg i{display:inline-block;width:8px;height:8px;border-radius:50%;
+  margin:0 4px 0 10px;vertical-align:0}
+.rmap .fmleg i:first-child{margin-left:0}
+.rmap .fmleg .k0{background:#f2cf84}
+.rmap .fmleg .k1{background:#bfa779}
+.rmap .fmleg .k2{background:#e07a62}
+.rmap .fmleg .kb{background:none;box-shadow:inset 0 0 0 1px rgba(245,214,150,.9)}
+@media (prefers-reduced-motion:reduce){ .rmap .rm.boss::after{animation:none} }
+
 </style>
 </head>
 <body>
