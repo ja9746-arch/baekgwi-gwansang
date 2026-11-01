@@ -1820,8 +1820,8 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   text-shadow:0 2px 20px rgba(0,0,0,.9),0 1px 3px rgba(0,0,0,.9)}
 
 /* ── 복채 — 시안의 금테 상자 ──────────────────────── */
-.payart{position:relative;margin:0 0 20px;width:100%;overflow:hidden}
-.payart img{display:block;width:100%;aspect-ratio:3/2.3;object-fit:cover;object-position:50% 42%}
+.payart{position:relative;margin:0 0 10px;width:100%;overflow:hidden}
+.payart img{display:block;width:100%;aspect-ratio:3/1.45;object-fit:cover;object-position:50% 38%}
 .payart i{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(8,4,6,.55),rgba(8,4,6,0) 34%,rgba(8,4,6,.9) 88%,rgba(8,4,6,1))}
 .sect.big{font-size:clamp(23px,6.6vw,31px);line-height:1.42;text-align:center}
@@ -2045,6 +2045,50 @@ body{letter-spacing:-.004em}
 /* 한자와 숫자는 명조로 둡니다 — 고딕 한자는 결이 깨집니다 */
 .vcell b i,.cpt .no,.jr .jn,.pcut figcaption b i{font-family:var(--serif)}
 
+
+/* ══════════════════════════════════════════════════
+   머리글은 가운데로 — 시안의 짜임입니다.
+   왼쪽으로 붙이면 흔한 앱이 되고, 가운데로 모으면
+   앉아서 듣는 자리가 됩니다.
+   ══════════════════════════════════════════════════ */
+.screen > .eyebrow,
+.screen > .sect,
+.screen > .sectsub,
+.screen > .kick{ text-align:center; display:block; margin-left:auto; margin-right:auto }
+.screen > .sectsub{ max-width:26em }
+.screen > .eyebrow::before,.screen > .eyebrow::after{ display:none }
+.screen > .eyebrow{ padding:0; letter-spacing:.26em }
+/* 머리글 밑에 가는 금줄 하나 — 시안의 결 */
+.screen > .sect::after{ content:""; display:block; width:46px; height:1px; margin:16px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.75),transparent) }
+.screen > .hint{ text-align:center }
+#s-mirror .tips{ text-align:center }
+#s-mirror .tips[open]{ text-align:left }
+#s-mirror .tips summary{ text-align:center }
+/* 제목 안에서도 크기를 달리합니다 — 시안처럼 가운데 줄이 가장 큽니다 */
+.gtitle{ text-align:center }
+.gtitle .sm{ display:block; font-size:.76em; opacity:.92 }
+
+
+/* ── 복채 화면은 한 화면에 다 들어와야 합니다 ──── */
+#s-pay .eyebrow{margin-top:10px}
+#s-pay .sect.big{margin:10px auto 0;font-size:clamp(21px,6.2vw,27px)}
+#s-pay .sect.big::after{margin-top:12px}
+#s-pay .sectsub{margin:12px auto 0;font-size:var(--fs-sm);line-height:1.75;max-width:24em}
+.paybox{margin:16px 0 14px;padding:18px 16px 16px;
+  box-shadow:0 16px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(201,162,74,.16),
+             0 0 34px rgba(170,120,46,.14)}
+.paybox h3{margin:0 0 12px;font-size:var(--fs-h2)}
+.paybox .gwant{margin:0 0 14px;gap:8px}
+.paybox .gwant li{font-size:var(--fs-sm);line-height:1.6}
+.paybox .price{padding:13px 0 0}
+.paybox .price .s{font-size:var(--fs-label);letter-spacing:.18em}
+.paybox .price .b{margin:4px 0 3px;font-size:clamp(32px,9.4vw,42px)}
+#s-pay .btn.hot{margin-top:4px}
+#s-pay .hint.small{margin-top:10px;font-size:var(--fs-label);line-height:1.6}
+#s-pay .btn.ghost{margin-top:14px}
+#s-pay .seerpay{display:none}
+
 </style>
 </head>
 <body>
@@ -2066,7 +2110,7 @@ body{letter-spacing:-.004em}
     <div class="kvveil"></div>
     <div class="kvtext on">
       <p class="eyebrow">원안법사의 비밀 관상소</p>
-      <h1 class="gtitle">얼굴에는 자네가<br>살아온 <em>흔적</em>이<br>남아 있지.</h1>
+      <h1 class="gtitle"><span class="sm">얼굴에는</span>자네가 살아온 <em>흔적</em>이<br><span class="sm">남아 있지.</span></h1>
     </div>
   </div>
 
