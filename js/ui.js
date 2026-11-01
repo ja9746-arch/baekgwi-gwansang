@@ -485,9 +485,12 @@ function renderGung12(box, R){
          <i>${말[j.lv]}</i><span>${esc(j.g.d)}</span></li>`).join("") +
     `</ul>
      ${(R.가린자리 && R.가린자리.length)
-        ? `<p class="more cov">${esc(R.가린자리.map(k=>{
-             const j=R.jari.find(x=>x.g.k===k); return j?j.g.n:k; }).join("·"))}은(는) 머리카락이나 그늘에 덮여 있어
-            빛을 빼고 모양으로만 보았습니다. 이마를 내고 다시 비추시면 더 또렷해집니다.</p>` : ""}
+        ? (()=>{ const 덮 = R.가린자리.map(k=>{
+             const j=R.jari.find(x=>x.g.k===k); return j?j.g.n:k; }).join("·");
+           const 받 = (c=>{ const u=c.charCodeAt(c.length-1);
+             return (u>=0xAC00&&u<=0xD7A3) ? ((u-0xAC00)%28!==0) : true; })(덮);
+           return `<p class="more cov">${esc(덮)}${받?"은":"는"} 머리카락이나 그늘에 덮여 있어
+            빛을 빼고 모양으로만 보았습니다. 이마를 내고 다시 비추시면 더 또렷해집니다.</p>`; })() : ""}
      <p class="more">트인지 막힌지는 여기까지 보여 드립니다.
       자리마다 선 백귀와 푸는 길은 제7첩에 적혀 있습니다.</p>`;
 }

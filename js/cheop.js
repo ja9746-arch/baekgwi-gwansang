@@ -297,7 +297,9 @@ function makeCheop(R, C, age, sex){
     const gi = GISAEK[R.gisaek];
     c.body.push(단락(
       "지금 도는 기운",
-      `얼굴에 ${R.gisaek}기(${gi ? gi.ja : ""})가 돕니다. ${gi ? gi.mal : ""} ${gi ? gi.ttae : ""} ` +
+      /* gi.mal 자체가 "누런 기가 돕니다"로 시작합니다.
+         앞에 "황기가 돕니다"를 또 붙이면 같은 말을 두 번 합니다. */
+      `얼굴에 ${R.gisaek}기(${gi ? gi.ja : ""})가 섰습니다. ${gi ? gi.mal : ""} ${gi ? gi.ttae : ""} ` +
       `그릇은 타고나 잘 바뀌지 않지만 기색은 다릅니다. 반년이면 달라지고, ` +
       `손님이 무엇을 겪고 있느냐에 따라 얼굴빛이 먼저 움직입니다. ` +
       `지금 ${R.gisaek}기가 돈다는 것은 손님이 요즘 어떤 쪽으로 힘을 쓰고 계시다는 뜻입니다. ` +
@@ -850,7 +852,8 @@ function makeCheop(R, C, age, sex){
       `얼굴에는 열두 자리가 있습니다. 자리마다 맡은 일이 다르고, 그 자리의 살빛과 결이 ` +
       `그 일이 지금 트였는지 막혔는지를 말합니다. 손님은 트인 자리가 ${R.opened}, 막힌 자리가 ${R.blocked}입니다. ` +
       (R.가린자리 && R.가린자리.length
-        ? `\n\n한 가지 먼저 말씀드립니다. ${R.가린자리.map(k=>G[k]?G[k].g.n:k).join("·")}은(는) ` +
+        ? (()=>{ const 덮 = R.가린자리.map(k=>G[k]?G[k].g.n:k).join("·");
+                 return `\n\n한 가지 먼저 말씀드립니다. ${덮}${jo(덮,"은","는")} `; })() +
           `사진에서 머리카락이나 그늘에 덮여 있었습니다. 덮인 자리는 빛으로 읽으면 ` +
           `무조건 어둡게 나와 "막혔다"고 잘못 짚게 됩니다. 그래서 그 자리는 빛을 빼고 ` +
           `모양으로만 보아 가운데에 두었습니다. 그 자리가 궁금하시면 이마를 내고 ` +
@@ -904,10 +907,12 @@ function makeCheop(R, C, age, sex){
       for (const [a,b,뜻,어긋,맞,반,막] of 짝){
         const A = G[a], B = G[b]; if (!A || !B) continue;
         const 차 = Math.abs(A.lv - B.lv);
-        const 말 = ["트였","반반","막혔"];
+        /* "반반" 뒤에 "고/습니다"를 그냥 붙이면 "반반고" "반반습니다"가 됩니다 */
+        const 이음 = ["트였고","반반이고","막혔고"];
+        const 맺음 = ["트였습니다","반반입니다","막혔습니다"];
         본.push({ a:A, b:B, 뜻, 글: 차 >= 1
-          ? `${A.g.n}${jo(A.g.n,"은","는")} ${말[A.lv]}고 ${B.g.n}${jo(B.g.n,"은","는")} ${말[B.lv]}습니다. 어긋난 짝입니다 — ${어긋}이지요.`
-          : `${A.g.n}과 ${B.g.n}이 나란히 ${말[A.lv]}습니다. ${A.lv===0 ? 맞+"입니다." : A.lv===2 ? 막+"." : 반+"."}`,
+          ? `${A.g.n}${jo(A.g.n,"은","는")} ${이음[A.lv]} ${B.g.n}${jo(B.g.n,"은","는")} ${맺음[B.lv]}. 어긋난 짝입니다 — ${어긋}이지요.`
+          : `${A.g.n}과 ${B.g.n}이 나란히 ${맺음[A.lv]}. ${A.lv===0 ? 맞+"입니다." : A.lv===2 ? 막+"." : 반+"."}`,
           차 });
       }
       본.sort((x,y)=> y.차 - x.차);
@@ -1073,8 +1078,15 @@ function makeCheop(R, C, age, sex){
         return `자로 재면 ${높말}.${모말}`; })(),
       []
     ));
-    c.할것 = 할것(R, R.boss.g.k,
-      { t:"얼굴로", d:(typeof OH_PYO !== "undefined" && OH_PYO[R.hyeong]) || "" });
+    /* 이 첩의 할 것은 이 첩이 내놓은 처방 그대로여야 합니다.
+       다른 자리에서 끌어다 쓰면 점·색·머리를 말해 놓고
+       엉뚱하게 역마 이야기를 하게 됩니다. */
+    c.할것 = [
+      P.jeom[0] ? { t:"점 자리", d:`${P.jeom[0].t} — ${P.jeom[0].w}입니다. 찍지 않으셔도 거울 볼 때 거기를 한 번 보세요.` } : null,
+      P.gil[0]  ? { t:"색으로", d:`${P.gil[0][0]}을 ${P.gil[0][2]}에 쓰세요. ${끝(P.gil[0][3])}` } : null,
+      P.hyung   ? { t:"피할 색", d:`${P.hyung[0]}은 ${P.hyung[2]}. ${끝(P.hyung[3])}` } : null,
+      P.mori[0] ? { t:"머리로", d:`${끝(P.mori[0])} ${끝(P.mori[1])}` } : null
+    ].filter(Boolean);
     out.push(c);
   }
 
@@ -1129,6 +1141,60 @@ function makeCheop(R, C, age, sex){
           ? `${R.brightest.g.n}부터 쓰세요. 트인 자리는 쓰지 않으면 닫힙니다.`
           : "" });
     out.push(c);
+  }
+
+  /* 첩마다 "오늘부터 할 것"이 붙지만, 고른 자리가 겹치면 두 첩이
+     똑같은 넉 줄을 들고 섭니다. 열 장을 다 읽는 손님에게는 그것이
+     가장 크게 거슬립니다. 그래서 책 전체에서 같은 줄은 한 번만 세우고,
+     모자라면 그 첩이 맡은 다른 자리에서 채웁니다. */
+  const 다크 = R.darkest ? R.darkest.g.k : "명";
+  const 브라 = R.brightest ? R.brightest.g.k : "명";
+  const 보스 = R.boss.g.k;
+  const 후보 = {
+    "타고난": ["명","질액","복덕"],
+    "재물":   ["재백","전택","노복"],
+    "인연":   ["처첩","남녀","형제"],
+    "사회":   ["관록","천이","부모"],
+    "세월":   [보스,"부모","형제"],
+    "강약":   [다크, 브라, "질액","복덕"],
+    "십이궁": [다크, 보스, "복덕","천이"],
+    "백귀":   [다크, 보스, 브라, "남녀"],
+    "처방":   [보스, 브라, "천이","부모"],
+    "밀서":   [브라, 보스, "남녀","노복"]
+  };
+  const 쓴할것 = new Set();
+
+  for (const c of out){
+    const 같 = a => String(a||"").replace(/\s+/g,"").replace(/[.!?·]/g,"");
+    const 선말 = new Set();
+    if (c.si)  선말.add(같(c.si));
+    if (c.act) 선말.add(같(c.act));
+    for (const b of (c.body||[])){
+      String(b.p||"").split(/(?<=[.!?])\s+/).forEach(x=>{ const k=같(x); if(k.length>12) 선말.add(k); });
+      (b.list||[]).forEach(x=> 선말.add(같(x.d)));
+    }
+    if (c.할것 && c.할것.length){
+      c.할것 = c.할것.filter(x=>{
+        if (!x || !x.d) return false;
+        const k = 같(x.d);
+        if (!k || 선말.has(k) || 쓴할것.has(k)) return false;
+        쓴할것.add(k); return true;
+      });
+    }
+    /* 걷어내고 나니 한 줄도 안 남는 첩이 생깁니다. 그 첩이 맡은
+       다른 자리에서 아직 안 쓴 줄을 끌어다 세 줄까지 채웁니다. */
+    if (c.할것 && c.할것.length < 3){
+      for (const k of (후보[c.key] || [])){
+        if (c.할것.length >= 3) break;
+        for (const x of 할것(R, k)){
+          if (c.할것.length >= 3) break;
+          if (!x || !x.d) continue;
+          const kk = 같(x.d);
+          if (!kk || 선말.has(kk) || 쓴할것.has(kk)) continue;
+          c.할것.push(x); 쓴할것.add(kk);
+        }
+      }
+    }
   }
 
   return out;

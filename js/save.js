@@ -249,7 +249,9 @@ function buildText(){
   if (!R) return "";
   const L = [];
   L.push("백귀야행도 · 백귀관상 — 원안법사의 관상첩", "");
-  L.push(`${R.hyeong}형(${R.hyeong}) · ${R.gisaek}기 · ${R.samjeong}정 · ${R.age}세 ${R.boss.g.n}`);
+  const OHJ = {"목":"木","화":"火","토":"土","금":"金","수":"水"};
+  const GIJ = {"청":"靑","적":"赤","황":"黃","백":"白","흑":"黑"};
+  L.push(`${R.hyeong}형(${OHJ[R.hyeong]||""}) · ${R.gisaek}기(${GIJ[R.gisaek]||""}) · ${R.samjeong}정 · ${R.age}세 ${R.boss.g.n}`);
   L.push(`열두 자리 가운데 트인 데 ${R.opened}, 막힌 데 ${R.blocked}`, "");
   L.push("[얼굴에서 잡힌 자리]");
   (C && C.list || []).forEach(h=> L.push(" · " + h.c.s));
