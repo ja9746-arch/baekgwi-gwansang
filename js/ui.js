@@ -938,6 +938,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   bindSound();
   bindPaybar();
   bindIntro(); bindAsk(); bindMirror(); bindPay(); bindMisc();
+  try { bindSave(); } catch(e){}
   /* 얼굴 읽는 기계를 미리 깨워 둡니다 — 손님이 사진을 고르는 동안 */
   setTimeout(()=>{ try { wakeMesh(); } catch(e){} }, 1200);
 });
