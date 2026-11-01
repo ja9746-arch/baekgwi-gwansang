@@ -362,6 +362,64 @@ function 글월(t){
     .map(x=>`<p>${esc(x)}</p>`).join("");
 }
 
+/* ── 읽은 것을 한 판에 ───────────────────────────
+   글만 죽 늘어놓으면 손님은 무엇을 받았는지 모릅니다.
+   타고난 꼴, 도는 빛, 세 마디, 올해 쥐는 자리를 한 판에 모읍니다. */
+function renderVerdict(box, R, C){
+  if (!box || !R) return;
+  box.hidden = false;
+  const oh = OH[R.hyeong], gi = GISAEK[R.gisaek];
+  const sam = (R.m && R.m.F && R.m.F.sam) ? R.m.F.sam : null;
+  const t = sam ? (sam[0]+sam[1]+sam[2]) : 0;
+  const pc = i => t ? Math.round(sam[i]/t*100) : 0;
+  const 센것 = C.list[0];
+  const 칸 = [
+    ["五行", R.hyeong + "형", oh ? oh.ja : "", oh ? oh.sul : ""],
+    ["氣色", R.gisaek + "기", gi ? gi.ja : "", gi ? (gi.mal||"").split(".")[0] : ""],
+    ["三停", R.samjeong + "정", "",
+      t ? `상 ${pc(0)} · 중 ${pc(1)} · 하 ${pc(2)}` : "위·가운데·아래의 몫"],
+    ["流年", R.boss.g.n, "", `${R.age}세 · ${R.yun.bu}`]
+  ];
+  box.innerHTML =
+    `<span class="ink" aria-hidden="true"></span>
+     <div class="vhead"><i></i><span>원안법사가 읽은 것</span><i></i></div>
+     <div class="vgrid">` +
+    칸.map(([k,b,ja,sub])=>
+      `<div class="vcell"><em>${esc(k)}</em>
+         <b>${esc(b)}${ja?`<i>${esc(ja)}</i>`:""}</b>
+         <span>${esc(sub)}</span></div>`).join("") +
+    `</div>
+     <div class="vbar" aria-hidden="true">` +
+       ["상","중","하"].map((n,i)=>
+         `<i class="${R.samjeong===n?"on":""}" style="flex:${t?sam[i]:1}"><u>${n}</u></i>`).join("") +
+     `</div>
+     <p class="vsay">${esc(
+        `자네 얼굴은 ${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴일세. ` +
+        `둘 사이가 ${R.gyo.dan}이니, ${R.gyo.mal}`)}</p>
+      <p class="vsay">${esc(
+        `열두 자리 가운데 트인 데가 ${R.opened}, 막힌 데가 ${R.blocked}. ` +
+        `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}일세. ` +
+        (센것 ? `얼굴에서 가장 세게 선 자리는 ${센것.c.n} — ${끝말(센것.c.s)}` : ""))}</p>`;
+}
+const 끝말 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(t).trim()+".";
+
+/* ── 열두 자리 맛보기 ────────────────────────────
+   트였는지 막혔는지까지는 무료로 보여 드립니다.
+   자리마다 무엇을 해야 하는지와 선 백귀가 제7첩입니다. */
+function renderGung12(box, R){
+  if (!box || !R || !R.jari) return;
+  box.hidden = false;
+  const 말 = ["트임","반반","막힘"];
+  box.innerHTML = `<span class="gt">자네 얼굴의 열두 자리</span>
+    <ul class="g12">` + R.jari.map(j=>
+      `<li class="l${j.lv}${j.g.k===R.boss.g.k?" now":""}">
+         <b>${esc(j.g.n)}</b><em>${esc(j.g.bu)}</em>
+         <i>${말[j.lv]}</i><span>${esc(j.g.d)}</span></li>`).join("") +
+    `</ul>
+     <p class="more">트인지 막힌지는 여기까지 보여 드립니다.
+      자리마다 선 백귀와 푸는 길은 제7첩에 적혀 있습니다.</p>`;
+}
+
 /* ── 얼굴에서 그 자리만 오려 내기 ────────────────
    글로 "눈꼬리가 올라갔습니다" 해 봐야 손님은 제 눈을 못 봅니다.
    점 468개를 이미 찍어 두었으니, 그 자리를 그대로 오려 보여 드립니다. */
@@ -452,13 +510,18 @@ function renderFree(){
     `열두 자리 가운데 트인 데가 <b>${R.opened}</b>, 막힌 데가 <b>${R.blocked}</b>이고.`;
 
   /* 얼굴에서 실제로 잡힌 자리 */
-  $("#free-clues").innerHTML = C.list.slice(0, 8).map(h=>clueChip({
+  /* 여덟 개만 보여 주면 "열여섯 자리가 섰다"고 해 놓고 반을 감추는 꼴입니다.
+     잡힌 자리는 전부 내어 놓습니다 — 이게 모든 풀이의 근거입니다. */
+  $("#free-clues").innerHTML = C.list.map(h=>clueChip({
     n:h.c.n, s:h.c.s, g:h.c.g
   })).join("");
-  $("#free-clue-more").textContent = C.count > 8 ? `그 밖에 ${C.count - 8} 자리가 더 섰습니다.` : "";
+  $("#free-clue-more").textContent =
+    `이 ${C.count} 자리가 아래 열 장의 근거입니다. 여기 없는 말은 적지 않았습니다.`;
 
-  /* 손님 얼굴에서 네 자리를 오려 보여 드립니다 */
+  /* 읽은 것을 한 판에, 그리고 손님 얼굴에서 네 자리를 오려 보여 드립니다 */
+  renderVerdict($("#free-card"), R, C);
   renderParts($("#free-parts"), ST.img, ST.F, C);
+  renderGung12($("#free-g12"), R);
 
   /* 첩 목록 — 두루마리로. 앞의 둘만 열고 나머지는 봉인합니다. */
   const list = sealCheop(ST.cheop);
@@ -504,7 +567,7 @@ function renderFree(){
   $("#free-cheop").innerHTML = list.map((c)=>{
     let 금 = "";
     if (c.sealed && 봉인첫){ 봉인첫 = false;
-      금 = `<div class="sealgate"><i></i><b>여기서부터 봉인입니다</b>
+      금 = `<div class="sealgate"><span class="ink" aria-hidden="true"></span><i></i><b>여기서부터 봉인입니다</b>
         <span>남은 여덟 장에 무엇이 적혀 있는지는 아래에 그대로 보입니다. 글만 아직 안 읽힐 뿐입니다.</span></div>`; }
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     const tag = c.sealed

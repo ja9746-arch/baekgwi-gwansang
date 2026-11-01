@@ -1078,10 +1078,13 @@ function makeCheop(R, C, age, sex){
    무엇을 못 읽고 있는지 알 수 있습니다. 목록만 잠가 두면
    무엇을 잠갔는지조차 모르니 궁금해질 까닭이 없습니다. */
 function sealCheop(list){
+  /* 긴 마디를 문단으로 끊습니다 — 맛보기는 문단 단위라야 말이 끊기지 않습니다 */
+  const 문단 = t => String(t||"").split(/\n{2,}/).map(x=>x.trim()).filter(Boolean);
   return list.map(c=>{
     if (c.free){
-      /* 먼저 열어 드리는 두 장 — 절반은 읽히고 절반은 흐립니다 */
-      const half = Math.max(2, Math.ceil(c.body.length / 2));
+      /* 먼저 열어 드리는 두 장 — 절반 넘게 읽히고 나머지가 흐립니다.
+         982자짜리 무료 구간은 열두 자 높이 화면에서 비어 보입니다. */
+      const half = Math.max(2, Math.ceil(c.body.length * 0.65));
       return Object.assign({}, c, {
         sealed:false,
         body: c.body.slice(0, half),
@@ -1090,15 +1093,25 @@ function sealCheop(list){
         si: null, act: null
       });
     }
-    /* 봉인된 여덟 장 — 무엇이 적혀 있는지는 다 보이고, 글만 안 읽힙니다.
-       적힌 것을 감추면 궁금해지는 것이 아니라 없는 줄 압니다. */
+    /* 봉인된 여덟 장 — 첫 마디의 첫 문단까지는 또렷하게 읽히고,
+       그 뒤가 흐려집니다. 한 자도 안 읽히면 궁금해지는 것이 아니라
+       없는 줄 압니다. 적힌 차례와 글자 수도 그대로 내어 둡니다. */
+    const 첫 = c.body[0] || { h:"", p:"" };
+    const ps = 문단(첫.p);
+    const 맛 = Object.assign({}, 첫, { p: ps[0] || "", list:null, ev:[] });
+    const 남 = ps.slice(1).join("\n\n");
+    const 가림 = [];
+    if (남) 가림.push(Object.assign({}, 첫, { h:"", p:남 }));
+    if (첫.list) 가림.push({ h:"", p:"", list:첫.list });
+    for (const b of c.body.slice(1, 3)) 가림.push(b);
     return Object.assign({}, c, {
-      sealed:true, body:[],
+      sealed:true,
+      body: 맛.p ? [맛] : [],
       mok: c.body.map(b=>b.h).filter(Boolean),
       glyph: c.body.reduce((n,b)=> n + (b.p?b.p.replace(/\n/g,"").length:0)
                                      + (b.list?b.list.reduce((m,x)=>m+(x.t+x.d).length,0):0), 0),
-      veil: c.body.slice(0, 2),
-      more: Math.max(0, c.body.length - 2),
+      veil: 가림,
+      more: Math.max(0, c.body.length - 1),
       ev:c.ev.slice(0,1), si:null, act:null, jari:null, gwi:null
     });
   });

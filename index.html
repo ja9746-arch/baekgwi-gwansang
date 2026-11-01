@@ -1035,18 +1035,23 @@ html[data-scene="s-pay"]{--scene:url("img/bg/b1.webp")}
 html[data-scene="s-cheop"]{--scene:url("img/bg/b3.webp")}
 html[data-scene="s-end"]{--scene:url("img/bg/b6.webp")}
 body::before{
+  /* 시안의 먹빛 금구름을 바탕 그림 위에 은은히 겹칩니다 */
   background:
     radial-gradient(ellipse 120% 48% at 50% 0%,rgba(142,62,22,.18),rgba(10,5,7,0) 54%),
     linear-gradient(180deg,rgba(10,5,7,.88) 0%,rgba(10,5,7,.86) 42%,
                     rgba(10,5,7,.90) 78%,rgba(10,5,7,.95) 100%),
+    url("img/ui/bg-cloud.webp") center top/432px 432px repeat,
     var(--scene) center top/cover no-repeat,
-    var(--mook) !important}
+    var(--mook) !important;
+  background-blend-mode:normal,normal,soft-light,normal,normal}
 body::after{opacity:.16}
 /* 글이 빽빽한 화면은 한 겹 더 덮어 바탕이 글을 이기지 않게 합니다 */
 html[data-scene="s-free"] body::before,
 html[data-scene="s-cheop"] body::before{
   background:linear-gradient(180deg,rgba(9,5,6,.945),rgba(9,5,6,.975)),
-    var(--scene) center top/cover no-repeat, var(--mook) !important}
+    url("img/ui/bg-cloud.webp") center top/432px 432px repeat,
+    var(--scene) center top/cover no-repeat, var(--mook) !important;
+  background-blend-mode:normal,soft-light,normal,normal}
 #stage{z-index:1}
 
 /* ───────── 머리말과 제목 ───────── */
@@ -1914,6 +1919,84 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .parts .pfoot{margin:12px 0 0;font-size:var(--fs-label);color:var(--jae-dim);line-height:1.7}
 @media (min-width:520px){ .parts .prow{grid-template-columns:repeat(4,1fr)} }
 
+
+/* ── 읽은 것을 한 판에 ────────────────────────── */
+.verdict{position:relative;margin-top:20px;padding:20px 16px 18px;border-radius:3px;
+  background:linear-gradient(180deg,rgba(32,17,15,.92),rgba(13,7,8,.97));
+  border:1px solid rgba(201,162,74,.4);
+  box-shadow:0 16px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(201,162,74,.16)}
+.verdict::before,.verdict::after{content:"";position:absolute;width:14px;height:14px;
+  border:1.5px solid rgba(201,162,74,.7)}
+.verdict::before{left:7px;top:7px;border-right:0;border-bottom:0}
+.verdict::after{right:7px;bottom:7px;border-left:0;border-top:0}
+.vhead{display:flex;align-items:center;gap:11px;margin:0 0 16px}
+.vhead i{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,74,.5))}
+.vhead i:last-child{background:linear-gradient(90deg,rgba(201,162,74,.5),transparent)}
+.vhead span{font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.2em;
+  color:var(--geum-dim);white-space:nowrap}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vcell{padding:11px 12px;border-radius:2px;
+  background:rgba(201,162,74,.06);border:1px solid rgba(201,162,74,.18)}
+.vcell em{display:block;font-style:normal;font-family:var(--serif);
+  font-size:var(--fs-label);letter-spacing:.2em;color:#9a7a44}
+.vcell b{display:flex;align-items:baseline;gap:5px;margin:5px 0 3px;
+  font-family:var(--serif);font-weight:400;font-size:var(--fs-h2);color:#f3e2bd;line-height:1.2}
+.vcell b i{font-style:normal;font-size:var(--fs-sm);color:var(--geum-dim)}
+.vcell span{display:block;font-size:var(--fs-label);line-height:1.6;color:#bfae97;
+  word-break:keep-all}
+.vbar{display:flex;gap:4px;margin:14px 0 4px;height:26px}
+.vbar i{position:relative;border-radius:2px;
+  background:linear-gradient(180deg,rgba(201,162,74,.16),rgba(201,162,74,.07));
+  border:1px solid rgba(201,162,74,.2)}
+.vbar i.on{background:linear-gradient(180deg,rgba(201,162,74,.5),rgba(170,120,46,.3));
+  border-color:rgba(201,162,74,.6)}
+.vbar i u{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;font-family:var(--serif);font-size:var(--fs-label);color:#e6d2a6}
+.vsay{margin:13px 0 0;font-size:var(--fs-sm);line-height:1.9;color:#ddcdb6;word-break:keep-all}
+
+/* ── 열두 자리 맛보기 ─────────────────────────── */
+.g12{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:7px}
+.g12 li{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;
+  grid-auto-flow:column;
+  gap:8px;padding:10px 11px;border-radius:2px;
+  background:rgba(8,4,5,.6);border-left:2px solid rgba(201,162,74,.3)}
+.g12 li.l0{border-left-color:rgba(201,162,74,.95)}
+.g12 li.l1{border-left-color:rgba(150,120,70,.7)}
+.g12 li.l2{border-left-color:rgba(192,54,42,.85)}
+.g12 li.now{background:rgba(201,162,74,.09)}
+.g12 b{font-family:var(--serif);font-weight:400;font-size:var(--fs-sm);color:#edd9ae}
+.g12 em{font-style:normal;font-size:var(--fs-label);color:var(--geum-dim)}
+.g12 span{font-size:var(--fs-label);color:#b7a890;text-align:right;
+  word-break:keep-all;line-height:1.5}
+.g12 i{order:4;font-style:normal;font-family:var(--serif);font-size:var(--fs-label);
+  padding:2px 7px;border-radius:2px;white-space:nowrap}
+.g12 .l0 i{color:#1d1208;background:linear-gradient(180deg,#e7c97f,#c8a054)}
+.g12 .l1 i{color:#e4d4b4;background:rgba(150,120,70,.35)}
+.g12 .l2 i{color:#f6d9d1;background:rgba(150,38,28,.6)}
+.g12 li.now b::after{content:"올해";margin-left:7px;padding:2px 6px;border-radius:2px;
+  font-family:var(--serif);font-size:var(--fs-label);color:#1d1208;
+  background:linear-gradient(180deg,#f0dcae,#d6b579);vertical-align:2px}
+
+
+/* ── 시안의 수묵 산수를 자리마다 ───────────────── */
+.sealgate{overflow:hidden}
+.sealgate::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.5),transparent)}
+.sealgate .ink{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url("img/ui/ink-scene.webp") center 32%/cover no-repeat;
+  opacity:.24;
+  -webkit-mask-image:radial-gradient(ellipse 78% 86% at 50% 48%,#000 18%,transparent 78%);
+  mask-image:radial-gradient(ellipse 78% 86% at 50% 48%,#000 18%,transparent 78%)}
+.sealgate > i,.sealgate > b,.sealgate > span{position:relative;z-index:1}
+/* 읽은 것 판에도 수묵을 옅게 깔아 둡니다 */
+.verdict{overflow:hidden}
+.verdict > *{position:relative;z-index:1}
+.verdict .ink{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url("img/ui/ink-scene.webp") center 40%/cover no-repeat;
+  opacity:.14;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent)}
+
 </style>
 </head>
 <body>
@@ -2088,6 +2171,8 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   <h2 class="sect">자네 얼굴에서 <b id="free-count">—</b> 자리가 섰네.</h2>
   <p class="sectsub" id="free-head"></p>
 
+  <div class="verdict" id="free-card" hidden></div>
+
   <div class="evid">
     <span class="t">자네 얼굴에서 실제로 잡힌 자리</span>
     <ul class="cls" id="free-clues"></ul>
@@ -2095,6 +2180,8 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   </div>
 
   <div class="evid parts" id="free-parts" hidden></div>
+
+  <div class="evid" id="free-g12" hidden></div>
 
   <div class="evid" id="free-prev" hidden></div>
 
