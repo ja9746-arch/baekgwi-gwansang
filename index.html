@@ -1705,7 +1705,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
     linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4) 16%,
                            rgba(0,0,0,.4) 84%,rgba(0,0,0,.6)),
     url("img/hanji.webp") center/190px repeat,
-    linear-gradient(168deg,#6a5c48 0%,#56493a 60%,#423829 100%) #574a3a;
+    linear-gradient(168deg,#6e5c42 0%,#5a4832 60%,#453725 100%) #5b4934;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 8px 20px rgba(0,0,0,.6)}
 .juru.shut::before,.juru.shut::after{filter:brightness(.62) saturate(.7)}
 
@@ -1885,6 +1885,36 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 /* 차례가 있으면 흐린 맛보기는 짧게 — 둘 다 길면 지루합니다 */
 .veil .mok + .veiled{max-height:168px}
 
+
+/* ── 첫 화면 — 열 장의 차례를 두루마리로 ──────────── */
+.tenwrap{margin-top:34px}
+.tenwrap .eyebrow{text-align:center}
+.sect.mid{text-align:center;font-size:clamp(21px,6vw,27px);line-height:1.44;margin-bottom:20px}
+.ten{list-style:none;margin:0;padding:0;display:grid;gap:13px}
+.jr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  column-gap:11px;row-gap:2px}
+.jr .jn{grid-column:1;grid-row:1/3;font-family:var(--serif);font-size:var(--fs-h2);
+  color:#9a7435;line-height:1;width:1.1em;text-align:center}
+.jr b{grid-column:2;grid-row:1;font-family:var(--serif);font-weight:400;
+  font-size:var(--fs-h3);color:#32230e;line-height:1.3;text-align:left}
+.jr .js{grid-column:2;grid-row:2;font-size:var(--fs-label);color:#6f5d44;line-height:1.55}
+.jr .jf{grid-column:3;grid-row:1/3;flex:none;padding:3px 9px;border-radius:3px;color:#3a2a10;
+  font-family:var(--serif);font-size:var(--fs-label);font-style:normal;
+  background:linear-gradient(180deg,#f3d99a,#d8b166);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.jr .jl{grid-column:3;grid-row:1/3;flex:none;width:16px;height:19px;
+  background:url("img/ui/icon-lock.webp") center/contain no-repeat;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.jr.shut .jn{color:#d3b887}
+.jr.shut b{color:#f4ead6}
+.jr.shut .js{color:#c6b79c}
+.tenfoot{margin:18px 0 0;text-align:center;font-size:var(--fs-sm);
+  line-height:1.8;color:var(--jae-dim)}
+/* 그림 위 작은 머리글이 손에 묻혀 안 보이던 것 */
+.kvtext.on .eyebrow{display:inline-block;padding:5px 14px;border-radius:2px;
+  background:rgba(8,4,6,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  text-shadow:0 1px 4px rgba(0,0,0,.9)}
+
 </style>
 </head>
 <body>
@@ -1927,6 +1957,24 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
     <li><b>二</b><span>오행형상·삼정·<i>십이궁</i>·유년운기 — 옛 관상서가 보던 자리를 그대로 봅니다.</span></li>
     <li><b>三</b><span>열 장의 관상첩 가운데 <i>두 장</i>을 먼저 열어 드립니다. 읽어 보시고 정하시면 됩니다.</span></li>
   </ul>
+
+  <div class="tenwrap">
+    <p class="eyebrow">원안법사의 관상첩</p>
+    <h2 class="sect mid">얼굴에 새겨진<br>열 가지 이야기</h2>
+    <ul class="ten">
+    <li class="jr juru sm"><span class="jn">一</span><b>내 타고난 얼굴</b><span class="js">오행형상·삼정·타고난 결</span><i class="jf">무료</i></li>
+    <li class="jr juru sm"><span class="jn">二</span><b>재물의 자리</b><span class="js">들어오는 길·새는 자리·돈이 드나드는 때</span><i class="jf">무료</i></li>
+    <li class="jr juru sm shut"><span class="jn">三</span><b>인연과 사람</b><span class="js">맞는 사람·피할 사람·배우자궁</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">四</span><b>사회적 인상과 평판</b><span class="js">첫인상·관록궁·이마 세 칸</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">五</span><b>세월이 남긴 흔적</b><span class="js">유년운기로 지나온 때와 올 때</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">六</span><b>강점과 주의할 점</b><span class="js">살릴 자리 셋, 지킬 자리 둘</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">七</span><b>얼굴 십이궁</b><span class="js">열두 자리 전부와 자리마다 선 백귀</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">八</span><b>얼굴에 깃든 백귀</b><span class="js">가장 세게 선 셋, 복과 흉 두 얼굴</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">九</span><b>원안법사의 처방</b><span class="js">점 찍을 자리·길한 색·머리</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><span class="jn">十</span><b>마지막 밀서</b><span class="js">총평·할 일 셋·피할 것 둘·움직일 달</span><i class="jl" aria-hidden="true"></i></li>
+    </ul>
+    <p class="tenfoot">앞의 두 장은 복채 없이 열어 드립니다. 읽어 보시고 정하시면 됩니다.</p>
+  </div>
 
   <div class="footbank"><img src="img/bg/b1.webp" alt="" loading="lazy"></div>
 </section>
