@@ -2092,6 +2092,34 @@ body{letter-spacing:-.004em}
 #s-pay .btn.ghost{margin-top:14px}
 #s-pay .seerpay{display:none}
 
+
+/* ── 보조 단추 — 시안(42012)의 "앨범에서 선택"을 떼어 씀 ── */
+.btn:not(.hot){border:0;background:none;box-shadow:none;padding:0 18px;
+  min-height:54px;display:flex;align-items:center;justify-content:center;gap:8px;
+  border-style:solid;border-width:0 44px;
+  border-image:url("img/ui/btn-ghost.webp") 0 132 fill / 0 44px / 0 stretch;
+  color:#f0e2cb;font-family:var(--serif);font-weight:700;
+  text-shadow:0 1px 3px rgba(0,0,0,.7);
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.5))}
+.btn:not(.hot)::before{display:none}
+.btn:not(.hot)::after{position:static;margin-left:4px}
+.btn:not(.hot):active{transform:translateY(1px)}
+.btn.ghost{min-height:48px;font-size:var(--fs-sm);
+  border-width:0 40px;
+  border-image:url("img/ui/btn-ghost.webp") 0 132 fill / 0 40px / 0 stretch;
+  opacity:.9}
+.two-btn .btn{margin-top:0}
+
+/* ── 어떻게 찍어야 하는지 — 시안의 세 가지 ───────── */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 4px}
+.shots li{list-style:none;display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:13px 6px 12px;border-radius:3px;
+  background:rgba(201,162,74,.05);border:1px solid rgba(201,162,74,.2)}
+.shots svg{width:28px;height:28px;stroke:#d9b063;fill:none;stroke-width:1.4;
+  stroke-linecap:round;stroke-linejoin:round}
+.shots b{font-family:var(--serif);font-weight:700;font-size:var(--fs-label);
+  letter-spacing:.06em;color:#e8d4ab}
+
 </style>
 </head>
 <body>
@@ -2214,6 +2242,11 @@ body{letter-spacing:-.004em}
       </div>
     </div>
   </div>
+  <ul class="shots">
+    <li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="11" rx="7" ry="8.4"/><path d="M8.6 9.6h1.6M13.8 9.6h1.6M12 11v2.6M9.6 15.4q2.4 1.4 4.8 0"/></svg><b>정면</b></li>
+    <li><svg viewBox="0 0 24 24"><path d="M12 3.6v2M4.8 7.2l1.5 1.4M19.2 7.2l-1.5 1.4M3.6 14.4h2M18.4 14.4h2"/><path d="M12 7.6a4.6 4.6 0 0 0-2.6 8.4v1.6h5.2V16A4.6 4.6 0 0 0 12 7.6z"/><path d="M10.2 20h3.6"/></svg><b>밝은 곳</b></li>
+    <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.6"/><path d="M6.6 6.6l10.8 10.8"/></svg><b>가림 없이</b></li>
+  </ul>
   <p class="hint" id="mirror-note"></p>
 
   <div class="two-btn">
