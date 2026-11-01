@@ -13,6 +13,7 @@ const ST = {
   F: null, m: null, C: null, R: null, cheop: null,
   paid: false, open: 1
 };
+window.ST = ST;   /* 검사할 때 들여다보려고 내어 둡니다 */
 
 /* ── 자잘한 것들 ──────────────────────────────── */
 const $  = (s, r)=> (r||document).querySelector(s);
@@ -334,6 +335,13 @@ function drawFace(cv, src, F, dim){
   g.restore();
 }
 
+/* 빈 줄로 끊긴 글을 문단으로 나눠 놓습니다.
+   한 덩어리로 두면 열 줄이 넘어 눈이 쉴 자리가 없습니다. */
+function 글월(t){
+  return String(t||"").split(/\n{2,}/).map(x=>x.trim()).filter(Boolean)
+    .map(x=>`<p>${esc(x)}</p>`).join("");
+}
+
 /* ── 단서 한 줄 ───────────────────────────────── */
 function clueChip(e){
   const g = e.g > 0 ? "ok" : (e.g < 0 ? "bad" : "mid");
@@ -358,7 +366,7 @@ function renderFree(){
 
   /* 첩 목록 — 두루마리로. 앞의 둘만 열고 나머지는 봉인합니다. */
   const list = sealCheop(ST.cheop);
-  const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
+  const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? 글월(b.p) : "") +
     (b.list ? `<ul class="jari">` + b.list.map(x=>
       `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
     ).join("") + `</ul>` : "");
@@ -452,7 +460,7 @@ function renderCheop(){
   const wrap = $("#cheop-all");
   wrap.innerHTML = ST.cheop.map(c=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
-    const para = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? `<p>${esc(b.p)}</p>` : "") +
+    const para = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? 글월(b.p) : "") +
       (b.list ? `<ul class="jari">` + b.list.map(x=>
         `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
       ).join("") + `</ul>` : "");
