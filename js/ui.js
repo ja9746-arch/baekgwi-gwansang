@@ -603,7 +603,8 @@ function renderParts(box, src, F, C){
     const cap = document.createElement("figcaption");
     const say = partSay(C, spec);
     cap.innerHTML = `<b>${esc(spec.nm)}<i>${esc(spec.ja)}</i></b>` +
-                    (say ? `<span>${esc(say)}</span>` : `<span>크게 어긋난 데가 없습니다</span>`);
+                    (say ? `<span>${esc(say)}</span>`
+                         : `<span>${esc(spec.nm)} 쪽은 자로 재어 치우친 데가 없습니다</span>`);
     fig.appendChild(cap);
     row.appendChild(fig);
   }
