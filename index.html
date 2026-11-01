@@ -1726,9 +1726,12 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .jbadge{position:absolute;right:20px;top:14px;z-index:4;
   display:inline-flex;align-items:center;gap:5px;
   font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.1em}
-.jbadge.free{width:50px;height:21px;padding:0;border-radius:4px;
-  background:url("img/ui/badge-free.webp") center/cover no-repeat;
-  text-indent:-9999px;overflow:hidden}
+.jbadge.free{padding:3px 11px 4px;border-radius:3px;color:#3b2707;
+  font-family:var(--serif);font-weight:800;font-size:var(--fs-label);letter-spacing:.06em;
+  background:linear-gradient(180deg,#f7e3ae,#dcb86e 52%,#c79f52);
+  box-shadow:0 2px 6px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.75),
+             inset 0 -1px 0 rgba(120,86,30,.5);
+  text-shadow:0 1px 0 rgba(255,255,255,.35)}
 .jbadge.lock{width:19px;height:23px;padding:0;
   background:url("img/ui/icon-lock.webp") center/contain no-repeat;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
@@ -1897,9 +1900,12 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .jr b{grid-column:2;grid-row:1;font-family:var(--serif);font-weight:400;
   font-size:var(--fs-h3);color:#271a08;line-height:1.3;text-align:left}
 .jr .js{grid-column:2;grid-row:2;font-size:var(--fs-label);color:#604e36;line-height:1.55}
-.jr .jf{grid-column:3;grid-row:1/3;flex:none;width:47px;height:20px;padding:0;border-radius:4px;
-  background:url("img/ui/badge-free.webp") center/cover no-repeat;
-  text-indent:-9999px;overflow:hidden}
+.jr .jf{grid-column:3;grid-row:1/3;flex:none;padding:3px 10px 4px;border-radius:3px;
+  color:#3b2707;font-family:var(--serif);font-weight:800;font-style:normal;
+  font-size:var(--fs-label);letter-spacing:.06em;align-self:center;
+  background:linear-gradient(180deg,#f7e3ae,#dcb86e 52%,#c79f52);
+  box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.75);
+  text-shadow:0 1px 0 rgba(255,255,255,.35)}
 .jr .jl{grid-column:3;grid-row:1/3;flex:none;width:16px;height:19px;
   background:url("img/ui/icon-lock.webp") center/contain no-repeat;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
@@ -1930,14 +1936,14 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 
 
 /* ── 읽은 것을 한 판에 ────────────────────────── */
-.verdict{position:relative;margin-top:20px;padding:20px 16px 18px;border-radius:3px;
+.vsum{position:relative;margin-top:20px;padding:20px 16px 18px;border-radius:3px;
   background:linear-gradient(180deg,rgba(32,17,15,.92),rgba(13,7,8,.97));
   border:1px solid rgba(201,162,74,.4);
   box-shadow:0 16px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(201,162,74,.16)}
-.verdict::before,.verdict::after{content:"";position:absolute;width:14px;height:14px;
+.vsum::before,.vsum::after{content:"";position:absolute;width:14px;height:14px;
   border:1.5px solid rgba(201,162,74,.7)}
-.verdict::before{left:7px;top:7px;border-right:0;border-bottom:0}
-.verdict::after{right:7px;bottom:7px;border-left:0;border-top:0}
+.vsum::before{left:7px;top:7px;border-right:0;border-bottom:0}
+.vsum::after{right:7px;bottom:7px;border-left:0;border-top:0}
 .vhead{display:flex;align-items:center;gap:11px;margin:0 0 16px}
 .vhead i{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,74,.5))}
 .vhead i:last-child{background:linear-gradient(90deg,rgba(201,162,74,.5),transparent)}
@@ -1998,11 +2004,12 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   mask-image:radial-gradient(ellipse 78% 86% at 50% 48%,#000 18%,transparent 78%)}
 .sealgate > i,.sealgate > b,.sealgate > span{position:relative;z-index:1}
 /* 읽은 것 판에도 수묵을 옅게 깔아 둡니다 */
-.verdict{overflow:hidden}
-.verdict > *{position:relative;z-index:1}
-.verdict .ink{position:absolute;inset:0;z-index:0;pointer-events:none;
+.vsum{overflow:hidden}
+.vsum > *{position:relative;z-index:1}
+.vsum > .ink,.sealgate > .ink{position:absolute;inset:0;z-index:0}
+.vsum .ink{position:absolute;inset:0;z-index:0;pointer-events:none;
   background:url("img/ui/ink-scene.webp") center 40%/cover no-repeat;
-  opacity:.14;
+  opacity:.1;
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent);
   mask-image:linear-gradient(180deg,transparent,#000 46%,#000 72%,transparent)}
 
@@ -2170,6 +2177,18 @@ body{letter-spacing:-.004em}
 .cdot:active .pin{transform:translate(-50%,-50%) scale(1.3)}
 .cfoot{margin:12px 0 0;font-size:var(--fs-label);color:var(--jae-dim);line-height:1.7}
 @media (prefers-reduced-motion:reduce){ .cdot .pin{animation:none} }
+
+
+/* ── 바닥 — 뜬금없는 풍경 한 장 대신 결에 맞는 마무리 ──
+   화면 흐름과 아무 상관 없는 사진이 발치에 깔려 있어 이질적이었습니다. */
+.footbank{height:auto;margin:34px 0 0;overflow:visible}
+.footbank img{display:none}
+.footbank::after{display:none}
+.footbank::before{content:"";position:static;display:block;
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.42),transparent)}
+.footbank .lo{display:none}
+.foot{padding-top:26px}
 
 </style>
 </head>
@@ -2353,7 +2372,7 @@ body{letter-spacing:-.004em}
 
   <div class="evid" id="free-chart" hidden></div>
 
-  <div class="verdict" id="free-card" hidden></div>
+  <div class="vsum" id="free-card" hidden></div>
 
   <div class="evid">
     <span class="t">자네 얼굴에서 실제로 잡힌 자리</span>
