@@ -261,9 +261,8 @@ function renderFree(){
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     if (!c.sealed){
       return `<article class="cp open">
-        <div class="cph"><img src="${art}" alt="" loading="lazy">
-          <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-          <span class="free">무료</span></div>
+        <div class="cph"><img src="${art}" alt="" loading="lazy"><span class="free">무료</span></div>
+        <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
         <div class="cpb">${c.body.map(fpara).join("")}
         ${c.more ? `<div class="sealrow"><span class="glock" aria-hidden="true"></span><p>이 첩에 ${c.more} 마디가 더 있습니다.</p></div>` : ""}
         </div></article>`;
@@ -378,8 +377,8 @@ function renderCheop(){
       : "";
 
     return `<article class="cp open full">
-      <div class="cph"><img src="${art}" alt="" loading="lazy">
-        <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div></div>
+      <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
+      <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
       <div class="cpb">${inner}
         ${c.si ? `<div class="si"><span>시기</span><p>${esc(c.si)}</p></div>` : ""}
         ${c.act ? `<div class="act"><span>풀 길</span><p>${esc(c.act)}</p></div>` : ""}

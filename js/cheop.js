@@ -70,10 +70,13 @@ function gwiOf(i){
   return { i, n:b[0], h:b[1], no:b[2], d:b[3], warn:b[4], fix:b[5],
            img: "img/baekgwi/" + b[2] + ".webp" };
 }
-/* 같은 백귀도 두 얼굴을 가집니다 — 복으로 설 때와 흉으로 설 때 */
-function gwiTwo(g, 길){
+/* 같은 백귀도 두 얼굴을 가집니다 — 복으로 설 때와 흉으로 설 때.
+   흉한 정체를 그대로 복이라 적으면 말이 안 되므로, 복은 그 자리의 몫으로 적습니다. */
+function gwiTwo(g, 길, 자리k){
   return 길
-    ? { on:"복(福)", t: g.d.replace(/\.$/,"") + " — 이 기운이 손님 쪽에 서면 그렇게 쓰입니다." }
+    ? { on:"복(福)", t: (typeof GWI_BOK!=="undefined" && GWI_BOK[자리k])
+        ? GWI_BOK[자리k]
+        : "이 기운이 손님 쪽에 서면 손님을 받칩니다." }
     : { on:"흉(凶)", t: g.warn };
 }
 
@@ -94,9 +97,17 @@ function makeCheop(R, C, age, sex){
   /* 한 번 쓴 단서는 다음 첩에서 다시 쓰지 않습니다.
      같은 말이 두 번 나오면 손님은 바로 알아챕니다. */
   const 썼다 = new Set();
-  function 뽑기(pool, n){
+  /* 윤곽과 삼정은 제1첩에서 오행형상·삼정으로 이미 말했습니다.
+     다른 첩 본문에서 또 끌어 쓰면 같은 말이 두 번 나옵니다. */
+  const 본문밖 = (h)=> h.c.bu==="삼정";
+  function 뽑기(pool, n, 윤곽도){
     const got = [];
-    for (const h of pool){ if(got.length>=n) break; if(썼다.has(h.c.id)) continue; got.push(h); }
+    for (const h of pool){
+      if(got.length>=n) break;
+      if(썼다.has(h.c.id)) continue;
+      if(!윤곽도 && 본문밖(h)) continue;
+      got.push(h);
+    }
     got.forEach(h=>썼다.add(h.c.id));
     return got;
   }
@@ -111,7 +122,7 @@ function makeCheop(R, C, age, sex){
   function 부위말(k, salt){
     const bus = 궁부위[k] || [];
     for (const bu of bus){
-      const arr = (C.byBu[bu] || []).filter(h=>!쓴부위.has(h.c.id));
+      const arr = (C.byBu[bu] || []).filter(h=>!쓴부위.has(h.c.id) && !썼다.has(h.c.id));
       if (arr.length){
         const h = arr[0]; 쓴부위.add(h.c.id); 썼다.add(h.c.id);
         return " 손님은 " + h.c.s.replace(/니다\.?$/, "고") + ", 그래서 " + h.c.m;
@@ -131,7 +142,7 @@ function makeCheop(R, C, age, sex){
     const oh = OH[R.hyeong];
     /* 윤곽과 삼정은 바로 앞에서 오행형상·삼정으로 말했습니다.
        같은 말을 두 번 하지 않도록 여기서는 빼고 뽑습니다. */
-    const 본 = 뽑기(byT.본성.filter(h=> h.c.bu!=="윤곽" && h.c.bu!=="삼정"), 4);
+    const 본 = 뽑기(byT.본성.filter(h=>h.c.bu!=="윤곽"), 4);
     c.ev = ev(본, 4);
 
     c.body.push(단락(
@@ -169,41 +180,48 @@ function makeCheop(R, C, age, sex){
   /* ── 제2첩 · 재물의 자리 ──────────────────────── */
   {
     const c = 첩(2, "재물", "재물의 자리", "돈이 들어오는 길과 새는 길", true);
-    const 재 = 뽑기(byT.재물, 4);
     const j = G["재백"], jt = G["전택"], jn = G["노복"];
-    c.ev = ev(재, 4);
+    /* 좋은 자리와 깎이는 자리를 갈라 둡니다. 한 첩 안에서
+       "콧방울이 두텁다"와 "콧방울이 얇다"가 같이 나오면 안 됩니다. */
+    const 재풀 = 뽑기(byT.재물, 4);
+    const 재길 = 재풀.filter(h=>h.c.g>0), 재흉 = 재풀.filter(h=>h.c.g<0),
+          재중 = 재풀.filter(h=>h.c.g===0);
+    c.ev = ev(재풀, 4);
 
     c.body.push(단락(
       "돈이 들어오는 길",
       `재백궁(財帛宮)은 준두 — 코끝입니다. ${j.g.lv[j.lv].dx} ${j.g.lv[j.lv].rd}`,
       []
     ));
-    if (재[0]) c.body.push(단락(
+
+    const 들 = 재길.concat(재중).slice(0, 2);
+    if (들.length) c.body.push(단락(
       "얼굴이 말하는 재물",
-      clueLine(재[0], 0, seed, 41) + 부위말("재백", 1),
-      [재[0].c.id]
+      "손님 얼굴에서 재물 쪽으로 선 자리입니다.",
+      들.map(h=>h.c.id),
+      들.map(h=>({ t:h.c.s, d:h.c.m, g:1 }))
     ));
 
+    const 샘 = 재흉.slice(0, 2);
     c.body.push(단락(
       "새는 자리",
-      (재[1] ? clueLine(재[1], 0, seed, 43) + " " : "") +
       (jt.lv === 2
         ? `전택궁(田宅宮)이 막혀 있습니다. ${jt.g.lv[2].rd} 집이나 묶어 둔 돈에서 샙니다.`
         : jt.lv === 1
           ? `전택궁은 반반입니다. ${jt.g.lv[1].rd}`
-          : `전택궁이 트여 있습니다. ${jt.g.lv[0].rd}`),
-      재[1] ? [재[1].c.id] : []
+          : `전택궁은 트여 있습니다. ${jt.g.lv[0].rd}`) +
+      (샘.length ? "" : " 크게 새는 자리는 얼굴에 보이지 않습니다. 새는 것은 자리가 아니라 버릇 쪽입니다."),
+      샘.map(h=>h.c.id),
+      샘.length ? 샘.map(h=>({ t:h.c.s, d:h.c.m, g:-1 })) : null
     ));
 
     c.body.push(단락(
       "큰돈을 다루는 힘",
-      (재[2] ? clueLine(재[2], 0, seed, 47) + " " : "") +
-      (재[3] ? clueLine(재[3], 1, seed, 53, 재[2]) + " " : "") +
       `${은는(jn.g.n)} ${jn.lv===0?"받칩니다":jn.lv===1?"들고 납니다":"비어 있습니다"}. ` +
-      (jn.lv===2 ? "손님이 큰 것을 쥐었을 때 곁에 남을 사람을 지금 만들어 두셔야 합니다. 지금 비어 있어요."
+      (jn.lv===2 ? "손님이 큰 것을 쥐었을 때 곁에 남을 사람을 지금 만들어 두셔야 합니다."
        : jn.lv===1 ? "사람이 들고 납니다. 한 사람만 붙드시면 그 사람이 손님 돈을 지킵니다."
        : "곁의 사람이 손님 돈을 지켜 줍니다. 혼자 쥐려 하지 마세요.") + 부위말("노복", 4),
-      [재[2], 재[3]].filter(Boolean).map(h=>h.c.id)
+      []
     ));
 
     c.si = 시기말(R, "재백", j.lv);
@@ -239,7 +257,7 @@ function makeCheop(R, C, age, sex){
                    "토":"얼굴이 두텁고 말이 느린", "금":"각이 지고 말이 또렷한",
                    "수":"둥글고 살이 도는" };
     c.body.push(단락(
-      "맞는 사람과 피할 사람",
+      "맞는 사람",
       `손님 그릇을 받쳐 주는 쪽은 ${꼴말[도움]} 사람입니다. ` +
       pickOne([
         "그 사람 곁에서는 손님이 애쓰지 않아도 일이 풉니다.",
@@ -247,17 +265,25 @@ function makeCheop(R, C, age, sex){
         "그 사람은 손님이 비운 자리를 묻지 않고 메웁니다.",
         "그런 얼굴과 붙으면 손님이 늦게까지 지치지 않습니다.",
         "그 사람 앞에서는 손님이 설명을 길게 안 해도 됩니다."
-      ], seed, 74) + " " +
-      `반대로 ${꼴말[눌림]} 사람과는 길게 가지 마세요. ` +
+      ], seed, 74),
+      []
+    ));
+    c.body.push(단락(
+      "피할 사람",
+      `${꼴말[눌림]} 사람과는 길게 가지 마세요. ` +
       pickOne([
         "처음에는 끌리는데, 가까워질수록 손님이 깎입니다.",
         "처음에 편한 만큼 나중에 손님이 맞춰 주게 됩니다.",
         "그런 사람과는 손님이 늘 먼저 양보하고 끝납니다.",
         "한동안은 잘 맞는데, 돈이나 자리 이야기가 나오면 갈립니다.",
         "손님이 참는 쪽이 되고, 참은 것을 저쪽은 모릅니다."
-      ], seed, 77) + " " +
-      (인[2] ? clueLine(인[2], 1, seed, 71) : ""),
-      인[2] ? [인[2].c.id] : []
+      ], seed, 77),
+      []
+    ));
+    if (인[2]) c.body.push(단락(
+      "손님이 사람에게 보이는 결",
+      clueLine(인[2], 0, seed, 71),
+      [인[2].c.id]
     ));
 
     c.body.push(단락(
@@ -449,7 +475,7 @@ function makeCheop(R, C, age, sex){
       const g = gwiOf(j.bg);
       return {
         rank: 3 - i, 자리: j.g.n, 부: j.g.bu, lv: j.lv,
-        g, 두얼굴: [gwiTwo(g, true), gwiTwo(g, false)],
+        g, 두얼굴: [gwiTwo(g, true, j.g.k), gwiTwo(g, false, j.g.k)],
         근거: `${j.g.bu} 자리가 ${j.lv===0?"트여":"막혀"} 있어 ${이가(g.n)} 여기 섰습니다.`,
         말: j.lv === 2
           ? `${을를(g.n)} 그대로 두면 ${j.g.d} 쪽이 계속 막힙니다. ${g.fix}`
