@@ -2362,20 +2362,21 @@ body{letter-spacing:-.004em}
 .jr.shut b{color:#e8dcc6}
 .jr.shut .js{color:#b7a78e}
 
-/* 맨 아래 — 복채와 다시 들어가는 문 */
-.last{margin:30px 0 0;padding:24px 17px 20px;border-radius:3px;text-align:center;
+/* 맨 아래 — 복채와 다시 들어가는 문.
+   제10첩 안에도 .last 가 있어, 이름이 겹치면 그 칸까지 가운데로 쏠립니다. */
+.lastcall{margin:30px 0 0;padding:24px 17px 20px;border-radius:3px;text-align:center;
   border:1px solid rgba(201,162,74,.3);
   background:linear-gradient(rgba(22,11,13,.8),rgba(10,5,7,.9)),
              url("img/ui/hanji-lotus.webp") center/152px auto repeat}
-.last .eyebrow{display:block;width:-moz-fit-content;width:fit-content;margin:0 auto 16px}
-.last .lw{margin:0;display:flex;flex-direction:column;align-items:center;gap:7px}
-.last .lw b{font-family:var(--serif);font-weight:800;
+.lastcall .eyebrow{display:block;width:-moz-fit-content;width:fit-content;margin:0 auto 16px}
+.lastcall .lw{margin:0;display:flex;flex-direction:column;align-items:center;gap:7px}
+.lastcall .lw b{font-family:var(--serif);font-weight:800;
   font-size:clamp(28px,7.6vw,36px);line-height:1;color:#f4dfae;
   text-shadow:0 2px 14px rgba(0,0,0,.7)}
-.last .lw span{font-size:var(--fs-sm);line-height:1.7;color:#bcab91;word-break:keep-all}
-.last .lno{margin:14px 0 0;font-size:var(--fs-sm);line-height:1.8;color:#9b8c76;
+.lastcall .lw span{font-size:var(--fs-sm);line-height:1.7;color:#bcab91;word-break:keep-all}
+.lastcall .lno{margin:14px 0 0;font-size:var(--fs-sm);line-height:1.8;color:#9b8c76;
   word-break:keep-all}
-.last .btn{margin-top:18px}
+.lastcall .btn{margin-top:18px}
 
 </style>
 </head>
@@ -2445,7 +2446,7 @@ body{letter-spacing:-.004em}
     <p class="tenfoot">앞의 두 장은 복채 없이 열어 드립니다. 읽어 보시고 정하시면 됩니다.</p>
   </div>
 
-  <div class="last">
+  <div class="lastcall">
     <p class="eyebrow">복채</p>
     <p class="lw"><b id="intro-won">—</b><span>한 번만 내시면 열 장이 모두 열립니다</span></p>
     <p class="lno">먼저 두 장을 읽어 보시고 정하셔도 늦지 않습니다.</p>
