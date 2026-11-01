@@ -66,6 +66,15 @@ function drawFaceCircle(g, src, F, cx, cy, r){
     try { g.drawImage(src, 0, 0); } catch(e){}
   }
   g.restore();
+  /* 사진관 배경이 동그라미를 채우면 증명사진처럼 보입니다. 둘레를 묻힙니다. */
+  g.save();
+  g.beginPath(); g.arc(cx, cy, r, 0, 7); g.clip();
+  const vg = g.createRadialGradient(cx, cy - r*0.06, r*0.34, cx, cy, r*1.02);
+  vg.addColorStop(0,   "rgba(16,8,10,0)");
+  vg.addColorStop(0.58,"rgba(16,8,10,.30)");
+  vg.addColorStop(1,   "rgba(16,8,10,.92)");
+  g.fillStyle = vg; g.fillRect(cx-r, cy-r, r*2, r*2);
+  g.restore();
   g.save();
   g.strokeStyle = "rgba(226,188,116,.9)"; g.lineWidth = 4;
   g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke();
