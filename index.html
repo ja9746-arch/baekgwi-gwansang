@@ -1683,6 +1683,13 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   margin-bottom:14px;border:1px solid var(--card);border-radius:3px}
 
 .seerask.small{width:34%;max-width:118px;margin:2px auto -10px}
+/* 네 변이 모두 녹아야 그림이 바탕에 얹힙니다.
+   아래만 녹이면 위와 옆에 네모 자국이 남아 오려 붙인 것처럼 보입니다. */
+.seerask,.seerend{
+  -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 44%,
+    #000 54%,rgba(0,0,0,.72) 78%,rgba(0,0,0,0) 100%);
+  mask-image:radial-gradient(ellipse 62% 58% at 50% 44%,
+    #000 54%,rgba(0,0,0,.72) 78%,rgba(0,0,0,0) 100%)}
 
 /* ══════════════════════════════════════════════════
    두루마리 — 시안의 생김을 그림이 아니라 선으로 그립니다.

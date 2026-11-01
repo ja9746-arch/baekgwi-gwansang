@@ -265,6 +265,16 @@ function showRaw(cv, img, dim){
   }
   g.fillStyle = dim ? "rgba(10,5,7,.62)" : "rgba(10,5,7,.34)";
   g.fillRect(0,0,W,H);
+  /* 사진의 뒷배경이 거울 유리까지 밀고 나오지 않게 둘레를 먹빛으로 묻힙니다.
+     파란 사진관 배경이 그대로 보이면 거울이 아니라 증명사진이 됩니다. */
+  (function(){
+    const vg = g.createRadialGradient(W/2, H*0.46, W*0.21, W/2, H*0.50, W*0.70);
+    vg.addColorStop(0,   "rgba(10,5,7,0)");
+    vg.addColorStop(0.46,"rgba(10,5,7,.34)");
+    vg.addColorStop(0.74,"rgba(10,5,7,.72)");
+    vg.addColorStop(1,   "rgba(10,5,7,.99)");
+    g.fillStyle = vg; g.fillRect(0,0,W,H);
+  })();
 }
 
 /* ── 거울 안에 얼굴을 그립니다 ──────────────────
@@ -293,6 +303,17 @@ function drawFace(cv, src, F, dim){
   g.translate(-sx*k, -sy*k); g.scale(k, k);
   try { g.drawImage(src, 0, 0); } catch(e){}
   g.restore();
+  /* 사진의 뒷배경이 거울 유리까지 밀고 나오지 않게 둘레를 먹빛으로 묻힙니다.
+     파란 사진관 배경이 그대로 보이면 거울이 아니라 증명사진이 됩니다. */
+  (function(){
+    const vg = g.createRadialGradient(W/2, H*0.46, W*0.21, W/2, H*0.50, W*0.70);
+    vg.addColorStop(0,   "rgba(10,5,7,0)");
+    vg.addColorStop(0.46,"rgba(10,5,7,.34)");
+    vg.addColorStop(0.74,"rgba(10,5,7,.72)");
+    vg.addColorStop(1,   "rgba(10,5,7,.99)");
+    g.fillStyle = vg; g.fillRect(0,0,W,H);
+  })();
+
   if (dim){ g.fillStyle = "rgba(10,5,7,.6)"; g.fillRect(0,0,W,H); return; }
   if (!F) return;
 
