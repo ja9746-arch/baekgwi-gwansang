@@ -765,9 +765,13 @@ async function openCheckout(amount){
    열두 자리도 점 자리도 남의 선 그림 위에 찍으면 남의 이야기입니다.
    자리 좌표는 0~100 자로 적혀 있으니, 손님 얼굴에 맞춰 옮겨 찍습니다. */
 function realFace(marks, opt){
+  try { return realFace_(marks, opt); }
+  catch(e){ return null; }   /* 어느 점 하나가 빠져도 그린 지도로 물러섭니다 */
+}
+function realFace_(marks, opt){
   const o = opt || {};
   const src = ST.img, F = ST.F;
-  if (!src || !F || !F.rawAll) return null;
+  if (!src || !F || !F.rawAll || F.rawAll.length < 468) return null;
   const W = 620, H = Math.round(W*4/3);
   const cv = document.createElement("canvas");
   cv.width = W; cv.height = H;
