@@ -2190,6 +2190,29 @@ body{letter-spacing:-.004em}
 .footbank .lo{display:none}
 .foot{padding-top:26px}
 
+
+/* ── 값을 단추 안에 — 시안의 짜임 ────────────────
+   값을 따로 두면 손님이 단추를 누르기 전에 한 번 더 찾아야 합니다. */
+.btn.hot.two{flex-direction:column;gap:2px;min-height:66px;line-height:1.25}
+.btn.hot.two b{font-weight:800;font-size:var(--fs-h3)}
+.btn.hot.two .won{font-family:var(--serif);font-weight:700;
+  font-size:var(--fs-sm);color:#ffe9c6;letter-spacing:.02em;opacity:.95}
+.btn.hot.two .ar{margin-left:3px}
+
+
+/* ── 첩 목록에 작은 먹그림 — 시안의 짜임 ──────── */
+.jr{grid-template-columns:auto auto 1fr auto;column-gap:10px}
+.jr .jt{grid-column:1;grid-row:1/3;width:40px;height:40px;border-radius:2px;
+  object-fit:cover;align-self:center;
+  box-shadow:0 1px 0 rgba(255,255,255,.45),0 2px 7px rgba(60,40,14,.35);
+  border:1px solid rgba(120,88,42,.38)}
+.jr .jn{grid-column:2;grid-row:1/3;font-size:var(--fs-h3);width:1em;opacity:.8}
+.jr b{grid-column:3;grid-row:1}
+.jr .js{grid-column:3;grid-row:2}
+.jr .jf,.jr .jl{grid-column:4}
+.jr.shut .jt{filter:sepia(.55) brightness(.62) contrast(1.06) hue-rotate(-8deg);
+  border-color:rgba(200,172,120,.24);box-shadow:0 2px 7px rgba(0,0,0,.45)}
+
 </style>
 </head>
 <body>
@@ -2237,16 +2260,16 @@ body{letter-spacing:-.004em}
     <p class="eyebrow">원안법사의 관상첩</p>
     <h2 class="sect mid">얼굴에 새겨진<br>열 가지 이야기</h2>
     <ul class="ten">
-    <li class="jr juru sm"><span class="jn">一</span><b>내 타고난 얼굴</b><span class="js">오행형상·삼정·타고난 결</span><i class="jf">무료</i></li>
-    <li class="jr juru sm"><span class="jn">二</span><b>재물의 자리</b><span class="js">들어오는 길·새는 자리·돈이 드나드는 때</span><i class="jf">무료</i></li>
-    <li class="jr juru sm shut"><span class="jn">三</span><b>인연과 사람</b><span class="js">맞는 사람·피할 사람·배우자궁</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">四</span><b>사회적 인상과 평판</b><span class="js">첫인상·관록궁·이마 세 칸</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">五</span><b>세월이 남긴 흔적</b><span class="js">유년운기로 지나온 때와 올 때</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">六</span><b>강점과 주의할 점</b><span class="js">살릴 자리 셋, 지킬 자리 둘</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">七</span><b>얼굴 십이궁</b><span class="js">열두 자리 전부와 자리마다 선 백귀</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">八</span><b>얼굴에 깃든 백귀</b><span class="js">가장 세게 선 셋, 복과 흉 두 얼굴</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">九</span><b>원안법사의 처방</b><span class="js">점 찍을 자리·길한 색·머리</span><i class="jl" aria-hidden="true"></i></li>
-    <li class="jr juru sm shut"><span class="jn">十</span><b>마지막 밀서</b><span class="js">총평·할 일 셋·피할 것 둘·움직일 달</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm"><img class="jt" src="img/cheop/t01.webp" alt="" loading="lazy"><span class="jn">一</span><b>내 타고난 얼굴</b><span class="js">오행형상·삼정·타고난 결</span><i class="jf">무료</i></li>
+    <li class="jr juru sm"><img class="jt" src="img/cheop/t02.webp" alt="" loading="lazy"><span class="jn">二</span><b>재물의 자리</b><span class="js">들어오는 길·새는 자리·큰돈</span><i class="jf">무료</i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t03.webp" alt="" loading="lazy"><span class="jn">三</span><b>인연과 사람</b><span class="js">맞는 사람·피할 사람·배우자궁</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t04.webp" alt="" loading="lazy"><span class="jn">四</span><b>사회적 인상과 평판</b><span class="js">첫인상·관록궁·이마 세 칸</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t05.webp" alt="" loading="lazy"><span class="jn">五</span><b>세월이 남긴 흔적</b><span class="js">유년운기로 지나온 때와 올 때</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t06.webp" alt="" loading="lazy"><span class="jn">六</span><b>강점과 주의할 점</b><span class="js">살릴 자리 셋, 지킬 자리 둘</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t07.webp" alt="" loading="lazy"><span class="jn">七</span><b>얼굴 십이궁</b><span class="js">열두 자리 전부와 자리마다 선 백귀</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t08.webp" alt="" loading="lazy"><span class="jn">八</span><b>얼굴에 깃든 백귀</b><span class="js">가장 세게 선 셋, 복과 흉 두 얼굴</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t09.webp" alt="" loading="lazy"><span class="jn">九</span><b>원안법사의 처방</b><span class="js">점 찍을 자리·길한 색·머리</span><i class="jl" aria-hidden="true"></i></li>
+    <li class="jr juru sm shut"><img class="jt" src="img/cheop/t10.webp" alt="" loading="lazy"><span class="jn">十</span><b>마지막 밀서</b><span class="js">총평·할 일 셋·피할 것 둘·움직일 달</span><i class="jl" aria-hidden="true"></i></li>
     </ul>
     <p class="tenfoot">앞의 두 장은 복채 없이 열어 드립니다. 읽어 보시고 정하시면 됩니다.</p>
   </div>
@@ -2398,7 +2421,9 @@ body{letter-spacing:-.004em}
       <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
       <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
     </ul>
-    <button class="btn hot" id="to-pay">관상첩 모두 열기 <span class="ar">→</span></button>
+    <button class="btn hot two" id="to-pay">
+      <b>내 관상첩 모두 열기 <span class="ar">→</span></b>
+      <span class="won" id="to-pay-won"></span></button>
   </div>
 </section>
 
@@ -2423,7 +2448,9 @@ body{letter-spacing:-.004em}
       <div class="n">한 번 내시면 이 기기에서 다시 받지 않습니다</div>
     </div>
   </div>
-  <button class="btn hot" id="pay-now">관상첩 모두 열기 <span class="ar">→</span></button>
+  <button class="btn hot two" id="pay-now">
+    <b>복채 내고 모두 열기 <span class="ar">→</span></b>
+    <span class="won" id="pay-now-won"></span></button>
   <p class="hint small">열람을 시작하면 환불이 제한됩니다. 결제하시면 이용약관과 환불규정에 동의한 것으로 봅니다.</p>
   <button class="btn ghost" data-go="s-free">돌아가기</button>
 </section>

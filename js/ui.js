@@ -694,6 +694,8 @@ function bindPay(){
   $("#pay-price").innerHTML =
     (PRICE.list ? `<del>${won(PRICE.list)}</del>` : "") +
     `${won(PRICE.now)}`;
+  /* 값을 단추 안에도 적습니다 — 누르기 전에 한 번 더 찾게 하지 않습니다 */
+  $$("#to-pay-won, #pay-now-won").forEach(e=> e.textContent = won(PRICE.now) + " · 한 번만");
   $("#pay-now").addEventListener("click", async ()=>{
     const ok = await openCheckout(PRICE.now);
     if (!ok){ toast("복채를 받지 못했습니다."); return; }
