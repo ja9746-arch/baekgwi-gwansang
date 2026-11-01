@@ -910,7 +910,8 @@ function makeCheop(R, C, age, sex){
     c.gwi = 셋.map((j, i)=>{
       const g = gwiOf(j.bg);
       return {
-        rank: 3 - i, 자리: j.g.n, 부: j.g.bu, lv: j.lv,
+        /* 가장 세게 선 것이 제1귀입니다 — 셋은 이미 센 차례로 서 있습니다 */
+        rank: i + 1, 자리: j.g.n, 부: j.g.bu, lv: j.lv,
         g, 두얼굴: [gwiTwo(g, true, j.g.k), gwiTwo(g, false, j.g.k)],
         근거: `${j.g.bu} 자리가 ${j.lv===0?"트여":"막혀"} 있어 ${이가(g.n)} 여기 섰습니다.`,
         말: j.lv === 2
