@@ -261,13 +261,38 @@ function measure(pts, W, H){
   const 축 = (r.이마중간.x + r.인당.x + r.턱끝.x) / 3;
   const 쏠림 = (Math.abs(r.준두.x-축) + Math.abs(r.입중앙.x-축)) / 2 / FW;
 
+  /* ── 자세를 되돌립니다 ──────────────────────────
+     관상의 자는 정면을 두고 잰 자입니다. 고개를 들면 이마가 줄고 턱이 늘며,
+     고개를 돌리면 이목구비가 한쪽으로 쏠린 것처럼 보입니다.
+     얼굴 열둘을 자세를 바꿔 가며 재어 그 기울기를 뽑았습니다.
+     막지 않고 되돌려 읽습니다. 손님을 돌려보내는 것보다 낫습니다. */
+  const 바름 = -0.025;                 /* 정면으로 섰을 때의 들린 정도 */
+  const dp = pitch - 바름;
+  const ay = Math.abs(yaw), ar = Math.abs(roll*180/Math.PI);
+  const cl = (v,a,b)=> Math.max(a, Math.min(b, v));
+
+  let 상 = sam[0] - 0.72*dp;
+  let 하 = sam[2] + 2.28*dp;
+  상 = cl(상, 0.18, 0.46); 하 = cl(하, 0.22, 0.52);
+  let 중 = 1 - 상 - 하;
+  if (중 < 0.16){ 중 = 0.16; const t = 상+하; 상 = 상/t*0.84; 하 = 하/t*0.84; }
+  const sam2 = [상, 중, 하];
+
+  const 쏠림2  = Math.max(0.002, 쏠림  - 0.272*ay);
+  const 어긋남2 = Math.max(0.018, 어긋남 - 0.42*ay - 0.0045*ar);
+  const ratio2 = cl(FW/Math.max(얼굴높이,1) + 1.29*dp + 0.15*ay, 0.55, 1.05);
+
+  /* 자세가 많이 비뚤면 그만큼 믿을 수 없습니다.
+     믿을 수 없는 만큼 그 자리의 문턱을 올려 억지 단서가 서지 않게 합니다. */
+  const 흔들림 = Math.min(1, ay/0.42 + Math.abs(dp)/0.12*0.7 + ar/26*0.5);
+
   return {
-    ok: true, FW, W, H, yaw, pitch, roll: roll*180/Math.PI,
+    ok: true, FW, W, H, yaw, pitch, roll: roll*180/Math.PI, 흔들림,
     pts: r, raw: p, rawAll, unrot,
 
     /* 틀 */
-    sam, 전장: n(전장), 세로: 얼굴높이/FW,
-    ratio: FW / Math.max(얼굴높이,1),              /* 넓이 ÷ 길이 — 클수록 넓은 얼굴 */
+    sam: sam2, sam0: sam, 전장: n(전장), 세로: 얼굴높이/FW,
+    ratio: ratio2,                                 /* 넓이 ÷ 길이 — 클수록 넓은 얼굴 */
     taper: 하폭 / Math.max(중폭,1),                /* 아래가 좁아지는 정도 */
     boxy: 턱선폭 / Math.max(중폭,1),               /* 네모진 정도 */
     상폭: n(상폭), 중폭: n(중폭), 하폭: n(하폭),
@@ -281,7 +306,7 @@ function measure(pts, W, H){
     인중길: 인중길/Math.max(전장,1),
     입폭: n(입폭), 입술: 입술/Math.max(입폭,1), 윗술: 윗술/Math.max(입술,1), 입각,
     턱길: 턱길/Math.max(전장,1), 턱각, 지각,
-    광대, 어긋남, 쏠림,
+    광대, 어긋남: 어긋남2, 쏠림: 쏠림2,
 
     /* 세 마디의 폭 — 예전 엔진이 쓰던 자리 */
     bandW: [상폭, 중폭, 하폭]

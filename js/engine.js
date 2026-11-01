@@ -19,22 +19,27 @@
      백가지 단서 → 모든 풀이의 근거 */
 
 /* ── 0. 자세를 봅니다 ─────────────────────────────
-   관상의 자는 정면을 두고 잰 자입니다. 고개를 돌리거나 들면
-   이마가 줄고 턱이 늘어 다른 사람의 수가 나옵니다.
-   그래서 비뚤면 재지 않고 다시 비추시게 합니다. */
-function poseCheck(F){
-  if (Math.abs(F.roll) > 8)
-    return { k:"roll", msg: (F.roll>0 ? "고개가 오른쪽으로 기울었습니다" : "고개가 왼쪽으로 기울었습니다"),
-             tip:"어깨를 펴고 고개를 똑바로 세워 주세요." };
-  if (F.yaw > 0.048)
-    return { k:"yaw", msg:"고개가 한쪽으로 돌아갔습니다", tip:"코끝이 화면 한가운데에 오게 하세요." };
-  if (F.yaw < -0.048)
-    return { k:"yaw", msg:"고개가 한쪽으로 돌아갔습니다", tip:"코끝이 화면 한가운데에 오게 하세요." };
-  if (F.pitch < 0.012)
-    return { k:"up", msg:"고개를 드셨습니다", tip:"턱을 조금 당기고 눈높이로 보세요." };
-  if (F.pitch > 0.090)
-    return { k:"down", msg:"고개를 숙이셨습니다", tip:"턱을 조금 들고 눈높이로 보세요." };
+   관상의 자는 정면을 두고 잰 자입니다. 다만 비뚤다고 손님을 돌려보내지는
+   않습니다. 되돌려 읽고(face.js), 되돌린 만큼 그 자리의 문턱을 올립니다(clues.js).
+   여기서는 아주 많이 비뚤 때만 한마디 거들 뿐, 길을 막지 않습니다. */
+function poseNote(F){
+  const ay = Math.abs(F.yaw), ar = Math.abs(F.roll);
+  if (ar > 22) return { k:"roll", msg:"고개가 많이 기울었습니다",
+    tip:"고개를 바로 세우고 한 장 더 주시면 훨씬 또렷하게 봅니다." };
+  if (ay > 0.62) return { k:"yaw", msg:"고개가 많이 돌아갔습니다",
+    tip:"코끝이 화면 한가운데에 오게 한 장 더 주시면 훨씬 또렷하게 봅니다." };
+  if (F.pitch < -0.20) return { k:"up", msg:"고개를 많이 드셨습니다",
+    tip:"턱을 조금 당기고 한 장 더 주시면 이마와 턱을 제대로 잽니다." };
+  if (F.pitch > 0.17) return { k:"down", msg:"고개를 많이 숙이셨습니다",
+    tip:"턱을 조금 들고 한 장 더 주시면 이마와 턱을 제대로 잽니다." };
   return null;
+}
+/* 되돌려 읽은 정도를 손님께 알려 주는 말 */
+function poseWord(F){
+  const s = F.흔들림 || 0;
+  if (s < 0.22) return null;
+  if (s < 0.5)  return "고개가 조금 기울어 그만큼 셈해 두었습니다.";
+  return "고개가 많이 기울어 되돌려 읽었습니다. 정면으로 한 장 더 주시면 더 또렷하게 봅니다.";
 }
 
 /* ── 1. 사진 한 장을 읽습니다 ────────────────────── */
@@ -50,32 +55,29 @@ async function readFace(srcEl){
   const F = measure(pts, cv.width, cv.height);
   if(!F) return { err:"얼굴이 너무 작습니다" };
 
-  const bad = (typeof window!=='undefined' && window.__NO_POSE__) ? null : poseCheck(F);
-  if (bad) return { err: bad.msg, tilt: bad.k, F, canvas:cv };
-
   const m = readSkin(cv, F, null);
-  if(!m) return { err:"빛이 모자랍니다", F, canvas:cv };
+  if(!m) return { err:"빛이 모자랍니다", F, canvas:cv, soft:true };
 
-  return { ok:true, F, m, canvas:cv, pts };
+  /* 비뚤어도 봅니다. 다만 아주 심하면 한 장 더 권합니다 — 막지는 않습니다. */
+  return { ok:true, F, m, canvas:cv, pts, note: poseNote(F), word: poseWord(F) };
 }
 
 /* ── 3. 오행형상을 가린다 ──────────────────────────
    다섯 갈래에 각각 점수를 매겨 가장 높은 쪽으로 봅니다.
    얼굴마다 조금씩이라도 기운 데가 있으므로 한쪽으로 몰리지 않습니다. */
 function pickHyeong(m){
-  /* 가늠자는 실제 얼굴들을 재서 잡았습니다.
-     가로세로비·하정의 좁아짐·네모진 정도, 셋으로 다섯 갈래를 가립니다.
-     결이 거친 정도(sd)는 사진기와 빛에 따라 들쭉날쭉해 쓰지 않습니다. */
-  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.866 : m.boxy);
-  const zr = (r - 0.647) / 0.072;   /* 넓을수록 큼 */
-  const zt = (t - 0.806) / 0.045;   /* 아래가 두터울수록 큼 */
-  const zx = (x - 0.866) / 0.023;   /* 네모질수록 큼 */
+  /* 가늠자는 얼굴들을 실제로 재서 잡았습니다 — clues.js 의 NORM 과 같은 자입니다.
+     가로세로비·하정의 좁아짐·네모진 정도, 셋으로 다섯 갈래를 가립니다. */
+  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.864 : m.boxy);
+  const zr = (r - 0.705) / 0.065;   /* 넓을수록 큼 */
+  const zt = (t - 0.483) / 0.038;   /* 아래가 두터울수록 큼 */
+  const zx = (x - 0.864) / 0.030;   /* 네모질수록 큼 */
   const sc = {
-    "목": -zr,                        /* 길고 좁은 상 */
-    "수":  zr*0.85 - zx*0.45,         /* 넓고 둥글며 모가 없는 상 */
-    "화": -zt,                        /* 아래로 뾰족이 모이는 상 */
-    "토":  zt*0.85 + zr*0.35,         /* 아래가 두텁고 넓은 상 */
-    "금":  zx                         /* 각이 지고 네모진 상 */
+    "목": -zr*0.92 - zt*0.22,         /* 길고 좁으며 위아래가 고른 상 */
+    "수":  zr*0.80 - zx*0.62,         /* 넓고 둥글며 모가 없는 상 */
+    "화": -zt*1.00 - zx*0.18,         /* 아래로 뾰족이 모이는 상 */
+    "토":  zt*0.80 + zr*0.42,         /* 아래가 두텁고 넓은 상 */
+    "금":  zx*1.00 + zt*0.14          /* 각이 지고 네모진 상 */
   };
   let best="수", bv=-1e9;
   for(const k in sc){ if(sc[k] > bv){ bv=sc[k]; best=k; } }
@@ -93,28 +95,24 @@ function pickGisaek(m){
   const gb   = (G - B) / Math.max(L,1);                    /* 누런 쪽으로 치우친 정도 */
   const geuneul = (Math.max.apply(null,m.sam) - Math.min.apply(null,m.sam)) / Math.max(L,1);
 
-  /* 얼굴 열일곱을 재어 얻은 자리입니다.
-     절대 눈금으로 끊으면 살빛은 평생 그 눈금을 넘지 못해
-     다섯 기색 중 황기 하나만 나옵니다. 그래서 무리 안에서의 치우침으로 가립니다. */
-  const zChae = (chae - 0.281) / 0.059;
-  const zWarm = (warm - 0.187) / 0.046;
-  const zGb   = (gb   - 0.135) / 0.039;
+  /* 얼굴들을 실제로 재어 얻은 자리입니다. 절대 눈금으로 끊으면
+     살빛은 평생 그 눈금을 넘지 못해 다섯 기색 중 하나만 나옵니다. */
+  const zChae = (chae - 0.309) / 0.052;
+  const zWarm = (warm - 0.262) / 0.058;
+  const zGb   = (gb   - 0.128) / 0.030;
 
-  /* 밝기 그 자체는 쓰지 않습니다. 기색은 살빛이 아니라 살빛 위에 도는 빛이라,
-     밝기를 그대로 쓰면 살빛이 짙은 분이 그대로 흑기가 됩니다.
-     그래서 흑기는 한쪽에만 진 그늘로만 봅니다 — 손님도 사진에서 함께 보는 것이라
-     말이 섭니다. 사진이 어두운 것은 사진 이야기라 따로 여쭙니다. */
-  if (geuneul > 0.09) return "흑";
+  /* 흑기는 한쪽에만 진 그늘로만 봅니다. 사진이 어두운 것은 사진 이야기라
+     따로 여쭙니다. 그늘이 아주 짙을 때만 흑으로 봅니다. */
+  if (geuneul > 0.33) return "흑";
 
   const sc = {
     "백": -zChae,
     "적":  zWarm * 0.82 - zGb * 0.34,
-    "청": -zGb * 1.15          /* 푸른 기는 핏기가 아니라 빛깔로만 봅니다 */
+    "청": -zGb * 1.15
   };
-  /* 어지간한 얼굴은 황기입니다. 기색마다 넘어야 할 문턱이 달라서,
-     흔한 흑·적보다 드문 청기의 문턱을 높게 둡니다.
+  /* 기색마다 넘어야 할 문턱이 다릅니다. 흔한 황기가 바탕이고,
      문턱을 가장 많이 넘어선 쪽이 그 얼굴에 도는 빛입니다. */
-  const need = { "백":1.05, "적":0.90, "청":1.50 };
+  const need = { "백":0.72, "적":0.62, "청":1.00 };
   let best = "황", bv = 0;
   for (const k in sc) { const over = sc[k] - need[k]; if (over > bv) { bv = over; best = k; } }
   return best;
@@ -122,14 +120,14 @@ function pickGisaek(m){
 
 /* ── 5. 삼정을 가린다 ─────────────────────────────── */
 function pickSamjeong(m){
-  /* 삼정은 어느 마디의 폭이 도드라지는가로 봅니다.
-     밝기로 보면 세 마디가 거의 같아 아무 뜻도 못 담습니다. */
-  if (m.bandW){
-    const [u, c, l] = m.bandW;
-    const up = u/Math.max(c,1), lo = l/Math.max(c,1), d = up - lo;
-    if (d > 0.13) return "상";
-    if (d < 0.07) return "하";
-    return "중";
+  /* 삼정은 세 마디의 길이로 봅니다. 밝기로 보면 세 마디가 거의 같아
+     아무 뜻도 못 담고, 폭으로 보면 이마가 늘 이깁니다.
+     그 얼굴 안에서가 아니라 사람들 사이에서 견주어야 갈립니다. */
+  const F = m.F;
+  if (F && F.sam){
+    const z = [ (F.sam[0]-0.328)/0.021, (F.sam[1]-0.355)/0.035, (F.sam[2]-0.310)/0.046 ];
+    const i = z.indexOf(Math.max.apply(null, z));
+    return ["상","중","하"][i];
   }
   const [a,b,c] = m.sam;
   const mx = Math.max(a,b,c);
@@ -212,9 +210,20 @@ function divine(m, age, sex){
   /* 좌우 기울기 — 일월각.
      m.left 는 사진의 왼쪽 반입니다. 사진의 왼쪽은 마주 선 사람의 오른쪽이고요.
      낮은 쪽을 찾아 사진 기준과 몸 기준을 함께 들고 다닙니다. */
-  const tilt = (m.left - m.right) / Math.max(m.meanL,1);
-  const gyeol = Math.abs(tilt) < 0.022 ? null
-              : (tilt < 0 ? "왼쪽" : "오른쪽");          /* 어두운 쪽이 낮은 쪽 */
+  /* 밝기로 보면 조명이 한쪽에서 오는 것까지 기울기로 읽힙니다.
+     그건 얼굴 이야기가 아니라 전등 이야기라, 자리의 높낮이로 봅니다. */
+  const Fm = m.F;
+  let tilt = 0;
+  if (Fm && Fm.raw){
+    const d1 = (Fm.pts.미상왼.y - Fm.pts.미상오른.y) / Fm.FW;      /* 눈썹 높낮이 */
+    const d2 = (Fm.pts.눈위왼.y - Fm.pts.눈위오른.y) / Fm.FW;      /* 눈 높낮이 */
+    const d3 = (Fm.pts.입꼬리왼.y - Fm.pts.입꼬리오른.y) / Fm.FW;  /* 입꼬리 높낮이 */
+    tilt = (d1*0.45 + d2*0.35 + d3*0.20);
+  } else {
+    tilt = (m.left - m.right) / Math.max(m.meanL,1) * 0.1;
+  }
+  const gyeol = Math.abs(tilt) < 0.012 ? null
+              : (tilt > 0 ? "왼쪽" : "오른쪽");          /* 아래로 처진 쪽이 낮은 쪽 */
   const gyeolMom = gyeol ? (gyeol==="왼쪽" ? "오른" : "왼") : null;
   /* 남좌여우 — 남자는 왼쪽, 여자는 오른쪽을 본인 자리로 봅니다 (몸 기준) */
   const ju = (sex==="남") ? "왼" : "오른";

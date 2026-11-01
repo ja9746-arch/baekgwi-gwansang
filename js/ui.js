@@ -73,12 +73,11 @@ function bindMirror(){
   take(file); take(shot);
   pick.addEventListener("click", ()=> file.click());
   $("#snap").addEventListener("click", ()=> shot.click());
+  /* 거울을 눌러도 사진첩이 열립니다 — 거기를 먼저 누르시니까요 */
+  hole.addEventListener("click", ()=> file.click());
 
   async function look(){
     note.textContent = "";
-    hole.innerHTML = "";
-    const c = document.createElement("canvas");
-    hole.appendChild(c);
     go("s-read");
     await read();
   }
@@ -95,17 +94,18 @@ async function read(){
   catch(e){ r = { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
 
   if (!r.ok){
-    const tip = r.tilt ? (poseCheck(r.F) || {}).tip : "";
     step(r.err, 100);
     $("#read-again").hidden = false;
     $("#read-tip").textContent = r.net
       ? "그물이 끊겼습니다. 잠시 뒤에 다시 해 주세요."
-      : (tip || "얼굴 전체가 들어오게, 밝은 데서 정면으로 한 장 비춰 주세요.");
+      : (r.err.indexOf("못 찾") >= 0
+          ? "얼굴 전체가 들어오게, 밝은 데서 한 장만 다시 주세요. 모자나 선글라스는 벗으시고요."
+          : "조금 더 밝은 데서 한 장만 다시 주세요.");
     if (r.canvas) drawFace(cv, r.canvas, r.F, true);
     return;
   }
 
-  ST.F = r.F; ST.m = r.m;
+  ST.F = r.F; ST.m = r.m; ST.note = r.note; ST.word = r.word;
   drawFace(cv, r.canvas, r.F, false);
 
   step("삼정과 오악을 재고 있습니다…", 34);
@@ -228,6 +228,7 @@ function clueChip(e){
 function renderFree(){
   const R = ST.R, C = ST.C;
   $("#free-count").textContent = C.count;
+  const w = $("#read-word"); if (w) w.textContent = ST.word || "";
   $("#free-head").innerHTML =
     `자네 얼굴은 <b>${esc(R.hyeong)}형(${esc(OH[R.hyeong].ja)})</b>의 그릇에 ` +
     `<b>${esc(R.gisaek)}기(${esc(GISAEK[R.gisaek].ja)})</b>가 도는 얼굴일세. ` +
