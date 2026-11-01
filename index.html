@@ -1027,7 +1027,7 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   text-shadow:0 1px 6px rgba(0,0,0,.95)}
 /* 들머리에서는 그림이 띠 밑까지 올라옵니다 */
 [data-scene="s-intro"] .kv{margin-top:calc((var(--pad) + 46px) * -1)}
-[data-scene="s-intro"] .kv img{object-position:50% 24%}
+[data-scene="s-intro"] .kv > img{object-position:50% 24%}
 .hint.small{font-size:var(--fs-label);color:var(--jae-dim);margin-top:10px;text-align:center;line-height:1.7}
 
 /* ───────── 바탕 ─────────
@@ -1093,7 +1093,7 @@ html[data-scene="s-cheop"] body::before{
    가라앉은 자리에서 시작합니다. */
 .kv{position:relative;margin:calc(var(--pad) * -1) calc(var(--pad) * -1) 0;
   aspect-ratio:4/5;max-height:62vh;overflow:hidden}
-.kv img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.kv > img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
 .kvveil{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(10,5,7,.7) 0%,rgba(10,5,7,.1) 22%,
              rgba(10,5,7,0) 40%,rgba(10,5,7,.42) 60%,rgba(10,5,7,.88) 80%,
@@ -1815,7 +1815,7 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 
 /* ── 첫 화면 — 글을 그림 위에 얹습니다 ─────────────── */
 .kv.tall{position:relative;margin:0;width:100%;border-radius:0;overflow:hidden}
-.kv.tall img{display:block;width:100%;aspect-ratio:3/4.1;object-fit:cover;object-position:50% 24%}
+.kv.tall > img{display:block;width:100%;aspect-ratio:3/4.1;object-fit:cover;object-position:50% 24%}
 .kv.tall .kvveil{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(8,4,6,.72) 0%,rgba(8,4,6,.05) 26%,
     rgba(8,4,6,.18) 44%,rgba(8,4,6,.82) 76%,rgba(8,4,6,.99) 100%)}
@@ -2309,6 +2309,70 @@ body{letter-spacing:-.004em}
 .sheetbox img{display:block;width:100%;height:auto;border-radius:3px;
   border:1px solid rgba(201,162,74,.34)}
 
+/* ── 첫 화면 다시 짜기 ────────────────────────────
+   이름이 없는 집 앞에서 손님이 멈춰 설 까닭이 없습니다.
+   붓글씨 이름을 머리그림 안에 세우고, 받는 것과 복채를
+   한눈에 보이게 하고, 맨 아래에 다시 들어가는 문을 둡니다. */
+.kv.tall > img{aspect-ratio:3/3.62;object-position:50% 15%}
+/* 두루마리 차례의 숫자가 한지에 묻히던 것 */
+.ten .jr .jn{opacity:1;font-weight:800;color:#7a4d16;font-size:var(--fs-h2);width:1.15em}
+.ten .jr.shut .jn{color:#cdb07d}
+.kvtext.on{bottom:22px;padding:0 22px}
+.logo{margin:0 0 11px;line-height:0}
+.logo img{display:block;width:min(70%,268px);height:auto;margin:0 auto;
+  filter:drop-shadow(0 3px 14px rgba(0,0,0,.85)) drop-shadow(0 0 26px rgba(176,44,32,.4))}
+.kvsub{margin:0 0 14px;font-family:var(--serif);font-size:var(--fs-label);
+  letter-spacing:.3em;color:#e6c98f;text-shadow:0 1px 8px #000,0 0 18px rgba(0,0,0,.95)}
+.kvsub::after{content:"";display:block;width:52px;height:1px;margin:11px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.7),transparent)}
+.kvtext.on .gtitle{margin:0;font-family:var(--serif);font-weight:700;
+  font-size:clamp(17px,4.6vw,20px);line-height:1.72;color:#ece0cb;letter-spacing:-.005em;
+  word-break:keep-all;text-shadow:0 2px 20px rgba(0,0,0,.95),0 1px 3px rgba(0,0,0,.95)}
+.kvtext.on .gtitle em{font-style:normal;color:#ffd98f;font-weight:700}
+.kvtext::after{display:none}
+
+/* 세 걸음 */
+.howto{list-style:none;margin:18px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(201,162,74,.22);border:1px solid rgba(201,162,74,.22);border-radius:3px;
+  overflow:hidden}
+.howto li{display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:14px 6px 13px;background:rgba(16,8,10,.86)}
+.howto li b{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid rgba(201,162,74,.6);font-family:var(--serif);font-weight:700;
+  font-size:var(--fs-label);color:#e8c67e}
+.howto li span{font-size:var(--fs-label);line-height:1.6;text-align:center;
+  color:#bfae93;word-break:keep-all}
+
+/* 열 장 차례 — 머리글이 왼쪽으로 삐져나가던 것 */
+.tenwrap{text-align:center}
+.tenwrap .eyebrow{display:block;width:-moz-fit-content;width:fit-content;
+  margin-left:auto;margin-right:auto}
+.tenwrap .ten,.tenwrap .tenfoot{text-align:left}
+.tenwrap .tenfoot{text-align:center}
+/* 잠긴 첩은 잠긴 티가 나야 합니다 */
+.ten .jr.juru.shut{filter:saturate(.72) brightness(.92)}
+.ten .jr.juru.shut::before{content:"";position:absolute;inset:0;z-index:0;
+  background:rgba(14,7,9,.3);pointer-events:none}
+.ten .jr.juru.shut > *{position:relative;z-index:1}
+.jr.shut b{color:#e8dcc6}
+.jr.shut .js{color:#b7a78e}
+
+/* 맨 아래 — 복채와 다시 들어가는 문 */
+.last{margin:30px 0 0;padding:24px 17px 20px;border-radius:3px;text-align:center;
+  border:1px solid rgba(201,162,74,.3);
+  background:linear-gradient(rgba(22,11,13,.8),rgba(10,5,7,.9)),
+             url("img/ui/hanji-lotus.webp") center/152px auto repeat}
+.last .eyebrow{display:block;width:-moz-fit-content;width:fit-content;margin:0 auto 16px}
+.last .lw{margin:0;display:flex;flex-direction:column;align-items:center;gap:7px}
+.last .lw b{font-family:var(--serif);font-weight:800;
+  font-size:clamp(28px,7.6vw,36px);line-height:1;color:#f4dfae;
+  text-shadow:0 2px 14px rgba(0,0,0,.7)}
+.last .lw span{font-size:var(--fs-sm);line-height:1.7;color:#bcab91;word-break:keep-all}
+.last .lno{margin:14px 0 0;font-size:var(--fs-sm);line-height:1.8;color:#9b8c76;
+  word-break:keep-all}
+.last .btn{margin-top:18px}
+
 </style>
 </head>
 <body>
@@ -2329,13 +2393,20 @@ body{letter-spacing:-.004em}
     <img src="img/seer/face-fierce.webp" alt="" loading="eager">
     <div class="kvveil"></div>
     <div class="kvtext on">
-      <p class="eyebrow">원안법사의 비밀 관상소</p>
-      <h1 class="gtitle"><span class="sm">얼굴에는</span>자네가 살아온 <em>흔적</em>이<br><span class="sm">남아 있지.</span></h1>
+      <h1 class="logo"><img src="img/title.webp" alt="백귀관상"></h1>
+      <p class="kvsub">원안법사의 비밀 관상소</p>
+      <p class="gtitle">얼굴에는 자네가 살아온 <em>흔적</em>이 남아 있지.</p>
     </div>
   </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
   <p class="hint small">얼굴 사진 한 장이면 됩니다 · 사진은 기기 밖으로 나가지 않습니다</p>
+
+  <ul class="howto">
+    <li><b>1</b><span>얼굴 사진<br>한 장이면</span></li>
+    <li><b>2</b><span>백 가지 자리를<br>자로 잽니다</span></li>
+    <li><b>3</b><span>관상첩 열 장이<br>나옵니다</span></li>
+  </ul>
 
   <div class="say">
     <span class="por"><img src="img/seer/face-mirror.webp" alt=""></span>
@@ -2370,7 +2441,12 @@ body{letter-spacing:-.004em}
     <p class="tenfoot">앞의 두 장은 복채 없이 열어 드립니다. 읽어 보시고 정하시면 됩니다.</p>
   </div>
 
-  <div class="footbank"><img src="img/bg/b1.webp" alt="" loading="lazy"></div>
+  <div class="last">
+    <p class="eyebrow">복채</p>
+    <p class="lw"><b id="intro-won">—</b><span>한 번만 내시면 열 장이 모두 열립니다</span></p>
+    <p class="lno">먼저 두 장을 읽어 보시고 정하셔도 늦지 않습니다.</p>
+    <button class="btn hot" id="go-ask2">얼굴 보이고 두 장 먼저 읽기 <span class="ar">→</span></button>
+  </div>
 </section>
 
 <!-- ── 나이와 성별 ─────────────────────────────── -->

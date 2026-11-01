@@ -91,7 +91,9 @@ function bindPaybar(){
 }
 
 function bindIntro(){
-  $("#go-ask").addEventListener("click", ()=> go("s-ask"));
+  $$("#go-ask, #go-ask2").forEach(b=> b.addEventListener("click", ()=> go("s-ask")));
+  /* 첫 화면에도 복채를 적습니다 — 끝까지 내려와서야 값을 묻게 두지 않습니다 */
+  const w = $("#intro-won"); if (w) w.textContent = won(PRICE.now);
 }
 
 /* ── 나이와 성별 ────────────────────────────────
