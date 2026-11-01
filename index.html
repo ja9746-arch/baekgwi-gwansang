@@ -22,7 +22,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 
 :root{
@@ -47,9 +49,13 @@
   --geum:#c9a24a; --geum-hot:#e8c377; --geum-dim:#9b7e3c;
   --jae:#ece0d2; --jae-dim:#a39486;
   --line:rgba(201,162,74,.26);
-  /* 백귀사주와 같은 글씨 — 궁서체, 없으면 송명 */
-  --serif:Gungsuh,GungsuhChe,"궁서체","궁서","Song Myung",Batang,serif;
-  --sans:Gungsuh,GungsuhChe,"궁서체","궁서","Song Myung",Batang,serif;
+  /* 시안과 같은 짜임 — 제목은 붓결 있는 명조, 본문은 고딕.
+     본문까지 궁서체로 찍으면 열네 자 글씨가 가늘어 읽히지 않고,
+     안드로이드에는 궁서체가 아예 없어 엉뚱한 글씨로 떨어집니다. */
+  --serif:"Nanum Myeongjo","Song Myung",Gungsuh,Batang,serif;
+  --sans:"Pretendard Variable",Pretendard,"Noto Sans KR",
+         -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",
+         "Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
@@ -71,13 +77,13 @@ html,body{height:100%;margin:0}
    여백이 열아홉 가지로 제각각이라 화면마다 결이 달랐습니다. */
 :root{
   /* 글자 — 1.25 비율 */
-  --fs-display:32px; --lh-display:1.26;
-  --fs-h1:24px;      --lh-h1:1.42;
-  --fs-h2:19px;      --lh-h2:1.5;
-  --fs-h3:16px;      --lh-h3:1.55;
-  --fs-body:14px;    --lh-body:1.85;
-  --fs-sm:12.5px;    --lh-sm:1.8;
-  --fs-label:11.5px; --lh-label:1.45;
+  --fs-display:34px; --lh-display:1.26;
+  --fs-h1:25px;      --lh-h1:1.42;
+  --fs-h2:20px;      --lh-h2:1.48;
+  --fs-h3:16.5px;    --lh-h3:1.55;
+  --fs-body:15.2px;  --lh-body:1.82;
+  --fs-sm:13.6px;    --lh-sm:1.78;
+  --fs-label:12.4px; --lh-label:1.5;
   /* 여백 — 4의 배수 */
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
   /* 마디와 마디 사이 */
@@ -2005,6 +2011,39 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .band i{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(9,5,6,.55) 0%,rgba(9,5,6,.12) 34%,
     rgba(9,5,6,.62) 82%,rgba(9,5,6,.99) 100%)}
+
+
+/* ══════════════════════════════════════════════════
+   글씨 — 시안과 같은 짜임
+   제목은 붓결 있는 명조를 굵게, 본문은 고딕을 얇게.
+   본문까지 명조로 찍으면 열다섯 자 글씨가 가늘어 읽히지 않습니다.
+   ══════════════════════════════════════════════════ */
+.gtitle{font-weight:800;letter-spacing:-.012em}
+.gtitle em{font-weight:800}
+h2.t,.sect,.sect.big,.sect.mid{font-weight:800;letter-spacing:-.01em}
+.cpt h3{font-weight:800;letter-spacing:-.01em}
+.paybox h3,.sealbox h3{font-weight:800}
+.sealgate b{font-weight:800}
+.vcell b{font-weight:800}
+.vhead span{font-weight:700}
+.jr b{font-weight:800}
+.g12 b{font-weight:700}
+.cpb h4,.lead h4,.cpb h5{font-weight:800}
+.btn{font-weight:700;letter-spacing:0}
+.btn.hot{font-weight:800}
+.veilsay b{font-weight:700}
+.veilsay .vopen{font-weight:700}
+.mok .mt,.evid .gt,.evid .t{font-weight:700}
+.pcut figcaption b{font-weight:700}
+.jari li b,.cls li b{font-weight:700}
+.say .nm{font-weight:700}
+.price .b,.paybox .price .b{font-weight:800}
+.seg .ko{font-weight:700}
+/* 고딕 본문은 자간을 조금 좁혀야 글줄이 고릅니다 */
+body{letter-spacing:-.004em}
+.cpb p,.lead p,.vsay,.hint,.sectsub{letter-spacing:-.006em}
+/* 한자와 숫자는 명조로 둡니다 — 고딕 한자는 결이 깨집니다 */
+.vcell b i,.cpt .no,.jr .jn,.pcut figcaption b i{font-family:var(--serif)}
 
 </style>
 </head>
