@@ -139,6 +139,8 @@ async function read(){
   step("백 가지 가운데 자네 얼굴의 것을 고르고 있습니다…", 84);
   await sleep(420);
   ST.cheop = makeCheop(ST.R, ST.C, ST.age, ST.sex);
+  /* 지난번에 오셨다면 그때와 견주어 둡니다 */
+  try { ST.prev = compareReading(loadReading(), ST.R); } catch(e){ ST.prev = null; }
   saveReading(ST.R);
 
   step(`자네 얼굴에서 ${ST.C.count} 자리가 섰네.`, 100);
@@ -304,6 +306,26 @@ function renderFree(){
       <b>${esc(c.title)}</b>
       <i class="rlock" aria-hidden="true"></i>
     </li>`).join("");
+
+  /* 지난번과 견주기 */
+  const pv = $("#free-prev");
+  if (pv){
+    const P = ST.prev;
+    if (P && P.days >= 1 && (P.better.length || P.worse.length)){
+      const 날 = P.days < 30 ? `${P.days}일 만에`
+               : P.days < 365 ? `${Math.round(P.days/30)}달 만에`
+               : `${Math.round(P.days/365)}해 만에`;
+      pv.hidden = false;
+      pv.innerHTML = `<span class="gt">지난번과 견주면</span>` +
+        `<p class="agoline">${esc(날)} 다시 오셨습니다. 얼굴은 해마다 달라집니다.</p>` +
+        (P.better.length ? `<ul class="cmp up">` + P.better.map(x=>
+          `<li><b>${esc(x.n)}</b><span>${["트임","반반","막힘"][x.from]} → ${["트임","반반","막힘"][x.to]}</span></li>`).join("") + `</ul>` : "") +
+        (P.worse.length ? `<ul class="cmp down">` + P.worse.map(x=>
+          `<li><b>${esc(x.n)}</b><span>${["트임","반반","막힘"][x.from]} → ${["트임","반반","막힘"][x.to]}</span></li>`).join("") + `</ul>` : "") +
+        (P.gisaekMoved ? `<p class="agoline">도는 기운이 ${esc(P.prevGisaek)}기에서 ${esc(ST.R.gisaek)}기로 바뀌었습니다.</p>` : "") +
+        (P.bossMoved ? `<p class="agoline">올해를 쥐는 자리도 ${esc(P.prevBoss.n||P.prevBoss.k)}에서 ${esc(ST.R.boss.g.n)}으로 넘어갔습니다.</p>` : "");
+    } else pv.hidden = true;
+  }
 
   $("#free-tease").textContent =
     ST.R.blocked >= 3

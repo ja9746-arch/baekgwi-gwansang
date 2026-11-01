@@ -1002,20 +1002,29 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 /* ───────── 바탕 ─────────
    천불벽이 글과 싸웁니다. 거의 먹빛까지 가라앉히고,
    글이 빽빽한 화면은 아예 덮습니다. */
+/* 바탕 그림 — 보내 주신 여섯 장을 화면마다 나눠 깝니다.
+   천불벽 타일보다 이쪽이 백귀관상의 결에 맞습니다. */
+:root{--scene:url("img/bg/b6.webp")}
+html[data-scene="s-ask"]{--scene:url("img/bg/b2.webp")}
+html[data-scene="s-mirror"]{--scene:url("img/bg/b4.webp")}
+html[data-scene="s-read"]{--scene:url("img/bg/b5.webp")}
+html[data-scene="s-free"]{--scene:url("img/bg/b5.webp")}
+html[data-scene="s-pay"]{--scene:url("img/bg/b1.webp")}
+html[data-scene="s-cheop"]{--scene:url("img/bg/b3.webp")}
+html[data-scene="s-end"]{--scene:url("img/bg/b6.webp")}
 body::before{
   background:
     radial-gradient(ellipse 120% 48% at 50% 0%,rgba(142,62,22,.18),rgba(10,5,7,0) 54%),
-    linear-gradient(180deg,rgba(10,5,7,.90) 0%,rgba(10,5,7,.88) 42%,
-                    rgba(10,5,7,.92) 78%,rgba(10,5,7,.96) 100%),
-    var(--scene) center top/440px 604px repeat,
+    linear-gradient(180deg,rgba(10,5,7,.88) 0%,rgba(10,5,7,.86) 42%,
+                    rgba(10,5,7,.90) 78%,rgba(10,5,7,.95) 100%),
+    var(--scene) center top/cover no-repeat,
     var(--mook) !important}
 body::after{opacity:.16}
+/* 글이 빽빽한 화면은 한 겹 더 덮어 바탕이 글을 이기지 않게 합니다 */
 html[data-scene="s-free"] body::before,
-html[data-scene="s-cheop"] body::before,
-html[data-scene="s-pay"] body::before,
-html[data-scene="s-read"] body::before{
-  background:linear-gradient(180deg,rgba(9,5,6,.96),rgba(9,5,6,.985)),
-    var(--scene) center top/440px 604px repeat, var(--mook) !important}
+html[data-scene="s-cheop"] body::before{
+  background:linear-gradient(180deg,rgba(9,5,6,.945),rgba(9,5,6,.975)),
+    var(--scene) center top/cover no-repeat, var(--mook) !important}
 #stage{z-index:1}
 
 /* ───────── 머리말과 제목 ───────── */
@@ -1358,6 +1367,54 @@ html[data-scene="s-read"] body::before{
   .sealbox img{aspect-ratio:21/9}
   .cph img{aspect-ratio:21/8}
 }
+
+/* 지난번과 견주기 */
+#free-prev .agoline{margin:0 0 10px;font-size:var(--fs-sm);color:#c0b2a0;line-height:1.8}
+.cmp{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px}
+.cmp li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:9px 11px;background:rgba(8,4,5,.6);border-left:2px solid rgba(201,162,74,.5)}
+.cmp.up li{border-left-color:rgba(201,162,74,.9)}
+.cmp.down li{border-left-color:rgba(192,54,42,.85)}
+.cmp li b{font-family:var(--serif);font-size:var(--fs-sm);color:#f0dcb8}
+.cmp.down li b{color:#f0c3b2}
+.cmp li span{font-size:var(--fs-label);color:var(--jae-dim);white-space:nowrap}
+
+/* ───────── 원안법사가 화면에 함께 섭니다 ─────────
+   투명 바탕 전신 여섯 자세를 자리마다 나눠 씁니다. 글을 가리지 않게
+   옆으로 비키고, 아래를 흐려 바닥에 스미게 둡니다. */
+.gmwrap{position:relative;margin-top:22px}
+.seerside{position:absolute;left:calc(var(--pad) * -1 - 6px);bottom:-10px;width:40%;max-width:150px;
+  pointer-events:none;z-index:1;opacity:.95;
+  -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 99%);
+  mask-image:linear-gradient(180deg,#000 72%,transparent 99%);
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.65))}
+.seerside.look{left:auto;right:calc(var(--pad) * -1 - 6px);transform:scaleX(-1)}
+.gmwrap .gmir{position:relative;z-index:2}
+@media (max-width:359px){ .seerside{display:none} }
+
+.seerask{display:block;width:44%;max-width:160px;margin:2px auto -14px;
+  -webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);
+  mask-image:linear-gradient(180deg,#000 74%,transparent 99%);
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.6))}
+
+.seerpay{display:block;width:52%;max-width:180px;margin:18px auto -8px;
+  -webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);
+  mask-image:linear-gradient(180deg,#000 74%,transparent 99%);
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.6))}
+
+.endwrap{position:relative;margin:10px 0 0;padding-top:8px}
+.endwrap::before{content:"";position:absolute;left:50%;top:18%;transform:translateX(-50%);
+  width:72%;aspect-ratio:1/1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(150,70,26,.22),rgba(10,5,7,0) 68%)}
+.seerend{display:block;width:60%;max-width:210px;margin:0 auto;position:relative;z-index:2;
+  -webkit-mask-image:linear-gradient(180deg,#000 76%,transparent 99%);
+  mask-image:linear-gradient(180deg,#000 76%,transparent 99%);
+  filter:drop-shadow(0 10px 28px rgba(0,0,0,.65))}
+
+.rollart{display:block;width:100%;aspect-ratio:16/7;object-fit:cover;object-position:50% 36%;
+  margin-bottom:14px;border:1px solid var(--card);border-radius:3px}
+
+.seerask.small{width:34%;max-width:118px;margin:2px auto -10px}
 </style>
 </head>
 <body>
@@ -1393,6 +1450,7 @@ html[data-scene="s-read"] body::before{
 
 <!-- ── 나이와 성별 ─────────────────────────────── -->
 <section id="s-ask" class="screen" hidden>
+  <img class="seerask" src="img/seer/pose-1.webp" alt="" loading="lazy">
   <p class="eyebrow">먼저 여쭙겠네</p>
   <h2 class="sect">자네 나이와 성별을 알려 주시게.</h2>
   <p class="sectsub">얼굴은 나이마다 맡은 자리가 다릅니다. 유년운기부위(流年運氣部位)를 보려면 나이가 있어야 합니다.</p>
@@ -1415,10 +1473,12 @@ html[data-scene="s-read"] body::before{
 
 <!-- ── 얼굴 비추기 ─────────────────────────────── -->
 <section id="s-mirror" class="screen" hidden>
+  <img class="seerask" src="img/seer/pose-3.webp" alt="" loading="lazy">
   <p class="eyebrow">거울 앞에</p>
   <h2 class="sect">자네의 얼굴을 비춰 보시게나.</h2>
   <p class="sectsub">거울을 누르면 사진첩이 열립니다.</p>
 
+  <div class="gmwrap">
   <div class="gmir">
     <div class="gmhole" id="hole" role="button" tabindex="0">
       <div class="gmguide" aria-hidden="true"></div>
@@ -1431,6 +1491,7 @@ html[data-scene="s-read"] body::before{
       <p class="gmph">얼굴 사진 올리기</p>
       <p class="gmpv">정면, 밝은 사진이 가장 좋습니다</p>
     </div>
+  </div>
   </div>
   <p class="hint" id="mirror-note"></p>
 
@@ -1455,10 +1516,13 @@ html[data-scene="s-read"] body::before{
 
 <!-- ── 얼굴 읽기 ───────────────────────────────── -->
 <section id="s-read" class="screen" hidden>
+  <img class="seerask small" src="img/seer/pose-4.webp" alt="" loading="lazy">
   <p class="eyebrow">이제,</p>
   <h2 class="sect">자네의 얼굴을 읽어보겠네.</h2>
+  <div class="gmwrap">
   <div class="gmir live">
     <div class="gmhole"><canvas id="readcv"></canvas></div>
+  </div>
   </div>
   <div class="gbar"><i id="readbar"></i></div>
   <p class="hint" id="read-say">얼굴의 기운을 살피는 중입니다…</p>
@@ -1479,9 +1543,12 @@ html[data-scene="s-read"] body::before{
     <p class="more" id="free-clue-more"></p>
   </div>
 
+  <div class="evid" id="free-prev" hidden></div>
+
   <div id="free-cheop"></div>
 
   <div class="rolls">
+    <img class="rollart" src="img/obj/index.webp" alt="" loading="lazy">
     <p class="rollhead">아직 봉인된 관상첩</p>
     <ul id="free-rolls"></ul>
     <p class="rollfoot">아직 열지 않은 관상첩에는 더 깊은 이야기가 기다리고 있습니다.</p>
@@ -1516,6 +1583,7 @@ html[data-scene="s-read"] body::before{
     <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
     <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
   </ul>
+  <img class="seerpay" src="img/seer/pose-5.webp" alt="" loading="lazy">
   <button class="btn hot" id="pay-now">복채 내고 전부 열기 <span class="ar">→</span></button>
   <p class="hint small">열람을 시작하면 환불이 제한됩니다. 결제하시면 이용약관과 환불규정에 동의한 것으로 봅니다.</p>
   <button class="btn ghost" data-go="s-free">돌아가기</button>
@@ -1531,7 +1599,9 @@ html[data-scene="s-read"] body::before{
 
 <!-- ── 마무리 ──────────────────────────────────── -->
 <section id="s-end" class="screen" hidden>
-  <div class="kv sm"><img src="img/scene/s2.webp" alt="" loading="lazy"><div class="kvveil"></div></div>
+  <div class="endwrap">
+    <img class="seerend" src="img/seer/pose-6.webp" alt="" loading="lazy">
+  </div>
   <h2 class="sect">자네의 관상첩이 완성되었네.</h2>
   <p class="sectsub">얼굴에 새겨진 이야기를 모두 읽었습니다. 얼굴은 해마다 달라집니다. 반년쯤 뒤에 다시 오시면 어느 자리가 달라졌는지 짚어 드리지요.</p>
   <div class="links">
