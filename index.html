@@ -1899,6 +1899,21 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   background:rgba(8,4,6,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
   text-shadow:0 1px 4px rgba(0,0,0,.9)}
 
+
+/* ── 눈여겨볼 자리 — 손님 사진에서 오려 온 넷 ───── */
+.parts .prow{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:13px}
+.pcut{margin:0;border-radius:2px;overflow:hidden;
+  background:rgba(8,4,5,.6);border:1px solid rgba(201,162,74,.22)}
+.pcut canvas{display:block;width:100%;height:auto;background:#120a0b}
+.pcut figcaption{padding:9px 10px 10px}
+.pcut figcaption b{display:flex;align-items:baseline;gap:6px;
+  font-family:var(--serif);font-weight:400;font-size:var(--fs-sm);color:#e7cf9c}
+.pcut figcaption b i{font-style:normal;font-size:var(--fs-label);color:var(--geum-dim)}
+.pcut figcaption span{display:block;margin-top:4px;font-size:var(--fs-label);
+  line-height:1.6;color:#cbbda8;word-break:keep-all}
+.parts .pfoot{margin:12px 0 0;font-size:var(--fs-label);color:var(--jae-dim);line-height:1.7}
+@media (min-width:520px){ .parts .prow{grid-template-columns:repeat(4,1fr)} }
+
 </style>
 </head>
 <body>
@@ -2077,6 +2092,11 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
     <span class="t">자네 얼굴에서 실제로 잡힌 자리</span>
     <ul class="cls" id="free-clues"></ul>
     <p class="more" id="free-clue-more"></p>
+  </div>
+
+  <div class="evid parts" id="free-parts" hidden></div>
+
+  <div style="display:none">
   </div>
 
   <div class="evid" id="free-prev" hidden></div>

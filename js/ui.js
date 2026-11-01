@@ -362,6 +362,79 @@ function 글월(t){
     .map(x=>`<p>${esc(x)}</p>`).join("");
 }
 
+/* ── 얼굴에서 그 자리만 오려 내기 ────────────────
+   글로 "눈꼬리가 올라갔습니다" 해 봐야 손님은 제 눈을 못 봅니다.
+   점 468개를 이미 찍어 두었으니, 그 자리를 그대로 오려 보여 드립니다. */
+const PART = {
+  /* 얼굴의 자리는 가로가 깁니다. 네모로 맞추면 위아래가 남아 머리카락이 찹니다. */
+  이마: { idx:[103,332,10,107,336], pad:[0.08,0.16,0.08,0.10], nm:"이마", ja:"額",
+         bu:["이마","삼정"] },
+  눈:   { idx:[33,263,159,386,145,374,107,336], pad:[0.10,0.22,0.10,0.22], nm:"눈과 눈썹", ja:"眼",
+         bu:["눈","눈썹"] },
+  코:   { idx:[168,1,98,327,48,278], pad:[0.34,0.10,0.34,0.14], nm:"코", ja:"鼻",
+         bu:["코","광대"] },
+  입:   { idx:[61,291,0,17,2,18], pad:[0.30,0.26,0.30,0.30], nm:"입과 턱", ja:"口",
+         bu:["입","인중","턱"] }
+};
+const PART_AR = 4/3;
+function cutPart(src, F, spec, px){
+  const cv = document.createElement("canvas");
+  const S = px || 260;
+  cv.width = S; cv.height = Math.round(S / PART_AR);
+  const g = cv.getContext("2d");
+  g.fillStyle = "#120a0b"; g.fillRect(0,0,cv.width,cv.height);
+  if (!F || !F.rawAll) return cv;
+  /* 점은 읽기용 720짜리 그림에 찍혀 있고, 여기 건네받은 사진은 본디 크기입니다.
+     자가 다르니 맞춰 두지 않으면 엉뚱한 데가 잘립니다. */
+  const kx = (F.W ? src.width / F.W : 1), ky = (F.H ? src.height / F.H : 1);
+  const xs = spec.idx.map(i=>F.rawAll[i].x * kx), ys = spec.idx.map(i=>F.rawAll[i].y * ky);
+  let x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
+  let y0=Math.min.apply(null,ys), y1=Math.max.apply(null,ys);
+  const w0=x1-x0, h0=y1-y0;
+  const [pl,pt_,pr,pb] = spec.pad;
+  x0 -= w0*pl; x1 += w0*pr; y0 -= h0*pt_; y1 += h0*pb;
+  /* 넉 장이 같은 꼴이어야 나란히 놓았을 때 자리가 비교됩니다 */
+  let w=x1-x0, h=y1-y0;
+  const cx=(x0+x1)/2, cy=(y0+y1)/2 + (spec.shift ? Math.max(w,h)*spec.shift : 0);
+  if (w / h < PART_AR) w = h * PART_AR; else h = w / PART_AR;
+  x0 = cx - w/2; y0 = cy - h/2;
+  const k = S/w;
+  g.save(); g.translate(-x0*k, -y0*k); g.scale(k,k);
+  try { g.drawImage(src, 0, 0); } catch(e){}
+  g.restore();
+  return cv;
+}
+/* 그 자리에서 실제로 선 단서 한 줄을 붙입니다 */
+function partSay(C, spec){
+  for (const b of spec.bu){
+    const hit = (C.byBu && C.byBu[b]) || [];
+    if (hit.length) return hit[0].c.s;
+  }
+  return "";
+}
+function renderParts(box, src, F, C){
+  if (!box) return;
+  if (!src || !F || !F.rawAll){ box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = `<span class="gt">눈여겨볼 자리</span><div class="prow"></div>` +
+    `<p class="pfoot">자네 사진에서 그 자리만 오려 왔습니다. 사진은 기기 밖으로 나가지 않습니다.</p>`;
+  const row = box.querySelector(".prow");
+  for (const k of ["이마","눈","코","입"]){
+    const spec = PART[k];
+    const fig = document.createElement("figure");
+    fig.className = "pcut";
+    const cv = cutPart(src, F, spec);
+    cv.setAttribute("aria-hidden","true");
+    fig.appendChild(cv);
+    const cap = document.createElement("figcaption");
+    const say = partSay(C, spec);
+    cap.innerHTML = `<b>${esc(spec.nm)}<i>${esc(spec.ja)}</i></b>` +
+                    (say ? `<span>${esc(say)}</span>` : `<span>크게 어긋난 데가 없습니다</span>`);
+    fig.appendChild(cap);
+    row.appendChild(fig);
+  }
+}
+
 /* ── 단서 한 줄 ───────────────────────────────── */
 function clueChip(e){
   const g = e.g > 0 ? "ok" : (e.g < 0 ? "bad" : "mid");
@@ -383,6 +456,9 @@ function renderFree(){
     n:h.c.n, s:h.c.s, g:h.c.g
   })).join("");
   $("#free-clue-more").textContent = C.count > 8 ? `그 밖에 ${C.count - 8} 자리가 더 섰습니다.` : "";
+
+  /* 손님 얼굴에서 네 자리를 오려 보여 드립니다 */
+  renderParts($("#free-parts"), ST.img, ST.F, C);
 
   /* 첩 목록 — 두루마리로. 앞의 둘만 열고 나머지는 봉인합니다. */
   const list = sealCheop(ST.cheop);
