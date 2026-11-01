@@ -1350,6 +1350,14 @@ html[data-scene="s-read"] body::before{
   .two-btn{grid-template-columns:1fr 1fr}
   .kv{max-height:none;aspect-ratio:3/2}
 }
+/* 눕혀 들었을 때 — 키 그림이 화면을 다 먹지 않게 */
+@media (orientation:landscape) and (max-height:520px){
+  .kv{aspect-ratio:auto;height:44vh;max-height:none}
+  .kvtext{margin-top:-46px}
+  .gmir{max-width:min(190px,40vw)}
+  .sealbox img{aspect-ratio:21/9}
+  .cph img{aspect-ratio:21/8}
+}
 </style>
 </head>
 <body>

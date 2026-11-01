@@ -92,16 +92,55 @@ async function wakeMesh(){
     if (typeof FaceMesh === "undefined") await loadScript(base + "face_mesh.js");
     const fm = new FaceMesh({ locateFile: (f)=> base + f });
     fm.setOptions({
+      /* 사진 한 장을 한 장으로만 봅니다.
+         이 자리를 비워 두면 기계가 앞서 본 얼굴을 기억해 다음 얼굴을 쫓습니다.
+         그러면 같은 사진을 두 번 비춰도 수가 달라져, 손님이 바로 알아챕니다. */
       maxNumFaces: 1,
       refineLandmarks: true,     /* 눈동자와 입술을 한 번 더 다듬습니다 */
       minDetectionConfidence: 0.4,
       minTrackingConfidence: 0.4
     });
     await fm.initialize();
+    /* 한 번 헛돌려 깨워 둡니다. 첫 장만 수가 다르게 나오던 것을 막습니다. */
+    try {
+      const warm = document.createElement("canvas");
+      warm.width = 64; warm.height = 64;
+      const wg = warm.getContext("2d");
+      wg.fillStyle = "#808080"; wg.fillRect(0,0,64,64);
+      await new Promise(ok=>{ let done=false;
+        const t=setTimeout(()=>{ if(!done){done=true;ok();} }, 4000);
+        fm.onResults(()=>{ if(!done){done=true;clearTimeout(t);ok();} });
+        fm.send({ image: warm }).catch(()=>{ if(!done){done=true;clearTimeout(t);ok();} });
+      });
+    } catch(e){}
     _mesh = fm;
     return fm;
   })();
   return _meshBusy;
+}
+
+/* 그림 한 장에서 점 468개를 받습니다.
+   이 기계는 본디 움직이는 영상을 쫓도록 만들어져, 앞서 본 얼굴을 기억합니다.
+   그래서 같은 사진을 두 번 비춰도 점이 조금씩 흔들립니다.
+   세 번 재어 가운데값을 쓰면 흔들림이 잦아듭니다. */
+async function findLandmarksStable(srcEl, n){
+  const runs = [];
+  const N = (n||3) + 1;
+  for (let i = 0; i < N; i++){
+    const p = await findLandmarks(srcEl);
+    /* 첫 장은 버립니다. 기계가 얼굴을 처음 찾을 때와 이미 쥐고 있을 때의
+       수가 달라서, 첫 장을 섞으면 볼 때마다 다른 수가 나옵니다. */
+    if (p && (i > 0 || N === 1)) runs.push(p);
+  }
+  if (!runs.length) return null;
+  if (runs.length === 1) return runs[0];
+  const mid = Math.floor(runs.length/2);
+  const pick = (arr)=>{ const a = arr.slice().sort((x,y)=>x-y); return a[mid]; };
+  return runs[0].map((_, i)=>({
+    x: pick(runs.map(r=>r[i].x)),
+    y: pick(runs.map(r=>r[i].y)),
+    z: pick(runs.map(r=>r[i].z || 0))
+  }));
 }
 
 /* 그림 한 장에서 점 468개를 받습니다. */

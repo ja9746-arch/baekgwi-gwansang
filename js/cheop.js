@@ -17,6 +17,8 @@ function jo(w, a, b){            /* 받침 있으면 a, 없으면 b */
   return ((c - 0xAC00) % 28) ? a : b;
 }
 const 은는 = w => w + jo(w,"은","는");
+/* 단서 한 줄은 늘 마침표로 끊고 다음 말을 잇습니다 */
+const 끝 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(t).trim() + ".";
 const 이가 = w => w + jo(w,"이","가");
 const 을를 = w => w + jo(w,"을","를");
 
@@ -39,7 +41,7 @@ function clueLine(h, i, seed, salt, prev){
     const 뒤집 = prev && ((prev.c.g > 0 && h.c.g < 0) || (prev.c.g < 0 && h.c.g > 0));
     head = pickOne(뒤집 ? 이음다 : 이음같, seed, salt + i*7);
   }
-  return head + h.c.s + ". " + h.c.m;
+  return head + 끝(h.c.s) + " " + h.c.m;
 }
 /* 세기에 따라 말을 더 세게 */
 function force(h){
@@ -97,6 +99,22 @@ function makeCheop(R, C, age, sex){
   /* 한 번 쓴 단서는 다음 첩에서 다시 쓰지 않습니다.
      같은 말이 두 번 나오면 손님은 바로 알아챕니다. */
   const 썼다 = new Set();
+  /* 재백궁은 준두와 콧방울을 빛으로 읽고, 단서는 같은 자리를 자로 잽니다.
+     둘이 어긋나면 손님에게는 그냥 앞뒤가 안 맞는 말입니다.
+     궁 등급과 반대로 가는 코 단서는 열 장 어디에서도 쓰지 않습니다. */
+  {
+    const jb = G["재백"];
+    if (jb){
+      const 코축 = { 코폭:1, 준두:1, 콧볼폭:1 };
+      const 걸림 = (h)=> 코축[h.c.k] && ((jb.lv===2 && h.c.g>0) || (jb.lv<=1 && h.c.g<0 && jb.lv===0)
+                        || (jb.lv===1 && h.c.g>0));
+      C.list = C.list.filter(h=>!걸림(h));
+      for (const k in C.byT) C.byT[k] = C.byT[k].filter(h=>!걸림(h));
+      for (const k in C.byBu) C.byBu[k] = C.byBu[k].filter(h=>!걸림(h));
+      C.gil = C.gil.filter(h=>!걸림(h));
+      C.hyung = C.hyung.filter(h=>!걸림(h));
+    }
+  }
   /* 윤곽과 삼정은 제1첩에서 오행형상·삼정으로 이미 말했습니다.
      다른 첩 본문에서 또 끌어 쓰면 같은 말이 두 번 나옵니다. */
   const 본문밖 = (h)=> h.c.bu==="삼정";
@@ -106,7 +124,8 @@ function makeCheop(R, C, age, sex){
       if(got.length>=n) break;
       if(썼다.has(h.c.id)) continue;
       if(!윤곽도 && 본문밖(h)) continue;
-      got.push(h);
+      if(이첩부위.has(h.c.bu)) continue;     /* 한 첩에 같은 자리는 한 번만 */
+      got.push(h); 이첩부위.add(h.c.bu);
     }
     got.forEach(h=>썼다.add(h.c.id));
     return got;
@@ -119,13 +138,16 @@ function makeCheop(R, C, age, sex){
     남녀:["눈","인중"], 재백:["코"], 노복:["턱","광대"]
   };
   const 쓴부위 = new Set();
+  /* 한 첩 안에서 같은 자리를 두 번 말하지 않게 적어 둡니다 */
+  let 이첩부위 = new Set();
+  const 첩시작 = ()=>{ 이첩부위 = new Set(); };
   function 부위말(k, salt){
     const bus = 궁부위[k] || [];
     for (const bu of bus){
       const arr = (C.byBu[bu] || []).filter(h=>!쓴부위.has(h.c.id) && !썼다.has(h.c.id));
       if (arr.length){
         const h = arr[0]; 쓴부위.add(h.c.id); 썼다.add(h.c.id);
-        return " 손님은 " + h.c.s.replace(/니다\.?$/, "고") + ", 그래서 " + h.c.m;
+        return " " + 끝(h.c.s) + " " + h.c.m;
       }
     }
     return "";
@@ -138,32 +160,38 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제1첩 · 내 타고난 얼굴 ───────────────────── */
   {
-    const c = 첩(1, "타고난", "내 타고난 얼굴", "얼굴에 새겨진, 자네가 가지고 난 결", true);
+    첩시작(); const c = 첩(1, "타고난", "내 타고난 얼굴", "얼굴에 새겨진, 자네가 가지고 난 결", true);
     const oh = OH[R.hyeong];
     /* 윤곽과 삼정은 바로 앞에서 오행형상·삼정으로 말했습니다.
        같은 말을 두 번 하지 않도록 여기서는 빼고 뽑습니다. */
-    const 본 = 뽑기(byT.본성.filter(h=>h.c.bu!=="윤곽"), 4);
+    let 본 = 뽑기(byT.본성.filter(h=>h.c.bu!=="윤곽"), 4);
+    /* 본성 쪽이 모자라면 얼굴에서 가장 세게 선 것으로 채웁니다.
+       무료로 보여 드리는 칸이 비면 안 됩니다. */
+    if (본.length < 3){
+      const 더 = 뽑기(C.list.filter(h=>h.c.bu!=="윤곽" && h.c.bu!=="삼정"), 4 - 본.length);
+      본 = 본.concat(더);
+    }
     c.ev = ev(본, 4);
 
     c.body.push(단락(
       "타고난 그릇",
       `손님 얼굴은 ${R.hyeong}(${{"목":"木","화":"火","토":"土","금":"金","수":"水"}[R.hyeong]})의 꼴입니다. ` +
-      oh.sul + "이지요. " + oh.seong + " " + oh.il,
+      oh.sul + "이지요. " + oh.seong,
       []
     ));
 
     const 삼 = SAMJEONG[R.samjeong];
     c.body.push(단락(
       "세 마디의 흐름",
-      `삼정(三停) 가운데 ${R.samjeong}정이 도드라집니다. ` + (삼 ? 삼.mal + " " + 삼.dae : ""),
+      `삼정(三停) 가운데 ${R.samjeong}정이 도드라집니다. ` + (삼 ? 삼.dae : ""),
       []
     ));
 
-    c.body.push(단락(
+    if (본.length) c.body.push(단락(
       "얼굴이 말하는 결",
       "이제 손님 얼굴에서 실제로 선 자리를 하나씩 짚겠습니다.",
-      본.slice(0,4).map(h=>h.c.id),
-      본.slice(0,4).map(h=>({ t: h.c.s, d: h.c.m }))
+      본.map(h=>h.c.id),
+      본.map(h=>({ t: h.c.s, d: h.c.m }))
     ));
 
     const gi = GISAEK[R.gisaek];
@@ -179,14 +207,26 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제2첩 · 재물의 자리 ──────────────────────── */
   {
-    const c = 첩(2, "재물", "재물의 자리", "돈이 들어오는 길과 새는 길", true);
+    첩시작(); const c = 첩(2, "재물", "재물의 자리", "돈이 들어오는 길과 새는 길", true);
     const j = G["재백"], jt = G["전택"], jn = G["노복"];
     /* 좋은 자리와 깎이는 자리를 갈라 둡니다. 한 첩 안에서
        "콧방울이 두텁다"와 "콧방울이 얇다"가 같이 나오면 안 됩니다. */
-    const 재풀 = 뽑기(byT.재물, 4);
+    /* 재백궁이 막혔는데 "콧방울이 두텁다"가 나오면 앞뒤가 어긋납니다.
+       궁 등급과 반대로 가는 코 단서는 이 첩에서 빼 둡니다. */
+    /* 재백궁 풀이가 이미 준두와 콧방울을 말합니다. 같은 자리를 단서로 또 말하면
+       빛으로 본 등급과 자로 잰 모양이 어긋날 때 앞뒤가 맞지 않게 됩니다.
+       코는 궁 풀이에 맡기고, 단서는 다른 자리에서 가져옵니다. */
+    const 코반대 = (h)=> h.c.k==="코폭" || h.c.k==="준두" || h.c.k==="콧볼폭";
+    let 재풀 = 뽑기(byT.재물.filter(h=>!코반대(h)), 4);
+    if (재풀.length < 2){
+      const 쓸만 = (C.byBu["코"]||[]).concat(C.byBu["입"]||[], C.byBu["턱"]||[])
+        .filter(h=> !코반대(h) && h.c.t.indexOf("세월") < 0);
+      const 더 = 뽑기(쓸만, 2 - 재풀.length);
+      재풀 = 재풀.concat(더);
+    }
     const 재길 = 재풀.filter(h=>h.c.g>0), 재흉 = 재풀.filter(h=>h.c.g<0),
           재중 = 재풀.filter(h=>h.c.g===0);
-    c.ev = ev(재풀, 4);
+    c.ev = ev(재풀.filter(h=>!코반대(h)), 4);
 
     c.body.push(단락(
       "돈이 들어오는 길",
@@ -231,12 +271,12 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제3첩 · 인연과 사람 ──────────────────────── */
   {
-    const c = 첩(3, "인연", "인연과 사람", "다가오는 인연과, 멀리해야 할 인연");
+    첩시작(); const c = 첩(3, "인연", "인연과 사람", "다가오는 인연과, 멀리해야 할 인연");
     const 인 = 뽑기(byT.인연, 4);
     const ch = G["처첩"], hy = G["형제"], nn = G["남녀"];
     c.ev = ev(인, 4);
 
-    c.body.push(단락(
+    if (인[0] || 인[1]) c.body.push(단락(
       "손님이 사람을 대하는 법",
       (인[0] ? clueLine(인[0], 0, seed, 61) + " " : "") +
       (인[1] ? clueLine(인[1], 1, seed, 67, 인[0]) : ""),
@@ -302,12 +342,12 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제4첩 · 사회적 인상과 평판 ───────────────── */
   {
-    const c = 첩(4, "사회", "사회적 인상과 평판", "남이 보는 자네, 그리고 자네가 설 자리");
+    첩시작(); const c = 첩(4, "사회", "사회적 인상과 평판", "남이 보는 자네, 그리고 자네가 설 자리");
     const 사 = 뽑기(byT.사회, 4);
     const gw = G["관록"], ch2 = G["천이"], bd = G["복덕"];
     c.ev = ev(사, 4);
 
-    c.body.push(단락(
+    if (사[0] || 사[1]) c.body.push(단락(
       "첫인상",
       (사[0] ? clueLine(사[0], 0, seed, 81) + " " : "") +
       (사[1] ? clueLine(사[1], 1, seed, 83, 사[0]) : ""),
@@ -348,7 +388,7 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제5첩 · 세월이 남긴 흔적 ─────────────────── */
   {
-    const c = 첩(5, "세월", "세월이 남긴 흔적", "지나온 자리와, 앞으로 오는 자리");
+    첩시작(); const c = 첩(5, "세월", "세월이 남긴 흔적", "지나온 자리와, 앞으로 오는 자리");
     const 세 = 뽑기(byT.세월, 3);
     c.ev = ev(세, 4);
 
@@ -377,7 +417,8 @@ function makeCheop(R, C, age, sex){
     const 앞 = 나이.map(x=>`${x.age}세에 ${x.bu}`).join(", ");
     c.body.push(단락(
       "앞으로 오는 자리",
-      (앞 ? `앞으로는 ${앞} 자리로 넘어갑니다. ` : "") +
+      (앞 ? `앞으로는 ${앞} 자리로 넘어갑니다. `
+          : `얼굴의 유년 자리는 아흔아홉에서 끝납니다. 손님은 이미 그 끝자락에 계시니, 앞을 셈하기보다 지금 쥔 것을 누구에게 넘길지가 더 급합니다. `) +
       (나이[0] && G[나이[0].g]
         ? `가장 먼저 오는 ${나이[0].bu}${jo(나이[0].bu,"은","는")} ${G[나이[0].g].g.n}이 맡는 자리라, ` +
           (G[나이[0].g].lv===2
@@ -406,8 +447,12 @@ function makeCheop(R, C, age, sex){
 
   /* ── 제6첩 · 강점과 주의할 점 ─────────────────── */
   {
-    const c = 첩(6, "강약", "강점과 주의할 점", "살릴 자리 셋, 지킬 자리 둘");
-    const 길 = C.gil.slice(0, 3), 흉 = C.hyung.slice(0, 2);
+    첩시작(); const c = 첩(6, "강약", "강점과 주의할 점", "살릴 자리 셋, 지킬 자리 둘");
+    /* 같은 자리를 두 번 세우지 않습니다 — 이마가 둘, 눈이 둘이면 센 자리가 흐려집니다 */
+    const 고르기 = (arr, n)=>{ const bu=new Set(), out=[];
+      for(const h of arr){ if(out.length>=n) break; if(bu.has(h.c.bu)) continue; bu.add(h.c.bu); out.push(h); }
+      return out; };
+    const 길 = 고르기(C.gil, 3), 흉 = 고르기(C.hyung, 2);
     c.ev = ev(길.concat(흉), 5);
 
     c.body.push(단락(
@@ -431,7 +476,8 @@ function makeCheop(R, C, age, sex){
       "왜 지금 안 풀리는가",
       막.length
         ? `지금 막힌 자리는 ${막.map(j=>j.g.n).join(", ")}입니다. ` +
-          `${막[0].g.lv[2].rd} ${막[0].g.lv[2].ac}`
+          `${은는(막[0].g.n)} ${막[0].g.d} 쪽을 맡는 자리인데, 거기가 눌려 있어요. ` +
+          `${막[0].g.lv[2].dx} ${막[0].g.lv[2].ac}`
         : `크게 막힌 자리는 없습니다. 지금 안 풀리는 것이 있다면 자리 탓이 아니라 때 탓입니다. ${R.gyo.mal}`,
       []
     ));
@@ -529,11 +575,10 @@ function makeCheop(R, C, age, sex){
     c.body.push(단락(
       "지금 꼭 기억할 것",
       C.gil[0]
-        ? `손님께 가장 센 자리는 여깁니다 — ${C.gil[0].c.s} ${C.gil[0].c.m} ` +
-          (C.hyung[0] ? `그리고 가장 깎이는 자리는 ${C.hyung[0].c.s.replace(/니다\.?$/,"는 것")}입니다. ${C.hyung[0].c.m}`
-                      : `깎이는 자리는 크지 않습니다. 가진 것을 쓰시면 됩니다.`)
+        ? "손님 얼굴에서 가장 센 자리와, 가장 깎이는 자리입니다. 올해는 이 둘만 들고 가셔도 됩니다."
         : "손님 얼굴은 고릅니다. 고른 얼굴은 크게 흔들리지 않습니다. 그것이 손님의 가장 큰 자리입니다.",
-      C.gil[0] ? [C.gil[0].c.id] : []
+      [C.gil[0], C.hyung[0]].filter(Boolean).map(h=>h.c.id),
+      [C.gil[0], C.hyung[0]].filter(Boolean).map(h=>({ t:h.c.s, d:h.c.m, g:h.c.g }))
     ));
     c.body.push(단락(
       "원안법사의 당부",

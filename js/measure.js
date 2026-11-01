@@ -6,6 +6,21 @@
    여기서는 점이 가리킨 자리만 봅니다. 인당은 인당 자리에서,
    준두는 준두 자리에서 빛을 잽니다. */
 
+/* 그림의 지문 — 같은 사진인지 가리는 데 씁니다.
+   얼굴 읽는 기계는 본디 영상을 쫓도록 만들어져 같은 사진도 조금씩 다르게 읽습니다.
+   그래서 한 번 잰 사진은 지문으로 적어 두고, 다시 오면 그대로 꺼내 씁니다.
+   "같은 얼굴인데 어제와 다른 말을 하네" 소리를 들으면 안 되니까요. */
+function fingerprint(cv){
+  let d;
+  try { d = cv.getContext("2d").getImageData(0,0,cv.width,cv.height).data; }
+  catch(e){ return null; }
+  let h = 2166136261;
+  for (let i = 0; i < d.length; i += 733){
+    h ^= d[i]; h = Math.imul(h, 16777619);
+  }
+  return (h>>>0).toString(36) + "." + cv.width + "x" + cv.height;
+}
+
 /* 그림을 화폭에 옮깁니다. 재는 데 쓸 크기로 줄입니다. */
 function toCanvas(srcEl, maxW){
   const W0 = srcEl.naturalWidth || srcEl.videoWidth || srcEl.width;

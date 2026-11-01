@@ -42,21 +42,74 @@ function poseWord(F){
   return "고개가 많이 기울어 되돌려 읽었습니다. 정면으로 한 장 더 주시면 더 또렷하게 봅니다.";
 }
 
+/* ── 지문으로 적어 두기 ───────────────────────────
+   재는 수만 적습니다. 사진은 적지 않습니다. */
+const KEEP_M = "baekgwi-gwansang-measured";
+/* 이 자리에서 본 사진은 바로 기억해 둡니다 — 같은 사진은 두 번 재지 않습니다 */
+const _본것 = new Map();
+const 적을것 = ["sam","ratio","taper","boxy","이마높","이마폭","이마모서리","미길","미꺾","미안",
+  "미각","미간","눈길","눈높","눈각","눈사이","와잠","콧대길","산근폭","코폭","콧볼폭","준두",
+  "콧대휨","인중길","입폭","입술","윗술","입각","턱길","턱각","지각","광대","어긋남","쏠림","흔들림"];
+const 적을빛 = ["meanL","sd","mR","mG","mB","sam","left","right","gung",
+  "ratio","taper","boxy","bandW"];   /* 이 넷을 빼먹으면 그릇과 제비가 흔들립니다 */
+function loadMeasured(fp){
+  try {
+    const all = JSON.parse(localStorage.getItem(KEEP_M) || "{}");
+    return all[fp] || null;
+  } catch(e){ return null; }
+}
+function saveMeasured(fp, F, m){
+  try {
+    const all = JSON.parse(localStorage.getItem(KEEP_M) || "{}");
+    const Fo = {}, mo = {};
+    적을것.forEach(k=>{ if(F[k] !== undefined) Fo[k] = F[k]; });
+    적을빛.forEach(k=>{ if(m[k] !== undefined) mo[k] = m[k]; });
+    all[fp] = { F:Fo, m:mo, t:Date.now() };
+    /* 너무 쌓이면 오래된 것부터 버립니다 */
+    const ks = Object.keys(all);
+    if (ks.length > 12){
+      ks.sort((a,b)=>(all[a].t||0)-(all[b].t||0)).slice(0, ks.length-12).forEach(k=>delete all[k]);
+    }
+    localStorage.setItem(KEEP_M, JSON.stringify(all));
+  } catch(e){}
+}
+
 /* ── 1. 사진 한 장을 읽습니다 ────────────────────── */
 async function readFace(srcEl){
   const cv = toCanvas(srcEl, 720);
   if(!cv) return { err:"그림을 열지 못했습니다" };
 
   let pts = null;
-  try { pts = await findLandmarks(cv); }
+  try { pts = await findLandmarksStable(cv, 3); }
   catch(e){ return { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
   if(!pts) return { err:"얼굴을 못 찾았습니다" };
 
   const F = measure(pts, cv.width, cv.height);
   if(!F) return { err:"얼굴이 너무 작습니다" };
 
-  const m = readSkin(cv, F, null);
+  let m = readSkin(cv, F, null);
   if(!m) return { err:"빛이 모자랍니다", F, canvas:cv, soft:true };
+
+  /* 한 번 본 사진이면 그때 잰 수를 그대로 씁니다.
+     기계가 볼 때마다 머리카락 굵기만큼 다르게 읽어, 그냥 두면
+     같은 얼굴에 다른 말을 하게 됩니다. */
+  const fp = fingerprint(cv);
+  if (fp){
+    const kept = _본것.get(fp) || loadMeasured(fp);
+    if (kept && kept.F && kept.m){
+      for (const k in kept.F) F[k] = kept.F[k];
+      for (const k in kept.m) m[k] = kept.m[k];
+      m.F = F;
+      /* 빛을 재는 자와 틀을 재는 자가 어긋나지 않게 다시 맞춰 둡니다 */
+      m.ratio = F.ratio; m.taper = F.taper; m.boxy = F.boxy; m.bandW = F.bandW;
+    } else {
+      const Fo = {}, mo = {};
+      적을것.forEach(k=>{ if(F[k] !== undefined) Fo[k] = F[k]; });
+      적을빛.forEach(k=>{ if(m[k] !== undefined) mo[k] = m[k]; });
+      _본것.set(fp, { F:Fo, m:mo });
+      saveMeasured(fp, F, m);
+    }
+  }
 
   /* 비뚤어도 봅니다. 다만 아주 심하면 한 장 더 권합니다 — 막지는 않습니다. */
   return { ok:true, F, m, canvas:cv, pts, note: poseNote(F), word: poseWord(F) };
@@ -68,10 +121,10 @@ async function readFace(srcEl){
 function pickHyeong(m){
   /* 가늠자는 얼굴들을 실제로 재서 잡았습니다 — clues.js 의 NORM 과 같은 자입니다.
      가로세로비·하정의 좁아짐·네모진 정도, 셋으로 다섯 갈래를 가립니다. */
-  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.864 : m.boxy);
-  const zr = (r - 0.705) / 0.065;   /* 넓을수록 큼 */
-  const zt = (t - 0.483) / 0.038;   /* 아래가 두터울수록 큼 */
-  const zx = (x - 0.864) / 0.030;   /* 네모질수록 큼 */
+  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.852 : m.boxy);
+  const zr = (r - 0.704) / 0.062;   /* 넓을수록 큼 */
+  const zt = (t - 0.459) / 0.0260;   /* 아래가 두터울수록 큼 */
+  const zx = (x - 0.852) / 0.0277;   /* 네모질수록 큼 */
   const sc = {
     "목": -zr*0.92 - zt*0.22,         /* 길고 좁으며 위아래가 고른 상 */
     "수":  zr*0.80 - zx*0.62,         /* 넓고 둥글며 모가 없는 상 */
@@ -125,7 +178,9 @@ function pickSamjeong(m){
      그 얼굴 안에서가 아니라 사람들 사이에서 견주어야 갈립니다. */
   const F = m.F;
   if (F && F.sam){
-    const z = [ (F.sam[0]-0.328)/0.021, (F.sam[1]-0.355)/0.035, (F.sam[2]-0.310)/0.046 ];
+    const z = [ (F.sam[0]-0.352)/0.0157,
+                (F.sam[1]-0.371)/0.0351,
+                (F.sam[2]-0.273)/0.0408 ];
     const i = z.indexOf(Math.max.apply(null, z));
     return ["상","중","하"][i];
   }

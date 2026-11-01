@@ -97,11 +97,20 @@ async function read(){
   const bar = $("#readbar"), say = $("#read-say"), cv = $("#readcv");
   const step = (t, p)=>{ say.textContent = t; bar.style.width = p + "%"; };
 
-  step("거울을 닦고 있습니다…", 8);
+  showRaw(cv, ST.img, false);
+  step("거울을 닦고 있습니다…", 6);
   await breathe();
+
+  /* 얼굴 읽는 눈은 처음 한 번만 받아 둡니다. 그동안 멈춘 것처럼 보이지 않게
+     걸음을 조금씩 옮겨 둡니다. */
+  let pct = 6, alive = true;
+  const 느림 = setTimeout(()=>{ if(alive) step("얼굴 읽는 눈을 뜨고 있습니다… 처음 한 번만 받습니다.", pct); }, 1800);
+  const 걸음 = setInterval(()=>{ if(!alive) return; pct = Math.min(30, pct + 1.4); bar.style.width = pct + "%"; }, 700);
+
   let r;
   try { r = await readFace(ST.img); }
   catch(e){ r = { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
+  alive = false; clearInterval(걸음); clearTimeout(느림);
 
   if (!r.ok){
     step(r.err, 100);
@@ -111,7 +120,8 @@ async function read(){
       : (r.err.indexOf("못 찾") >= 0
           ? "얼굴 전체가 들어오게, 밝은 데서 한 장만 다시 주세요. 모자나 선글라스는 벗으시고요."
           : "조금 더 밝은 데서 한 장만 다시 주세요.");
-    if (r.canvas) drawFace(cv, r.canvas, r.F, true);
+    if (r.canvas && r.F) drawFace(cv, r.canvas, r.F, true);
+    else showRaw(cv, ST.img, true);
     return;
   }
 
@@ -137,6 +147,23 @@ async function read(){
   go("s-free");
 }
 const sleep = (ms)=> new Promise(r=> setTimeout(r, ms));
+
+/* 그림을 거울에 그대로 띄웁니다. 얼굴을 읽기 전에도, 못 읽었을 때도
+   손님이 올린 것이 보여야 합니다. 검은 네모만 보이면 기다리지 않습니다. */
+function showRaw(cv, img, dim){
+  const W = 620, H = Math.round(W*4/3);
+  cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  g.fillStyle = "#0b0607"; g.fillRect(0,0,W,H);
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  if (iw && ih){
+    const k = Math.max(W/iw, H/ih);
+    const w = iw*k, h = ih*k;
+    try { g.drawImage(img, (W-w)/2, (H-h)/2, w, h); } catch(e){}
+  }
+  g.fillStyle = dim ? "rgba(10,5,7,.62)" : "rgba(10,5,7,.34)";
+  g.fillRect(0,0,W,H);
+}
 
 /* ── 거울 안에 얼굴을 그립니다 ──────────────────
    얼굴 자리에 맞춰 잘라 키우고, 관상이 보는 자리를 점과 줄로 얹습니다.
