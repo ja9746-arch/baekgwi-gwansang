@@ -157,8 +157,28 @@ function bindMirror(){
   take(file); take(shot);
   pick.addEventListener("click", ()=> file.click());
   $("#snap").addEventListener("click", ()=> shot.click());
-  /* 거울을 눌러도 사진첩이 열립니다 — 거기를 먼저 누르시니까요 */
-  hole.addEventListener("click", ()=> file.click());
+  /* 거울을 눌러도 사진첩이 열립니다 — 거기를 먼저 누르시니까요.
+     다만 거울이 화면을 거의 다 덮고 있어, 거기를 짚고 밀어 내리시는 일이
+     잦습니다. 민 것인지 누른 것인지를 갈라, 민 것이면 열지 않습니다. */
+  let 짚은데 = null;
+  const 짚기 = (e)=>{ const t = (e.touches && e.touches[0]) || e;
+    짚은데 = { x:t.clientX, y:t.clientY, s:window.scrollY, t:Date.now() }; };
+  hole.addEventListener("pointerdown", 짚기);
+  hole.addEventListener("touchstart", 짚기, { passive:true });
+  hole.addEventListener("click", (e)=>{
+    if (짚은데){
+      const t = e;
+      const 움직임 = Math.abs((t.clientX||0) - 짚은데.x) + Math.abs((t.clientY||0) - 짚은데.y);
+      const 밀림 = Math.abs(window.scrollY - 짚은데.s);
+      /* 손가락이 열 점 넘게 가거나 화면이 밀렸으면 민 것입니다 */
+      if (움직임 > 10 || 밀림 > 4){ 짚은데 = null; return; }
+    }
+    짚은데 = null; file.click();
+  });
+  /* 손가락 대신 자판으로 오시는 분 */
+  hole.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); file.click(); }
+  });
 
   async function look(){
     note.textContent = "";
