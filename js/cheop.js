@@ -571,6 +571,7 @@ function makeCheop(R, C, age, sex){
     const c = 첩(7, "십이궁", "얼굴 십이궁", "얼굴에 숨은 열두 자리의 운");
     c.jari = R.jari.map(j=>({
       k: j.g.k, n: j.g.n, h: j.g.h, bu: j.g.bu, d: j.g.d, lv: j.lv,
+      x: j.g.x, y: j.g.y,          /* 얼굴 지도에 찍을 자리 */
       dx: j.g.lv[j.lv].dx, rd: j.g.lv[j.lv].rd, ac: j.g.lv[j.lv].ac,
       gwi: gwiOf(j.bg), boss: j.g.k === R.boss.g.k
     }));

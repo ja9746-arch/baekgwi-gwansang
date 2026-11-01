@@ -406,7 +406,50 @@ function renderCheop(){
       ).join("") + `</ul>` : "");
     let inner = c.body.map(para).join("");
 
+/* ── 얼굴 지도 ──────────────────────────────────
+   열두 자리를 글로만 늘어놓으면 손님은 그게 얼굴 어디인지 모릅니다.
+   자리 좌표는 처음부터 자료에 있었으니, 얼굴 먹선 위에 그대로 찍습니다.
+   좌표는 0~100 자로, 이마가 10 언저리, 눈이 43, 코끝이 64, 턱이 90입니다. */
+function faceInk(){
+  return `
+    <path class="fl" d="M50 4c26 0 39 15 39 38 0 28-17 52-39 54-22-2-39-26-39-54C11 19 24 4 50 4z"/>
+    <path class="fl" d="M26 16q24-8 48 0" opacity=".4"/>
+    <path class="fl" d="M24 35q10-6 20-1"/><path class="fl" d="M76 35q-10-6-20-1"/>
+    <ellipse class="fl" cx="34" cy="43" rx="8.4" ry="3.6"/>
+    <ellipse class="fl" cx="66" cy="43" rx="8.4" ry="3.6"/>
+    <circle class="fp" cx="34" cy="43" r="1.7"/><circle class="fp" cx="66" cy="43" r="1.7"/>
+    <path class="fl" d="M50 40v20"/>
+    <path class="fl" d="M43 64q7 4 14 0"/>
+    <path class="fl" d="M43 64q-2-4 1-5"/><path class="fl" d="M57 64q2-4-1-5"/>
+    <path class="fl" d="M41 77q9-3.5 18 0q-9 5.5-18 0z"/>
+    <path class="fl" d="M50 77v-1.6"/>
+    <path class="fl" d="M12 41q-5 1-4 7t6 6.4"/><path class="fl" d="M88 41q5 1 4 7t-6 6.4"/>
+    <path class="fl" d="M43 88q7 3 14 0" opacity=".55"/>`;
+}
+function faceMap(marks, opt){
+  const o = opt || {};
+  const dots = marks.map((m,i)=>{
+    const cls = "fm" + (m.lv===undefined ? "" : " lv"+m.lv) + (m.boss ? " boss" : "");
+    const r = m.r || 3.2;
+    return `<g class="${cls}">
+      ${m.boss ? `<circle class="halo" cx="${m.x}" cy="${m.y}" r="${r+3.4}"/>` : ""}
+      <circle class="dot" cx="${m.x}" cy="${m.y}" r="${r}"/>
+      ${m.no ? `<text class="no" x="${m.x}" y="${m.y+1.3}">${m.no}</text>` : ""}
+    </g>`;
+  }).join("");
+  return `<figure class="facemap${o.wide?" wide":""}">
+    <svg viewBox="0 0 100 100" role="img" aria-label="${esc(o.alt||"얼굴 자리 그림")}">
+      <g class="ink">${faceInk()}</g>${dots}
+    </svg>
+    ${o.legend ? `<figcaption class="fmleg">${o.legend}</figcaption>` : ""}
+  </figure>`;
+}
+
     if (c.key === "십이궁" && c.jari){
+      inner += faceMap(c.jari.map(j=>({ x:j.x, y:j.y, lv:j.lv, boss:j.boss })), {
+        wide:true, alt:"얼굴 열두 자리 지도",
+        legend:`<i class="k0"></i>트임 <i class="k1"></i>반반 <i class="k2"></i>막힘 <i class="kb"></i>올해 쥐는 자리`
+      });
       inner += `<div class="ggungs">` + c.jari.map(j=>`
         <div class="gu gl${j.lv}${j.boss?" gboss":""}">
           <div class="guh"><b>${esc(j.n)}</b><span>${esc(j.bu)}</span>
@@ -436,8 +479,10 @@ function renderCheop(){
 
     if (c.key === "처방"){
       inner += `<div class="gcure">
-        <h5>점 찍을 자리</h5>
-        <ul class="moles">` + c.jeom.map(j=>`<li><b>${esc(j.t)}</b><span>${esc(j.w)}</span></li>`).join("") + `</ul>
+        <h5>점 찍을 자리</h5>`
+        + faceMap(c.jeom.map((j,i)=>({ x:j.x, y:j.y, no:i+1, r:3.6 })), {
+            alt:"점 찍을 자리 셋", legend:"아래 셋 가운데 손님께 맞는 자리를 짚어 드립니다" })
+        + `<ul class="moles">` + c.jeom.map((j,i)=>`<li><b><i class="n">${i+1}</i>${esc(j.t)}</b><span>${esc(j.w)}</span></li>`).join("") + `</ul>
         <h5>길한 색</h5>
         <ul class="cols">` + c.gil.map(g=>`<li><i style="background:${esc(g[1])}"></i><b>${esc(g[0])}</b><span>${esc(g[2])} — ${esc(g[3])}</span></li>`).join("") +
         `<li class="gno"><i style="background:${esc(c.hyung[1])}"></i><b>${esc(c.hyung[0])}</b><span>${esc(c.hyung[2])}</span></li></ul>

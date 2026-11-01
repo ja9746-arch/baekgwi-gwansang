@@ -1368,6 +1368,37 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   letter-spacing:.18em;color:#8a6a3a;margin-bottom:6px}
 .si p,.act p{margin:0;font-size:var(--fs-body);line-height:1.9;color:#3a2a16}
 
+/* ───────── 얼굴 지도 ─────────
+   열두 자리를 글로만 늘어놓으면 손님은 그게 얼굴 어디인지 모릅니다.
+   먹선으로 얼굴을 한 장 그려 두고 자리를 그 위에 찍습니다. */
+.facemap{margin:18px 0 6px;padding:0}
+.facemap svg{display:block;width:min(228px,62%);margin:0 auto;overflow:visible}
+.facemap.wide svg{width:min(258px,74%)}
+.facemap .ink .fl{fill:none;stroke:rgba(201,162,74,.5);stroke-width:1;
+  stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.facemap .ink .fp{fill:rgba(201,162,74,.5)}
+.facemap .fm .dot{fill:rgba(201,162,74,.5);stroke:rgba(10,5,7,.9);stroke-width:.7}
+.facemap .fm.lv0 .dot{fill:#e8c377;filter:drop-shadow(0 0 4px rgba(232,195,119,.9))}
+.facemap .fm.lv1 .dot{fill:rgba(201,162,74,.42)}
+.facemap .fm.lv2 .dot{fill:#c0362a;filter:drop-shadow(0 0 4px rgba(192,54,42,.75))}
+.facemap .fm .no{fill:#1a0f0a;font-family:var(--serif);font-size:4.2px;
+  text-anchor:middle;font-weight:700}
+.facemap .fm:not(.lv0):not(.lv1):not(.lv2) .dot{fill:#f0d79c}
+.facemap .fm.boss .halo{fill:none;stroke:#f0d79c;stroke-width:.9;opacity:.85;
+  animation:fmpulse 2.4s ease-in-out infinite}
+@keyframes fmpulse{0%,100%{opacity:.25;r:6.6}50%{opacity:.95;r:8.4}}
+.fmleg{margin:12px 0 0;text-align:center;font-size:var(--fs-label);
+  line-height:2;color:var(--jae-dim)}
+.fmleg i{display:inline-block;width:8px;height:8px;border-radius:50%;
+  margin:0 5px 0 12px;vertical-align:middle}
+.fmleg i:first-child{margin-left:0}
+.fmleg .k0{background:#e8c377}.fmleg .k1{background:rgba(201,162,74,.42)}
+.fmleg .k2{background:#c0362a}
+.fmleg .kb{background:none;box-shadow:0 0 0 1px #f0d79c inset;width:9px;height:9px}
+.moles li b .n{display:inline-grid;place-items:center;width:17px;height:17px;
+  margin-right:7px;border-radius:50%;font-style:normal;font-size:var(--fs-label);
+  color:#1a0f0a;background:#f0d79c;vertical-align:middle}
+
 /* ───────── 십이궁 ───────── */
 .ggungs{margin:14px 0 0;display:grid;gap:11px}
 .gu{padding:14px}
