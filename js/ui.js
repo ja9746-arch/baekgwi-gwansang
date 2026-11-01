@@ -46,19 +46,47 @@ function bindIntro(){
   $("#go-ask").addEventListener("click", ()=> go("s-ask"));
 }
 
-/* ── 나이와 성별 ──────────────────────────────── */
+/* ── 나이와 성별 ────────────────────────────────
+   묻기만 하고 가만히 있으면 손님은 신청서를 쓰는 기분이 됩니다.
+   나이를 고르시는 동안 그 나이가 걸리는 자리를 바로 읽어 드립니다.
+   아직 얼굴을 보지 않았으니 자리 이름과 맡은 일까지만 말합니다. */
 function bindAsk(){
   const age = $("#age"), ok = $("#ask-ok");
+  const now = $("#age-now"), pae = $("#yunpae");
+  const bu = $("#yun-bu"), mal = $("#yun-mal"), note = $("#segnote");
   const sexes = $$("[data-sex]");
+
   function check(){
     const a = parseInt(age.value, 10);
-    ok.disabled = !(a >= 10 && a <= 99 && ST.sex);
+    ok.disabled = !(a >= 14 && a <= 90 && ST.sex);
   }
-  age.addEventListener("input", ()=>{ ST.age = parseInt(age.value,10)||0; check(); });
+  function drawAge(){
+    const a = parseInt(age.value,10) || 33;
+    ST.age = a;
+    now.innerHTML = a + "<i>세</i>";
+    age.setAttribute("aria-valuetext", a + "세");
+    /* 유년운기부위 — 남좌여우는 성별을 고르셔야 갈리니, 아직이면 남자 자로 봅니다 */
+    try{
+      const y = yunOf(a, ST.sex || "남");
+      const g = (typeof GUNG !== "undefined") && GUNG.find(G=>G.k === y.g);
+      if (g){
+        bu.textContent = g.n + "(" + g.h + ")";
+        mal.textContent = y.bu + " — " + g.d + " 쪽을 맡는 자리입니다.";
+        pae.classList.add("on");
+      }
+    }catch(e){ pae.classList.remove("on"); }
+    check();
+  }
+  age.addEventListener("input", drawAge);
+  drawAge();
+
   sexes.forEach(b=> b.addEventListener("click", ()=>{
     ST.sex = b.dataset.sex;
     sexes.forEach(x=> x.setAttribute("aria-pressed", String(x===b)));
-    check();
+    note.textContent = ST.sex === "남"
+      ? "남좌여우(男左女右) — 자네는 남자이니 짝이 있는 여덟 자리는 몸의 왼쪽으로 봅니다."
+      : "남좌여우(男左女右) — 자네는 여자이니 짝이 있는 여덟 자리는 몸의 오른쪽으로 봅니다.";
+    drawAge();
   }));
   ok.addEventListener("click", ()=> go("s-mirror"));
 }
@@ -286,26 +314,33 @@ function renderFree(){
       `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
     ).join("") + `</ul>` : "");
 
+  /* 열 장을 모두 내어 놓습니다. 먼저 열어 드리는 두 장은 절반까지 읽히고,
+     봉인된 여덟 장은 첫 마디가 흐린 채로 보입니다. 무엇이 적혀 있는지는
+     보이고 읽히지는 않습니다. */
+  const veilBlock = (c)=>{
+    if (!c.veil || !c.veil.length) return "";
+    const inner = c.veil.map(fpara).join("");
+    const n = c.more || c.veil.length;
+    return `<div class="veil">
+      <div class="veiled" aria-hidden="true">${inner}</div>
+      <div class="veilsay"><i class="vlock" aria-hidden="true"></i>
+        <b>${c.sealed ? "봉인" : "이 뒤로 " + n + "마디"}</b>
+        <span>${c.sealed ? "복채를 내시면 이 첩이 풀립니다" : "복채를 내시면 끝까지 읽힙니다"}</span>
+      </div>
+    </div>`;
+  };
+
   $("#free-cheop").innerHTML = list.map((c)=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
-    if (!c.sealed){
-      return `<article class="cp open">
-        <div class="cph"><img src="${art}" alt="" loading="lazy"><span class="free">무료</span></div>
-        <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-        <div class="cpb">${c.body.map(fpara).join("")}
-        ${c.more ? `<div class="sealrow"><span class="glock" aria-hidden="true"></span><p>이 첩에 ${c.more} 마디가 더 있습니다.</p></div>` : ""}
-        </div></article>`;
-    }
-    return "";
+    const tag = c.sealed
+      ? `<span class="seal" aria-hidden="true">封</span>`
+      : `<span class="free">무료</span>`;
+    return `<article class="cp ${c.sealed ? "shut" : "open"}">
+      <div class="cph"><img src="${art}" alt="" loading="lazy">${tag}</div>
+      <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
+      <div class="cpb">${c.body.map(fpara).join("")}${veilBlock(c)}</div>
+    </article>`;
   }).join("");
-
-  /* 봉인된 것들은 두루마리로 한눈에 */
-  $("#free-rolls").innerHTML = list.filter(c=>c.sealed).map(c=>`
-    <li class="roll">
-      <span class="no">제${c.no}첩</span>
-      <b>${esc(c.title)}</b>
-      <i class="rlock" aria-hidden="true"></i>
-    </li>`).join("");
 
   /* 지난번과 견주기 */
   const pv = $("#free-prev");

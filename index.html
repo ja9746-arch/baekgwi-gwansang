@@ -275,11 +275,15 @@ h2.t{font-family:var(--serif);font-weight:700;font-size:clamp(22px,6.2vw,28px);
     rgba(10,5,7,.30) 44%,rgba(10,5,7,.74) 56%,rgba(10,5,7,.95) 68%,var(--mook) 80%)}
 .titlewrap{position:absolute;left:0;right:0;bottom:2px;z-index:2;text-align:center;
   padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
-.eyebrow{position:relative;display:inline-block;margin:22px 0 0;font-family:var(--serif);font-size:var(--fs-label);
-  letter-spacing:.12em;font-size:var(--fs-label);color:#edd199;padding:4px 13px;
-  border-top:1px solid rgba(201,162,74,.35);border-bottom:1px solid rgba(201,162,74,.35);
-  background:rgba(10,5,7,.5);text-shadow:0 1px 6px #000}
-.eyebrow::before{content:"";position:absolute;left:50%;top:-13px;transform:translateX(-50%);
+.eyebrow{position:relative;display:inline-block;margin:22px 0 0;font-family:var(--serif);
+  font-size:var(--fs-label);letter-spacing:.3em;color:#e6c98f;padding:5px 2px 6px;
+  background:none;border:0;text-shadow:0 1px 8px #000,0 0 18px rgba(0,0,0,.9)}
+/* 양옆으로 가늘게 뻗는 금선 — 네모 상자보다 가볍습니다 */
+.eyebrow::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:150%;max-width:210px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.55) 24%,
+             rgba(201,162,74,.55) 76%,transparent)}
+.kvtext .eyebrow::before{content:"";position:absolute;left:50%;top:-15px;transform:translateX(-50%);
   width:76px;height:26px;
   background:radial-gradient(ellipse 46% 60% at 50% 54%,rgba(10,5,7,.96) 46%,rgba(10,5,7,0) 80%),
              var(--lotus-b) center/40px 21px no-repeat;
@@ -994,9 +998,19 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 }
 
 .screen{padding:0 var(--pad) 52px;opacity:1}
-.top{display:flex;align-items:center;justify-content:space-between;
-  padding:14px var(--pad) 2px}
-.top .brand{font-size:var(--fs-label);letter-spacing:.2em}
+/* 머리띠는 들머리 그림 위에 겹칩니다. 그림이 밝으면 상호가 묻히니
+   띠 아래로 먹빛을 깔아 글이 늘 읽히게 합니다. */
+.top{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;
+  padding:14px var(--pad) 8px;margin-bottom:-6px}
+.top::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-18px;z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,4,6,.92) 0%,rgba(8,4,6,.7) 56%,rgba(8,4,6,0) 100%)}
+.top::after{display:none}
+.top .brand{font-size:var(--fs-label);letter-spacing:.2em;
+  text-shadow:0 1px 6px rgba(0,0,0,.95)}
+/* 들머리에서는 그림이 띠 밑까지 올라옵니다 */
+[data-scene="s-intro"] .kv{margin-top:calc((var(--pad) + 46px) * -1)}
+[data-scene="s-intro"] .kv img{object-position:50% 24%}
 .hint.small{font-size:var(--fs-label);color:var(--jae-dim);margin-top:10px;text-align:center;line-height:1.7}
 
 /* ───────── 바탕 ─────────
@@ -1028,27 +1042,77 @@ html[data-scene="s-cheop"] body::before{
 #stage{z-index:1}
 
 /* ───────── 머리말과 제목 ───────── */
-.eyebrow{display:inline-block;margin:20px 0 0;padding:4px 12px 5px;
-  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.16em;color:#e8c377;
-  background:rgba(10,5,7,.78);border:1px solid rgba(201,162,74,.34);text-shadow:none}
+/* 머리말은 현판이 아니라 낙관입니다. 네모 상자를 두르면
+   화면마다 같은 상자가 되풀이되어 눈이 먼저 지칩니다. */
+.eyebrow{position:relative;display:inline-block;margin:20px 0 0;padding:3px 1px 7px;
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.3em;color:#e6c98f;
+  background:none;border:0;text-shadow:0 1px 8px rgba(0,0,0,.9)}
 .eyebrow::before{display:none}
+.eyebrow::after{content:"";position:absolute;left:0;right:3px;bottom:0;height:1px;
+  background:linear-gradient(90deg,rgba(201,162,74,.6),rgba(201,162,74,.08));
+  transform:none;width:auto;max-width:none}
+/* 들머리에서만 연꽃을 얹습니다 */
+.kvtext .eyebrow::before{content:"";display:block;position:absolute;left:50%;top:-17px;
+  transform:translateX(-50%);width:40px;height:21px;
+  background:var(--lotus-b) center/contain no-repeat;opacity:.9;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.9))}
+.kvtext .eyebrow::after{left:50%;right:auto;transform:translateX(-50%);width:138%;max-width:200px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.55) 26%,
+             rgba(201,162,74,.55) 74%,transparent)}
 .sect{margin:12px 0 0;font-family:var(--serif);font-weight:400;
   font-size:var(--fs-h1);line-height:var(--lh-h1);color:#f6ecda;letter-spacing:.005em}
 .sect b{color:var(--geum-hot);font-weight:400}
 .sectsub{margin:9px 0 0;font-size:var(--fs-sm);line-height:var(--lh-sm);color:#c7b9a6}
 .sectsub b{color:#e8c377;font-weight:400}
 
-/* ───────── 들머리 ───────── */
-.kv{position:relative;margin:0 calc(var(--pad) * -1);aspect-ratio:1/1;max-height:52vh;overflow:hidden}
-.kv img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+/* ───────── 들머리 ─────────
+   첫 화면은 관상소의 문입니다. 그림 위에 네모 라벨을 얹으면 문이
+   아니라 광고판이 됩니다. 그림을 끝까지 쓰고, 글은 그림이 먹빛으로
+   가라앉은 자리에서 시작합니다. */
+.kv{position:relative;margin:calc(var(--pad) * -1) calc(var(--pad) * -1) 0;
+  aspect-ratio:4/5;max-height:62vh;overflow:hidden}
+.kv img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
 .kvveil{position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(10,5,7,.55) 0%,rgba(10,5,7,.06) 30%,
-             rgba(10,5,7,.72) 74%,rgba(10,5,7,.97) 94%,var(--mook) 100%)}
-.kvtext{position:relative;margin:-54px 0 0}
-.gtitle{margin:12px 0 0;font-family:var(--serif);font-weight:400;
-  font-size:var(--fs-display);line-height:var(--lh-display);color:#fff6e8;
-  letter-spacing:-.01em;
-  text-shadow:0 2px 12px rgba(6,3,5,.98),0 0 30px rgba(6,3,5,.92)}
+  background:linear-gradient(180deg,rgba(10,5,7,.7) 0%,rgba(10,5,7,.1) 22%,
+             rgba(10,5,7,0) 40%,rgba(10,5,7,.42) 60%,rgba(10,5,7,.88) 80%,
+             rgba(10,5,7,.99) 94%,var(--mook) 100%)}
+/* 그림 아래에서 불빛이 번져 올라옵니다 */
+.kv::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:2;
+  pointer-events:none;
+  background:radial-gradient(ellipse 130% 100% at 50% 100%,rgba(188,86,30,.3),rgba(10,5,7,0) 72%)}
+.kvtext{position:relative;z-index:3;margin:-78px 0 0;text-align:center}
+.kvtext .eyebrow{margin:0 0 16px}
+.gtitle{margin:0;font-family:var(--serif);font-weight:400;
+  font-size:clamp(25px,7.6vw,33px);line-height:1.46;color:#fff6e8;letter-spacing:-.01em;
+  text-shadow:0 2px 14px rgba(6,3,5,.99),0 0 34px rgba(6,3,5,.95)}
+
+.gtitle em{font-style:normal;color:#ffd98f;
+  text-shadow:0 2px 14px rgba(6,3,5,.99),0 0 30px rgba(255,170,70,.55)}
+/* 제목 아래 가는 금선과 연꽃 */
+.kvtext::after{content:"";display:block;width:94px;height:21px;margin:20px auto 0;
+  background:var(--lotus) center/contain no-repeat;opacity:.72}
+
+/* 세 가지 약속 — 체크표 대신 번호를 새긴 패 */
+.vow{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:1px;
+  background:rgba(201,162,74,.2);border:1px solid rgba(201,162,74,.24);border-radius:2px;
+  overflow:hidden}
+.vow li{display:flex;gap:13px;align-items:flex-start;padding:15px 15px 15px 14px;
+  background:linear-gradient(180deg,rgba(24,14,14,.9),rgba(11,6,8,.94));
+  font-size:var(--fs-sm);line-height:1.76;color:#ddd0bd}
+.vow li b{flex:none;width:23px;height:23px;display:grid;place-items:center;margin-top:1px;
+  font-family:var(--serif);font-weight:400;font-size:var(--fs-label);color:#f0d79c;
+  border:1px solid rgba(201,162,74,.5);border-radius:50%;background:rgba(10,5,7,.7)}
+.vow li i{font-style:normal;color:#f3e2c4}
+
+/* 바닥 전각 — 관상소의 밤 */
+.footbank{position:relative;margin:30px calc(var(--pad) * -1) 0;height:138px;overflow:hidden}
+.footbank img{position:absolute;left:50%;top:50%;width:126%;transform:translate(-50%,-48%);
+  filter:saturate(1.04) brightness(1.1)}
+.footbank::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,var(--mook) 0%,rgba(10,5,7,.5) 34%,
+             rgba(10,5,7,.28) 60%,rgba(10,5,7,.9) 100%)}
+.footbank::before{content:"";position:absolute;left:14%;right:14%;top:0;height:1px;z-index:3;
+  background:linear-gradient(90deg,transparent,rgba(201,162,74,.46),transparent)}
 
 /* ───────── 단추 ───────── */
 .btn{margin-top:20px;padding:17px 16px;font-size:var(--fs-h3);border-radius:2px}
@@ -1067,38 +1131,128 @@ html[data-scene="s-cheop"] body::before{
 .btn.hot .ar{font-size:var(--fs-h3);opacity:.9}
 .btn.hot:hover{filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)) drop-shadow(0 0 24px rgba(192,54,42,.45))}
 
-/* ───────── 묻는 칸 ───────── */
-.fields{margin-top:22px;display:grid;gap:20px}
+/* ───────── 묻는 칸 ─────────
+   숫자 칸 하나와 네모 둘은 어느 신청서에나 있는 꼴입니다.
+   나이는 눈금 새긴 자로, 성별은 패 두 장으로 받습니다.
+   받는 동안에도 얼굴 이야기가 이어져야 손님이 기다리지 않습니다. */
+.fields{margin-top:20px;display:grid;gap:14px}
+.field{position:relative;padding:16px 15px 17px;border:1px solid rgba(201,162,74,.3);
+  background-image:
+    var(--co-tl), var(--co-tr), var(--co-bl), var(--co-br),
+    linear-gradient(180deg,rgba(28,17,16,.9),rgba(12,7,9,.94));
+  background-repeat:no-repeat;
+  background-position:left 4px top 4px, right 4px top 4px, left 4px bottom 4px, right 4px bottom 4px, 0 0;
+  background-size:12px 12px,12px 12px,12px 12px,12px 12px,100% 100%;
+  box-shadow:0 10px 26px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,224,170,.07)}
 .field>span{display:block;font-family:var(--serif);font-size:var(--fs-label);
-  letter-spacing:.16em;color:var(--geum-dim);margin-bottom:9px}
-.field input{width:100%;padding:16px 14px;background:rgba(9,5,6,.92);
-  border:1px solid rgba(201,162,74,.3);color:var(--hi);font-family:var(--serif);
-  font-size:var(--fs-h2);text-align:center;letter-spacing:.06em;outline:none;border-radius:2px}
-.field input:focus{border-color:rgba(201,162,74,.8);box-shadow:0 0 0 3px rgba(201,162,74,.1)}
-.field input::placeholder{color:rgba(163,148,134,.4);letter-spacing:0}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.seg .sk{padding:16px 8px;background:linear-gradient(180deg,rgba(24,15,12,.92),rgba(12,7,8,.96));
-  border:1px solid rgba(201,162,74,.26);color:#c4b296;font-family:var(--serif);
-  font-size:var(--fs-h3);cursor:pointer;white-space:nowrap;border-radius:2px}
-.seg .sk[aria-pressed="true"]{border-color:var(--geum-hot);color:var(--hi);
-  background:linear-gradient(180deg,rgba(70,44,20,.94),rgba(26,14,11,.97));
-  box-shadow:inset 0 1px 0 rgba(255,228,176,.26),0 0 18px rgba(201,162,74,.2)}
-.segnote{margin:10px 0 0;font-size:var(--fs-label);color:var(--jae-dim);line-height:1.7}
+  letter-spacing:.24em;color:var(--geum-dim);margin-bottom:13px}
 
-/* ───────── 거울 ───────── */
-.gmir{position:relative;margin:22px auto 0;max-width:min(248px,70vw)}
-.gmir .gmhole{position:relative;aspect-ratio:4/5;overflow:hidden;cursor:pointer;
-  border:1px solid rgba(201,162,74,.4);background:#090506;border-radius:3px;
+/* 나이 — 눈금 새긴 자 */
+.agewrap{display:flex;align-items:flex-end;gap:13px}
+.agebar{flex:1;min-width:0}
+.agewrap b{font-family:var(--serif);font-weight:400;font-size:34px;line-height:.92;
+  color:var(--geum-hot);min-width:78px;text-align:right;
+  text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 22px rgba(232,195,119,.25)}
+.agewrap b i{font-style:normal;font-size:var(--fs-sm);color:var(--jae-dim);margin-left:3px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;
+  background:none;outline:none;margin:0;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(201,162,74,.75),rgba(201,162,74,.2));
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+input[type=range]::-moz-range-track{height:3px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(201,162,74,.75),rgba(201,162,74,.2))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:21px;height:21px;margin-top:-9px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 36% 30%,#f6e2bc,#c9a24a 58%,#7d5e26);
+  border:1px solid rgba(255,238,206,.6);
+  box-shadow:0 2px 8px rgba(0,0,0,.7),0 0 16px rgba(232,195,119,.4)}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 36% 30%,#f6e2bc,#c9a24a 58%,#7d5e26);
+  border:1px solid rgba(255,238,206,.6)}
+.ageticks{position:relative;height:15px;margin:2px 10px 0}
+.ageticks span{position:absolute;transform:translateX(-50%);
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.04em;
+  color:rgba(206,170,96,.7)}
+.ageticks span:nth-child(1){left:0;transform:none}
+.ageticks span:nth-child(2){left:33.3%}
+.ageticks span:nth-child(3){left:66.6%}
+.ageticks span:nth-child(4){left:auto;right:0;transform:none}
+
+/* 성별 — 패 두 장 */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg button{position:relative;padding:15px 8px 12px;overflow:hidden;border-radius:2px;
+  border:1px solid rgba(201,162,74,.26);background:rgba(10,5,7,.55);
+  display:grid;gap:4px;justify-items:center;
+  transition:border-color .2s,box-shadow .25s,background .25s}
+.seg .hj{font-family:var(--serif);font-size:30px;line-height:1;color:rgba(214,186,132,.42);
+  transition:color .25s,text-shadow .25s}
+.seg .ko{font-family:var(--serif);font-size:var(--fs-sm);letter-spacing:.2em;
+  color:var(--jae-dim);transition:color .25s}
+.seg button[aria-pressed="true"]{border-color:rgba(201,162,74,.85);
+  background:radial-gradient(ellipse at 50% 28%,rgba(96,60,23,.92),rgba(18,11,8,.96) 74%);
+  box-shadow:0 0 22px rgba(170,126,61,.25),inset 0 1px 0 rgba(255,224,170,.2)}
+.seg button[aria-pressed="true"] .hj{color:#f3dca6;text-shadow:0 0 16px rgba(232,195,119,.55)}
+.seg button[aria-pressed="true"] .ko{color:#f6e8ce}
+.segnote{margin:11px 0 0;font-family:var(--serif);font-size:var(--fs-label);
+  line-height:1.7;color:rgba(206,170,96,.8)}
+
+/* 그 나이가 걸리는 자리 — 묻는 동안 벌써 읽어 드립니다 */
+.yunpae{display:flex;align-items:stretch;gap:12px;margin-top:14px;padding:13px 14px;
+  border:1px solid rgba(201,162,74,.3);border-radius:2px;
+  background:linear-gradient(180deg,rgba(32,20,14,.78),rgba(10,6,8,.86));
+  opacity:0;transform:translateY(5px);transition:opacity .45s,transform .45s}
+.yunpae.on{opacity:1;transform:none}
+.yunpae .bu{font-family:var(--serif);font-size:var(--fs-h3);color:#f3e5cb;white-space:nowrap;
+  display:flex;flex-direction:column;justify-content:center}
+.yunpae .bu small{font-size:var(--fs-label);letter-spacing:.2em;color:var(--geum-dim);
+  margin-bottom:4px;display:block}
+.yunpae .mal{flex:1;min-width:0;font-size:var(--fs-label);line-height:1.7;color:var(--jae-dim);
+  display:flex;align-items:center;padding-left:12px;
+  border-left:1px solid rgba(201,162,74,.2)}
+
+/* ───────── 거울 ─────────
+   구멍 뚫린 네모는 거울이 아닙니다. 테를 두르고 유리를 깔아야
+   손님이 거기 얼굴을 비출 마음이 납니다. */
+.gmwrap{position:relative;margin:24px 0 0;display:flex;justify-content:center}
+.gmwrap::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:300px;height:300px;pointer-events:none;
+  background:radial-gradient(circle,rgba(176,96,36,.2),rgba(10,5,7,0) 68%)}
+.gmir{position:relative;width:min(252px,72vw)}
+.gmir::before{content:"";position:absolute;inset:-11px;border-radius:50% 50% 48% 48%/54% 54% 46% 46%;
+  background:
+    conic-gradient(from 210deg,#6b4e22,#e3c88a,#8a6a3a,#f0d79c,#7d5e26,#c9a24a,#6b4e22);
+  opacity:.9;filter:blur(.4px)}
+.gmir::after{content:"";position:absolute;inset:-4px;border-radius:50% 50% 48% 48%/54% 54% 46% 46%;
+  background:radial-gradient(ellipse at 50% 16%,rgba(255,238,206,.2),rgba(10,5,7,0) 60%);
+  border:1px solid rgba(255,236,200,.28);pointer-events:none}
+.gmhole{position:relative;z-index:2;aspect-ratio:4/5;overflow:hidden;cursor:pointer;
+  border-radius:50% 50% 48% 48%/54% 54% 46% 46%;
+  background:radial-gradient(ellipse at 50% 22%,#1b1216,#070406 72%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
-  box-shadow:inset 0 0 40px rgba(0,0,0,.9),0 16px 36px rgba(0,0,0,.6),0 0 30px rgba(150,70,26,.1)}
-.gmir .gmhole canvas{width:100%;height:100%;object-fit:cover;display:block}
-.gmguide{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:52%;height:62%;border:1.4px dashed rgba(201,162,74,.4);
+  box-shadow:inset 0 0 44px rgba(0,0,0,.95),inset 0 2px 0 rgba(255,236,200,.1)}
+.gmhole::after{content:"";position:absolute;left:-30%;top:-12%;width:76%;height:124%;
+  transform:rotate(17deg);pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,244,222,0),rgba(255,244,222,.07) 44%,rgba(255,244,222,0));
+  animation:gleam 5.5s ease-in-out infinite}
+@keyframes gleam{0%,62%{transform:translateX(0) rotate(17deg)}
+  86%,100%{transform:translateX(230%) rotate(17deg)}}
+.gmhole canvas{width:100%;height:100%;object-fit:cover;display:block}
+.gmguide{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+  width:41%;height:50%;border:1.2px dashed rgba(201,162,74,.34);
   border-radius:50% 50% 46% 46%;pointer-events:none}
-.gmico{color:var(--geum-dim);line-height:0}
-.gmph{margin:0;font-family:var(--serif);font-size:var(--fs-h3);color:#e2d2b6}
-.gmpv{margin:0;font-size:var(--fs-label);color:var(--jae-dim)}
+/* 거울 속에 어렴풋이 비치는 얼굴 — 아직 아무도 서지 않았음을 보입니다 */
+.gmhole::before{content:"";position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);
+  width:62%;height:70%;pointer-events:none;opacity:.14;
+  background:
+    radial-gradient(ellipse 29% 36% at 50% 32%,rgba(232,195,119,.9),rgba(232,195,119,0) 70%),
+    radial-gradient(ellipse 40% 46% at 50% 56%,rgba(201,162,74,.55),rgba(201,162,74,0) 72%)}
+.gmico{color:rgba(201,162,74,.85);line-height:0;position:relative;z-index:2}
+.gmph{margin:0;font-family:var(--serif);font-size:var(--fs-sm);color:#e8d9bf;
+  position:relative;z-index:2;letter-spacing:.06em}
+.gmpv{margin:0;font-size:var(--fs-label);color:var(--jae-dim);position:relative;z-index:2}
 .gmir.live .gmhole{cursor:default}
+.gmir.live::before{animation:breathe 3.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.78}50%{opacity:1}}
 
 /* ───────── 읽는 중 ───────── */
 .gbar{height:2px;margin:22px 0 12px;background:rgba(201,162,74,.12);overflow:hidden}
@@ -1156,9 +1310,42 @@ html[data-scene="s-cheop"] body::before{
 .cpb p{margin:0;font-size:var(--fs-body);line-height:var(--lh-body);color:#e2d6c6}
 .cpb h5{margin:26px 0 12px;font-family:var(--serif);font-weight:400;
   font-size:var(--fs-h3);color:#f0dcb8}
-.sealrow{display:flex;align-items:center;gap:11px;margin-top:24px;padding-top:16px;
-  border-top:1px dashed rgba(201,162,74,.26)}
-.sealrow p{margin:0;font-size:var(--fs-sm);color:var(--jae-dim)}
+
+/* ── 먹이 번진 자리 ──────────────────────────────
+   무엇이 적혀 있는지는 보이고, 읽히지는 않아야 합니다.
+   글을 지우면 무엇을 못 읽는지조차 모르니 궁금해질 까닭이 없습니다. */
+.veil{position:relative;margin-top:22px;padding-top:18px;
+  border-top:1px dashed rgba(201,162,74,.3)}
+.veiled{position:relative;max-height:212px;overflow:hidden;
+  filter:blur(3.1px) saturate(.8) contrast(.92);
+  opacity:.72;user-select:none;-webkit-user-select:none;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 34%,rgba(0,0,0,.34) 76%,transparent);
+  mask-image:linear-gradient(180deg,#000 0,#000 34%,rgba(0,0,0,.34) 76%,transparent)}
+.veiled h4{color:#c9a24a}
+.veiled h4::before{display:none}
+.veil::after{content:"";position:absolute;left:-16px;right:-16px;bottom:52px;height:84px;
+  background:radial-gradient(120% 100% at 50% 100%,rgba(10,5,7,.92),rgba(10,5,7,0) 72%);
+  pointer-events:none}
+.veilsay{position:relative;z-index:2;margin-top:-10px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;background:rgba(9,4,6,.9);
+  border:1px solid rgba(201,162,74,.34);border-radius:2px;
+  box-shadow:0 -14px 28px rgba(9,4,6,.9),inset 0 1px 0 rgba(236,199,130,.1)}
+.veilsay b{font-family:var(--serif);font-weight:400;font-size:var(--fs-sm);
+  letter-spacing:.1em;color:#f0d79c;flex:none}
+.veilsay span{font-size:var(--fs-label);color:var(--jae-dim);line-height:1.6}
+.vlock{flex:none;width:15px;height:17px;background:url("img/ui/icon-lock.webp") center/contain no-repeat;
+  opacity:.92}
+
+/* 봉인된 첩은 그림부터 가라앉혀 둡니다 */
+.cp.shut .cph img{filter:grayscale(.3) brightness(.62) saturate(.8)}
+.cp.shut .cpt h3{color:#e8d9c2}
+.cph .seal{position:absolute;right:12px;top:12px;z-index:3;
+  display:grid;place-items:center;width:30px;height:30px;
+  font-family:var(--serif);font-size:16px;color:#f6e2c4;
+  background:radial-gradient(circle at 36% 30%,#c0362a,#7e1f17);
+  border:1px solid rgba(246,226,196,.42);border-radius:3px;
+  box-shadow:0 3px 10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,228,196,.3)}
 
 /* 얼굴에서 선 자리를 한 줄씩 */
 .jari{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:9px}
@@ -1309,6 +1496,8 @@ html[data-scene="s-cheop"] body::before{
   box-shadow:0 3px 12px rgba(0,0,0,.6)}
 .say .por::after{display:none}
 .say{position:relative;margin-top:36px}
+.say .por img{width:100%;height:100%;object-fit:cover;object-position:50% 14%}
+.say.low{margin-top:30px}
 .say .nm{margin:0 0 10px 52px;font-family:var(--serif);font-size:var(--fs-label);
   letter-spacing:.1em;color:#7a5526}
 .say p{margin:0;font-size:var(--fs-body);line-height:1.9;color:#33240f}
@@ -1424,15 +1613,17 @@ html[data-scene="s-cheop"] body::before{
 <!-- ── 관상소 입장 ─────────────────────────────── -->
 <section id="s-intro" class="screen">
   <div class="kv">
-    <img src="img/seer/face-pray.webp" alt="" loading="eager">
+    <img src="img/seer/face-fierce.webp" alt="" loading="eager">
     <div class="kvveil"></div>
   </div>
   <div class="kvtext">
     <p class="eyebrow">원안법사의 비밀 관상소</p>
-    <h1 class="gtitle">얼굴에는<br>자네가 살아온 흔적이<br>남아 있지.</h1>
+    <h1 class="gtitle">얼굴에는 자네가<br>살아온 <em>흔적</em>이<br>남아 있지.</h1>
   </div>
-  <button class="btn" id="go-ask">원안법사에게 얼굴 보이기</button>
+
+  <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
   <p class="hint small">얼굴 사진 한 장이면 됩니다 · 사진은 기기 밖으로 나가지 않습니다</p>
+
   <div class="say">
     <span class="por"><img src="img/seer/face-mirror.webp" alt=""></span>
     <div class="txt">
@@ -1441,57 +1632,73 @@ html[data-scene="s-cheop"] body::before{
       <p>나는 원광법사께 상(相) 보는 법을 배운 사람일세. 자네 얼굴에 새겨진 이야기를 하나씩 읽어드리지.</p>
     </div>
   </div>
-  <ul class="gwant mini">
-    <li>얼굴에서 백 가지 자리를 재어, 자네 얼굴에 실제로 선 것만 짚습니다</li>
-    <li>삼정·십이궁·유년운기로 지나온 때와 올 때를 함께 봅니다</li>
-    <li>열 장의 관상첩 가운데 두 장을 먼저 열어 드립니다</li>
+
+  <ul class="vow">
+    <li><b>一</b><span>얼굴에서 <i>백 가지 자리</i>를 자로 재어, 자네 얼굴에 실제로 선 것만 짚습니다. 누구에게나 맞는 말은 적지 않습니다.</span></li>
+    <li><b>二</b><span>오행형상·삼정·<i>십이궁</i>·유년운기 — 옛 관상서가 보던 자리를 그대로 봅니다.</span></li>
+    <li><b>三</b><span>열 장의 관상첩 가운데 <i>두 장</i>을 먼저 열어 드립니다. 읽어 보시고 정하시면 됩니다.</span></li>
   </ul>
+
+  <div class="footbank"><img src="img/bg/b1.webp" alt="" loading="lazy"></div>
 </section>
 
 <!-- ── 나이와 성별 ─────────────────────────────── -->
 <section id="s-ask" class="screen" hidden>
-  <img class="seerask" src="img/seer/pose-1.webp" alt="" loading="lazy">
   <p class="eyebrow">먼저 여쭙겠네</p>
-  <h2 class="sect">자네 나이와 성별을 알려 주시게.</h2>
-  <p class="sectsub">얼굴은 나이마다 맡은 자리가 다릅니다. 유년운기부위(流年運氣部位)를 보려면 나이가 있어야 합니다.</p>
+  <h2 class="sect">자네 나이와 성별을<br>알려 주시게.</h2>
+  <p class="sectsub">얼굴은 나이마다 맡은 자리가 다릅니다. 유년운기부위(流年運氣部位)를 보려면
+    나이가 있어야 하고, 짝이 있는 여덟 자리는 남녀가 보는 쪽이 다릅니다.</p>
+
   <div class="fields">
-    <label class="field">
-      <span>나이 (만)</span>
-      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="예: 34">
-    </label>
     <div class="field">
-      <span>성별</span>
-      <div class="seg">
-        <button class="sk" data-sex="남" aria-pressed="false">남자</button>
-        <button class="sk" data-sex="여" aria-pressed="false">여자</button>
+      <span>나 이</span>
+      <div class="agewrap">
+        <div class="agebar">
+          <input id="age" type="range" min="14" max="90" step="1" value="33"
+                 aria-label="나이" aria-valuetext="33세">
+          <div class="ageticks"><span>14</span><span>39</span><span>64</span><span>90</span></div>
+        </div>
+        <b id="age-now">33<i>세</i></b>
       </div>
-      <p class="segnote">남좌여우(男左女右) — 짝이 있는 여덟 자리는 남녀가 보는 쪽이 다릅니다.</p>
+      <div class="yunpae" id="yunpae">
+        <div class="bu"><small>이 나이가 걸리는 자리</small><span id="yun-bu">—</span></div>
+        <p class="mal" id="yun-mal"></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <span>성 별</span>
+      <div class="seg">
+        <button data-sex="남" aria-pressed="false"><span class="hj">男</span><span class="ko">남자</span></button>
+        <button data-sex="여" aria-pressed="false"><span class="hj">女</span><span class="ko">여자</span></button>
+      </div>
+      <p class="segnote" id="segnote">남좌여우(男左女右) — 고르시면 어느 쪽을 보는지 말씀드리지요.</p>
     </div>
   </div>
+
   <button class="btn" id="ask-ok" disabled>거울 앞으로</button>
 </section>
 
 <!-- ── 얼굴 비추기 ─────────────────────────────── -->
 <section id="s-mirror" class="screen" hidden>
-  <img class="seerask" src="img/seer/pose-3.webp" alt="" loading="lazy">
   <p class="eyebrow">거울 앞에</p>
-  <h2 class="sect">자네의 얼굴을 비춰 보시게나.</h2>
-  <p class="sectsub">거울을 누르면 사진첩이 열립니다.</p>
+  <h2 class="sect">자네의 얼굴을<br>비춰 보시게나.</h2>
+  <p class="sectsub">거울을 누르면 사진첩이 열립니다. 정면으로, 이마부터 턱까지 들어온 사진이 가장 또렷합니다.</p>
 
   <div class="gmwrap">
-  <div class="gmir">
-    <div class="gmhole" id="hole" role="button" tabindex="0">
-      <div class="gmguide" aria-hidden="true"></div>
-      <div class="gmico" aria-hidden="true">
-        <svg viewBox="0 0 44 36" width="44" height="36" fill="none"
-             stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
-          <path d="M3 10h8l3-5h16l3 5h8v22H3z"/><circle cx="22" cy="20" r="8"/>
-        </svg>
+    <div class="gmir">
+      <div class="gmhole" id="hole" role="button" tabindex="0" aria-label="얼굴 사진 올리기">
+        <div class="gmguide" aria-hidden="true"></div>
+        <div class="gmico" aria-hidden="true">
+          <svg viewBox="0 0 44 36" width="40" height="33" fill="none"
+               stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+            <path d="M3 10h8l3-5h16l3 5h8v22H3z"/><circle cx="22" cy="20" r="8"/>
+          </svg>
+        </div>
+        <p class="gmph">얼굴 사진 올리기</p>
+        <p class="gmpv">여기를 누르시게</p>
       </div>
-      <p class="gmph">얼굴 사진 올리기</p>
-      <p class="gmpv">정면, 밝은 사진이 가장 좋습니다</p>
     </div>
-  </div>
   </div>
   <p class="hint" id="mirror-note"></p>
 
@@ -1512,6 +1719,14 @@ html[data-scene="s-cheop"] body::before{
     </ul>
     <p class="hint small">사진은 자네 기기 안에서만 처리됩니다. 서버로 보내지 않고 저장하지도 않습니다.</p>
   </details>
+
+  <div class="say low">
+    <span class="por"><img src="img/seer/pose-3.webp" alt=""></span>
+    <div class="txt">
+      <p class="nm">원안법사 圓安法師</p>
+      <p>얼굴을 고치고 오실 것 없네. 오늘 자네 얼굴 그대로가 읽을 것일세.</p>
+    </div>
+  </div>
 </section>
 
 <!-- ── 얼굴 읽기 ───────────────────────────────── -->
@@ -1533,7 +1748,7 @@ html[data-scene="s-cheop"] body::before{
 
 <!-- ── 무료로 보여 드리는 것 ───────────────────── -->
 <section id="s-free" class="screen" hidden>
-  <p class="eyebrow">제1첩 · 제2첩</p>
+  <p class="eyebrow">원안법사가 읽은 것</p>
   <h2 class="sect">자네 얼굴에서 <b id="free-count">—</b> 자리가 섰네.</h2>
   <p class="sectsub" id="free-head"></p>
 
@@ -1546,13 +1761,6 @@ html[data-scene="s-cheop"] body::before{
   <div class="evid" id="free-prev" hidden></div>
 
   <div id="free-cheop"></div>
-
-  <div class="rolls">
-    <img class="rollart" src="img/obj/index.webp" alt="" loading="lazy">
-    <p class="rollhead">아직 봉인된 관상첩</p>
-    <ul id="free-rolls"></ul>
-    <p class="rollfoot">아직 열지 않은 관상첩에는 더 깊은 이야기가 기다리고 있습니다.</p>
-  </div>
 
   <div class="sealbox">
     <img src="img/obj/book.webp" alt="" loading="lazy">

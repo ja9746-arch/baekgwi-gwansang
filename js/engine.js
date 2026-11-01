@@ -119,17 +119,18 @@ async function readFace(srcEl){
    다섯 갈래에 각각 점수를 매겨 가장 높은 쪽으로 봅니다.
    얼굴마다 조금씩이라도 기운 데가 있으므로 한쪽으로 몰리지 않습니다. */
 function pickHyeong(m){
-  /* 가늠자는 얼굴들을 실제로 재서 잡았습니다 — clues.js 의 NORM 과 같은 자입니다.
-     가로세로비·하정의 좁아짐·네모진 정도, 셋으로 다섯 갈래를 가립니다. */
-  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.852 : m.boxy);
-  const zr = (r - 0.704) / 0.062;   /* 넓을수록 큼 */
-  const zt = (t - 0.459) / 0.0260;   /* 아래가 두터울수록 큼 */
-  const zx = (x - 0.852) / 0.0277;   /* 네모질수록 큼 */
+  /* 가늠자는 사람 얼굴 마흔한 장을 실제로 재서 잡았습니다 —
+     clues.js 의 NORM 과 같은 자입니다. 가로세로비·하정의 좁아짐·
+     네모진 정도, 셋으로 다섯 갈래를 가립니다. */
+  const r = m.ratio, t = m.taper, x = (m.boxy===undefined ? 0.8393 : m.boxy);
+  const zr = (r - 0.7273) / 0.0333;   /* 넓을수록 큼 */
+  const zt = (t - 0.4550) / 0.0203;   /* 아래가 두터울수록 큼 */
+  const zx = (x - 0.8393) / 0.0213;   /* 네모질수록 큼 */
   const sc = {
     "목": -zr*0.92 - zt*0.22,         /* 길고 좁으며 위아래가 고른 상 */
     "수":  zr*0.80 - zx*0.62,         /* 넓고 둥글며 모가 없는 상 */
     "화": -zt*1.00 - zx*0.18,         /* 아래로 뾰족이 모이는 상 */
-    "토":  zt*0.80 + zr*0.42,         /* 아래가 두텁고 넓은 상 */
+    "토":  zr*0.70 + zt*1.15,         /* 아래가 두텁고 넓은 상 */
     "금":  zx*1.00 + zt*0.14          /* 각이 지고 네모진 상 */
   };
   let best="수", bv=-1e9;
@@ -150,13 +151,13 @@ function pickGisaek(m){
 
   /* 얼굴들을 실제로 재어 얻은 자리입니다. 절대 눈금으로 끊으면
      살빛은 평생 그 눈금을 넘지 못해 다섯 기색 중 하나만 나옵니다. */
-  const zChae = (chae - 0.309) / 0.052;
-  const zWarm = (warm - 0.262) / 0.058;
-  const zGb   = (gb   - 0.128) / 0.030;
+  const zChae = (chae - 0.1273) / 0.0568;
+  const zWarm = (warm - 0.0914) / 0.0393;
+  const zGb   = (gb   - 0.0449) / 0.0257;
 
   /* 흑기는 한쪽에만 진 그늘로만 봅니다. 사진이 어두운 것은 사진 이야기라
      따로 여쭙니다. 그늘이 아주 짙을 때만 흑으로 봅니다. */
-  if (geuneul > 0.33) return "흑";
+  if (geuneul > 0.52) return "흑";
 
   const sc = {
     "백": -zChae,
@@ -165,7 +166,7 @@ function pickGisaek(m){
   };
   /* 기색마다 넘어야 할 문턱이 다릅니다. 흔한 황기가 바탕이고,
      문턱을 가장 많이 넘어선 쪽이 그 얼굴에 도는 빛입니다. */
-  const need = { "백":0.72, "적":0.62, "청":1.00 };
+  const need = { "백":0.50, "적":0.38, "청":0.62 };
   let best = "황", bv = 0;
   for (const k in sc) { const over = sc[k] - need[k]; if (over > bv) { bv = over; best = k; } }
   return best;
@@ -178,9 +179,9 @@ function pickSamjeong(m){
      그 얼굴 안에서가 아니라 사람들 사이에서 견주어야 갈립니다. */
   const F = m.F;
   if (F && F.sam){
-    const z = [ (F.sam[0]-0.352)/0.0157,
-                (F.sam[1]-0.371)/0.0351,
-                (F.sam[2]-0.273)/0.0408 ];
+    const z = [ (F.sam[0]-0.3271)/0.0112,
+                (F.sam[1]-0.3196)/0.0181,
+                (F.sam[2]-0.3526)/0.0214 ];
     const i = z.indexOf(Math.max.apply(null, z));
     return ["상","중","하"][i];
   }
