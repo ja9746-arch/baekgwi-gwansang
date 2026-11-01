@@ -362,6 +362,70 @@ function 글월(t){
     .map(x=>`<p>${esc(x)}</p>`).join("");
 }
 
+/* ── 내 얼굴 관상도 ──────────────────────────────
+   글로 "준두가 재백궁입니다" 해 봐야 손님은 제 코를 못 봅니다.
+   손님 사진 위에 자리마다 불을 켜고 이름을 붙입니다.
+   누르면 그 자리를 맡은 첩으로 갑니다. */
+/* 가운데 줄에 선 자리는 이름을 얼굴 바깥으로 빼고 실로 잇습니다.
+   그러지 않으면 코 이름표가 입을, 입 이름표가 턱을 덮습니다. */
+const CHART = [
+  { i:[103,332,10], nm:"이마",  sub:"초년", no:4, side:"l", out:58 },
+  { i:[9],          nm:"미간",  sub:"명궁", no:1, side:"r", out:58 },
+  { i:[105],        nm:"눈썹",  sub:"인연", no:3, side:"l", out:14 },
+  { i:[263],        nm:"눈",    sub:"인상", no:3, side:"r", out:14 },
+  { i:[116],        nm:"광대",  sub:"조력", no:6, side:"l", out:14 },
+  { i:[1],          nm:"코",    sub:"재물", no:2, side:"r", out:64 },
+  { i:[13],         nm:"입",    sub:"표현", no:3, side:"l", out:64 },
+  { i:[152],        nm:"턱",    sub:"말년", no:5, side:"c", out:0 }
+];
+function renderChart(box, src, F, R){
+  if (!box) return;
+  if (!src || !F || !F.rawAll){ box.hidden = true; return; }
+  box.hidden = false;
+  /* 얼굴을 화폭에 꽉 채워 그립니다 */
+  const W = 620, H = Math.round(W*4/3);
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  g.fillStyle = "#0b0607"; g.fillRect(0,0,W,H);
+  const kx = (F.W ? src.width/F.W : 1), ky = (F.H ? src.height/F.H : 1);
+  const P = i => ({ x:F.rawAll[i].x*kx, y:F.rawAll[i].y*ky });
+  const ov = [10,152,234,454,103,332,172,397];
+  const xs = ov.map(i=>P(i).x), ys = ov.map(i=>P(i).y);
+  const x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
+  const y0=Math.min.apply(null,ys), y1=Math.max.apply(null,ys);
+  const fw=x1-x0, fh=y1-y0, cx=(x0+x1)/2, cy=(y0+y1)/2 - fh*0.04;
+  let w = fw*1.46, h = w*4/3;
+  if (h < fh*1.24){ h = fh*1.24; w = h*3/4; }
+  const sx = cx-w/2, sy = cy-h/2, k = W/w;
+  g.save(); g.translate(-sx*k,-sy*k); g.scale(k,k);
+  try { g.drawImage(src, 0, 0); } catch(e){}
+  g.restore();
+  /* 가장자리를 어둡게 눌러 글자가 읽히게 합니다 */
+  const vg = g.createRadialGradient(W/2,H*0.46,W*0.22,W/2,H*0.5,W*0.78);
+  vg.addColorStop(0,"rgba(10,5,7,0)"); vg.addColorStop(1,"rgba(10,5,7,.88)");
+  g.fillStyle = vg; g.fillRect(0,0,W,H);
+
+  const pos = (c)=>{
+    const ps = c.i.map(P);
+    const mx = ps.reduce((a,p)=>a+p.x,0)/ps.length;
+    const my = ps.reduce((a,p)=>a+p.y,0)/ps.length;
+    return { x:((mx-sx)*k)/W*100, y:((my-sy)*k)/H*100 };
+  };
+  const dots = CHART.map(c=>{
+    const q = pos(c);
+    return `<button class="cdot c${c.side}" data-cheop="${c.no}" type="button"
+       style="left:${q.x.toFixed(2)}%;top:${q.y.toFixed(2)}%;--out:${c.out}px"
+       aria-label="${esc(c.nm)}(${esc(c.sub)}) — 제${c.no}첩으로">
+       <i class="pin"></i>
+       <span class="lab"><b>${esc(c.nm)}</b><em>${esc(c.sub)}</em></span></button>`;
+  }).join("");
+  box.innerHTML = `<span class="gt">내 얼굴 관상도</span>
+    <div class="chart"><div class="cwrap"></div>${dots}</div>
+    <p class="cfoot">불이 켜진 자리를 누르면 그 자리를 맡은 첩으로 갑니다.</p>`;
+  box.querySelector(".cwrap").appendChild(cv);
+}
+
 /* ── 읽은 것을 한 판에 ───────────────────────────
    글만 죽 늘어놓으면 손님은 무엇을 받았는지 모릅니다.
    타고난 꼴, 도는 빛, 세 마디, 올해 쥐는 자리를 한 판에 모읍니다. */
@@ -519,6 +583,7 @@ function renderFree(){
     `이 ${C.count} 자리가 아래 열 장의 근거입니다. 여기 없는 말은 적지 않았습니다.`;
 
   /* 읽은 것을 한 판에, 그리고 손님 얼굴에서 네 자리를 오려 보여 드립니다 */
+  renderChart($("#free-chart"), ST.img, ST.F, R);
   renderVerdict($("#free-card"), R, C);
   renderParts($("#free-parts"), ST.img, ST.F, C);
   renderGung12($("#free-g12"), R);
@@ -613,6 +678,14 @@ function renderFree(){
 /* ── 복채 ─────────────────────────────────────── */
 function bindPay(){
   $("#to-pay").addEventListener("click", ()=> go("s-pay"));
+  /* 관상도의 불 켜진 자리를 누르면 그 첩으로 갑니다 */
+  document.addEventListener("click", (e)=>{
+    const d = e.target.closest && e.target.closest("[data-cheop]");
+    if (!d) return;
+    const no = +d.dataset.cheop;
+    const art = $$("#free-cheop .cp")[no-1];
+    if (art) art.scrollIntoView({ behavior:"smooth", block:"start" });
+  });
   /* 봉인 명판의 열기 — 첩마다 달려 있어 한 군데서 받습니다 */
   document.addEventListener("click", (e)=>{
     const b = e.target.closest && e.target.closest("[data-pay]");
