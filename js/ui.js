@@ -378,11 +378,17 @@ function renderFree(){
     if (!c.veil || !c.veil.length) return "";
     const inner = c.veil.map(fpara).join("");
     const n = c.more || c.veil.length;
+    /* 소제목은 그대로 보이고 본문만 흐립니다.
+       무슨 이야기가 적혀 있는지는 보여야 다음이 궁금해집니다. */
+    const 목 = c.veil.map(b=>b.h).filter(Boolean).slice(0,3).join(" · ");
     return `<div class="veil">
       <div class="veiled" aria-hidden="true">${inner}</div>
       <div class="veilsay"><i class="vlock" aria-hidden="true"></i>
-        <b>${c.sealed ? "봉인" : "이 뒤로 " + n + "마디"}</b>
-        <span>${c.sealed ? "복채를 내시면 이 첩이 풀립니다" : "복채를 내시면 끝까지 읽힙니다"}</span>
+        <div class="vt">
+          <b>${c.sealed ? "봉인된 첩입니다" : "이 뒤로 " + n + "마디가 더 있습니다"}</b>
+          <span>${목 ? 목 : (c.sealed ? "복채를 내시면 이 첩이 풀립니다" : "복채를 내시면 끝까지 읽힙니다")}</span>
+        </div>
+        <button class="vopen" type="button" data-pay="1">열기</button>
       </div>
     </div>`;
   };
@@ -395,12 +401,16 @@ function renderFree(){
   $("#free-cheop").innerHTML = list.map((c)=>{
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     const tag = c.sealed
-      ? `<span class="seal" aria-hidden="true">封</span>`
-      : `<span class="free">무료</span>`;
+      ? `<span class="jbadge lock" aria-label="봉인"></span>`
+      : `<span class="jbadge free">무료</span>`;
+    /* 첫 마디는 한지 위에 올립니다 — 열 장이 다 같은 검은 바탕이면 눈이 쉴 데가 없습니다 */
+    const 머리 = c.body.length ? `<div class="lead juru">${fpara(c.body[0])}</div>` : "";
+    const 나머지 = c.body.slice(1).map(fpara).join("");
     return `<article class="cp ${c.sealed ? "shut" : "open"}">
-      <div class="cph"><img src="${art}" alt="" loading="lazy">${tag}</div>
-      <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-      <div class="cpb">${c.body.map(fpara).join("")}${veilBlock(c)}</div>
+      <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
+      <div class="cpt juru${c.sealed ? " shut" : ""}">${tag}
+        <span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
+      <div class="cpb">${머리}${나머지}${veilBlock(c)}</div>
     </article>`;
   }).join("");
 
@@ -433,6 +443,11 @@ function renderFree(){
 /* ── 복채 ─────────────────────────────────────── */
 function bindPay(){
   $("#to-pay").addEventListener("click", ()=> go("s-pay"));
+  /* 봉인 명판의 열기 — 첩마다 달려 있어 한 군데서 받습니다 */
+  document.addEventListener("click", (e)=>{
+    const b = e.target.closest && e.target.closest("[data-pay]");
+    if (b) go("s-pay");
+  });
   $("#pay-price").innerHTML =
     (PRICE.list ? `<del>${won(PRICE.list)}</del>` : "") +
     `${won(PRICE.now)}`;
@@ -464,7 +479,8 @@ function renderCheop(){
       (b.list ? `<ul class="jari">` + b.list.map(x=>
         `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
       ).join("") + `</ul>` : "");
-    let inner = c.body.map(para).join("");
+    let inner = (c.body.length ? `<div class="lead juru">${para(c.body[0])}</div>` : "")
+              + c.body.slice(1).map(para).join("");
 
 /* ── 얼굴 지도 ──────────────────────────────────
    열두 자리를 글로만 늘어놓으면 손님은 그게 얼굴 어디인지 모릅니다.
@@ -569,7 +585,7 @@ function faceMap(marks, opt){
 
     return `<article class="cp open full">
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
-      <div class="cpt"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
+      <div class="cpt juru"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
       <div class="cpb">${inner}
         ${c.si ? `<div class="si"><span>시기</span><p>${esc(c.si)}</p></div>` : ""}
         ${c.act ? `<div class="act"><span>풀 길</span><p>${esc(c.act)}</p></div>` : ""}

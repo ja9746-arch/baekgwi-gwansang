@@ -1668,6 +1668,193 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   margin-bottom:14px;border:1px solid var(--card);border-radius:3px}
 
 .seerask.small{width:34%;max-width:118px;margin:2px auto -10px}
+
+/* ══════════════════════════════════════════════════
+   두루마리 — 시안의 생김을 그림이 아니라 선으로 그립니다.
+   시안에서 떼어 낸 두루마리는 300픽셀이라 늘리면 뭉갭니다.
+   같은 생김을 CSS로 그리면 어느 길이에도 또렷합니다.
+   ══════════════════════════════════════════════════ */
+.juru{position:relative;margin-left:21px;margin-right:21px;
+  padding:14px 17px;box-sizing:border-box;color:var(--meok);
+  background:
+    linear-gradient(180deg,rgba(104,74,38,.20),rgba(104,74,38,0) 13%,
+                           rgba(104,74,38,0) 87%,rgba(104,74,38,.20)),
+    linear-gradient(90deg,rgba(104,74,38,.22),rgba(104,74,38,0) 7%,
+                           rgba(104,74,38,0) 93%,rgba(104,74,38,.22)),
+    url("img/hanji.webp") center/190px repeat,
+    linear-gradient(168deg,#f0e6d2 0%,#e8dcc3 52%,#dccfb2 100%) #e9dfca;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),
+             inset 0 -1px 0 rgba(120,88,46,.3),
+             0 10px 26px rgba(0,0,0,.5)}
+/* 양 끝 나무 축 */
+.juru::before,.juru::after{content:"";position:absolute;top:-6px;bottom:-6px;
+  width:21px;border-radius:3px;
+  background:linear-gradient(90deg,#241509 0%,#5d3f20 20%,#b48a4e 42%,
+                                   #8d6634 58%,#4a3119 80%,#201206 100%);
+  box-shadow:0 6px 16px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.4),
+             inset 0 1px 0 rgba(224,186,126,.35);
+  z-index:2}
+.juru::before{left:-21px}
+.juru::after{right:-21px}
+.juru.sm{padding:11px 14px;margin-left:17px;margin-right:17px}
+.juru.sm::before,.juru.sm::after{width:17px;top:-4px;bottom:-4px}
+.juru.sm::before{left:-17px} .juru.sm::after{right:-17px}
+/* 잠긴 두루마리 — 덮여서 어둡습니다 */
+.juru.shut{color:#6a5a44;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.2) 16%,
+                           rgba(0,0,0,.2) 84%,rgba(0,0,0,.42)),
+    url("img/hanji.webp") center/190px repeat,
+    linear-gradient(168deg,#9d8f78 0%,#8b7c64 60%,#766850 100%) #8a7b63;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 20px rgba(0,0,0,.55)}
+.juru.shut::before,.juru.shut::after{filter:brightness(.62) saturate(.7)}
+
+/* ── 첩 머리 명패 ──────────────────────────────── */
+.cp{margin-top:34px;overflow:visible;border-radius:2px;
+  box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.cph img{aspect-ratio:16/6.4}
+.cph::after{height:76%;
+  background:linear-gradient(180deg,transparent,rgba(9,5,6,.55) 42%,rgba(9,5,6,.97))}
+.cpt{margin-top:-46px;padding:0;z-index:3}
+.cpt.juru{padding:13px 16px 14px}
+.cpt .no{display:inline-block;background:none;border:0;padding:0;
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.14em;
+  color:#8a6a33;margin:0 0 3px}
+.cpt h3{color:var(--meok);font-size:var(--fs-h1);line-height:1.3;
+  text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.cpt p{color:#6b5a42;font-size:var(--fs-sm);margin-top:5px}
+.cp.shut .cpt h3{color:#efe3cd;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.cp.shut .cpt .no{color:#c3ab82}
+.cp.shut .cpt p{color:#cdbfa6}
+/* 명패 오른쪽 표 */
+.jbadge{position:absolute;right:12px;top:12px;z-index:4;
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.1em}
+.jbadge.free{padding:4px 10px;border-radius:3px;color:#3a2a10;
+  background:linear-gradient(180deg,#f3d99a,#d8b166);
+  box-shadow:0 2px 6px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+.jbadge.lock{width:19px;height:23px;padding:0;
+  background:url("img/ui/icon-lock.webp") center/contain no-repeat;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.cph .free,.cph .seal{display:none}
+
+/* ── 첫 마디를 한지 위에 ──────────────────────────
+   열 장이 모두 같은 검은 바탕이면 눈이 쉴 데가 없습니다.
+   첩마다 머리 마디 하나를 한지에 올려 결을 바꿉니다. */
+.lead{margin:18px 0 6px}
+.lead h4{margin:0 0 9px;color:#6b4a1c;font-size:var(--fs-h3);
+  font-family:var(--serif);font-weight:400;display:flex;align-items:center;gap:8px}
+.lead h4::before{content:"";width:3px;height:15px;background:#9a3226;flex:none;border-radius:1px}
+.lead p{margin:0 0 10px;color:#3b2d1d;font-size:var(--fs-body);line-height:1.95}
+.lead p:last-child{margin-bottom:0}
+.lead .jari li{background:rgba(120,92,48,.1);border-left-color:rgba(154,50,38,.55)}
+.lead .jari li b{color:#6b4a1c}
+.lead .jari li span{color:#4b3c28}
+
+/* ══════════════════════════════════════════════════
+   봉인 — 보이되 읽히지 않게.
+   끊어 두기만 하면 손님은 끝난 줄 알고 닫습니다.
+   무슨 이야기가 적혀 있는지는 보이고, 글자만 안 잡혀야
+   그 다음이 궁금해집니다.
+   ══════════════════════════════════════════════════ */
+.veil{position:relative;margin-top:24px;padding-top:20px;
+  border-top:1px solid rgba(201,162,74,.22)}
+.veiled{position:relative;max-height:300px;overflow:hidden;
+  filter:none;opacity:1;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 36%,rgba(0,0,0,.5) 74%,transparent 98%);
+  mask-image:linear-gradient(180deg,#000 0,#000 36%,rgba(0,0,0,.5) 74%,transparent 98%)}
+/* 소제목은 또렷하게 — 무슨 얘긴지는 보여야 합니다 */
+.veiled h4{color:#e6c478;filter:none;opacity:1;margin-top:20px;
+  font-size:var(--fs-h3);letter-spacing:.01em;
+  text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.veiled h4:first-child{margin-top:0}
+.veiled h4::before{display:none}
+/* 본문만 흐립니다 */
+.veiled p,.veiled .jari{filter:blur(4.6px);opacity:.72;user-select:none}
+.veiled .jari li b{filter:blur(3px)}
+.veil::after{display:none}
+/* 봉랍 명판 */
+.veilsay{position:relative;z-index:3;margin-top:-26px;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 15px;border-radius:3px;
+  background:linear-gradient(180deg,rgba(26,14,12,.94),rgba(14,7,8,.98));
+  border:1px solid rgba(201,162,74,.3);
+  box-shadow:0 10px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(201,162,74,.14)}
+.veilsay .vlock{width:26px;height:30px;
+  background:url("img/ui/icon-lock.webp") center/contain no-repeat;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.6))}
+.veilsay .vt{flex:1;min-width:0}
+.veilsay b{display:block;font-family:var(--serif);font-weight:400;
+  font-size:var(--fs-sm);color:#f0dcb3;letter-spacing:.03em}
+.veilsay span{display:block;margin-top:3px;font-size:var(--fs-label);
+  color:var(--jae-dim);line-height:1.6}
+.veilsay .vopen{flex:none;align-self:center;
+  padding:9px 14px;border:0;border-radius:3px;cursor:pointer;
+  font-family:var(--serif);font-size:var(--fs-label);letter-spacing:.06em;
+  color:#fff3df;background:linear-gradient(180deg,#9d2b22,#71170f);
+  box-shadow:0 4px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.22)}
+.veilsay .vopen:active{transform:translateY(1px)}
+
+/* ── 첩 목록 두루마리 ──────────────────────────── */
+.roll{border-image:none;background:none;padding:0;min-height:0;display:block;
+  filter:none}
+.rolls ul{gap:13px}
+.roll .jr{display:flex;align-items:center;gap:10px;min-height:46px}
+.roll .no{color:#8a6a33}
+.roll b{color:#32230e;flex:1;min-width:0}
+.roll.shut b{color:#efe3cd}
+.roll.shut .no{color:#c0a87e}
+.rlock{position:static;transform:none;flex:none;width:17px;height:20px}
+.rfree{flex:none;padding:3px 9px;border-radius:3px;color:#3a2a10;
+  font-family:var(--serif);font-size:var(--fs-label);
+  background:linear-gradient(180deg,#f3d99a,#d8b166);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+
+
+/* ── 첫 화면 — 글을 그림 위에 얹습니다 ─────────────── */
+.kv.tall{position:relative;margin:0 -16px;border-radius:0;overflow:hidden}
+.kv.tall img{display:block;width:100%;aspect-ratio:3/4.1;object-fit:cover;object-position:50% 24%}
+.kv.tall .kvveil{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,4,6,.72) 0%,rgba(8,4,6,.05) 26%,
+    rgba(8,4,6,.18) 44%,rgba(8,4,6,.82) 76%,rgba(8,4,6,.99) 100%)}
+.kvtext.on{position:absolute;left:0;right:0;bottom:16px;z-index:2;
+  padding:0 20px;text-align:center}
+.kvtext.on .eyebrow{margin:0 0 12px}
+.kvtext.on .gtitle{margin:0;font-size:clamp(25px,7.4vw,34px);line-height:1.46;
+  text-shadow:0 2px 20px rgba(0,0,0,.9),0 1px 3px rgba(0,0,0,.9)}
+
+/* ── 복채 — 시안의 금테 상자 ──────────────────────── */
+.payart{position:relative;margin:0 -16px 20px;overflow:hidden}
+.payart img{display:block;width:100%;aspect-ratio:3/2.3;object-fit:cover;object-position:50% 42%}
+.payart i{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,4,6,.55),rgba(8,4,6,0) 34%,rgba(8,4,6,.9) 88%,rgba(8,4,6,1))}
+.sect.big{font-size:clamp(23px,6.6vw,31px);line-height:1.42;text-align:center}
+#s-pay .sectsub{text-align:center;margin-bottom:22px}
+.paybox{position:relative;margin:0 0 22px;padding:22px 18px 20px;border-radius:3px;
+  background:linear-gradient(180deg,rgba(28,15,13,.9),rgba(12,6,8,.96));
+  border:1px solid rgba(201,162,74,.42);
+  box-shadow:0 16px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(201,162,74,.16)}
+/* 모서리 표 네 군데 */
+.paybox::before,.paybox::after{content:"";position:absolute;width:15px;height:15px;
+  border:1.5px solid rgba(201,162,74,.75)}
+.paybox::before{left:7px;top:7px;border-right:0;border-bottom:0}
+.paybox::after{right:7px;bottom:7px;border-left:0;border-top:0}
+.paybox .cn::before,.paybox .cn::after{content:"";position:absolute;width:15px;height:15px;
+  border:1.5px solid rgba(201,162,74,.75)}
+.paybox .cn::before{right:7px;top:7px;border-left:0;border-bottom:0}
+.paybox .cn::after{left:7px;bottom:7px;border-right:0;border-top:0}
+.paybox h3{margin:0 0 16px;text-align:center;font-family:var(--serif);font-weight:400;
+  font-size:var(--fs-h2);color:#f0d9a6;letter-spacing:.04em}
+.paybox .gwant{margin:0 0 20px}
+.paybox .price{margin:0;padding:16px 0 2px;border:0;background:none;
+  border-top:1px solid rgba(201,162,74,.2)}
+.paybox .price .s{font-family:var(--serif);font-size:var(--fs-label);
+  letter-spacing:.2em;color:var(--geum-dim);text-align:center}
+.paybox .price .b{margin:6px 0 4px;text-align:center;font-family:var(--serif);
+  font-size:clamp(34px,10vw,46px);color:#f6e2b4;line-height:1.1;
+  text-shadow:0 2px 18px rgba(201,162,74,.3)}
+.paybox .price .n{text-align:center;font-size:var(--fs-label);color:var(--jae-dim)}
+
 </style>
 </head>
 <body>
@@ -1684,13 +1871,13 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 
 <!-- ── 관상소 입장 ─────────────────────────────── -->
 <section id="s-intro" class="screen">
-  <div class="kv">
+  <div class="kv tall">
     <img src="img/seer/face-fierce.webp" alt="" loading="eager">
     <div class="kvveil"></div>
-  </div>
-  <div class="kvtext">
-    <p class="eyebrow">원안법사의 비밀 관상소</p>
-    <h1 class="gtitle">얼굴에는 자네가<br>살아온 <em>흔적</em>이<br>남아 있지.</h1>
+    <div class="kvtext on">
+      <p class="eyebrow">원안법사의 비밀 관상소</p>
+      <h1 class="gtitle">얼굴에는 자네가<br>살아온 <em>흔적</em>이<br>남아 있지.</h1>
+    </div>
   </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
@@ -1850,21 +2037,26 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 
 <!-- ── 복채 ────────────────────────────────────── -->
 <section id="s-pay" class="screen" hidden>
+  <div class="payart"><img src="img/obj/book.webp" alt="" loading="lazy"><i></i></div>
   <p class="eyebrow">복채</p>
-  <h2 class="sect">관상첩 전체 열람</h2>
-  <div class="price">
-    <div class="s">출시 기념가</div>
-    <div class="b" id="pay-price"></div>
-    <div class="n">한 번 내시면 이 기기에서 다시 받지 않습니다</div>
+  <h2 class="sect big">봉인된 관상첩을<br>열어보시겠나?</h2>
+  <p class="sectsub">보이지 않는 자리까지 살펴, 자네만의 관상첩 열 장을 끝까지 열어 드립니다.</p>
+  <div class="paybox"><i class="cn"></i>
+    <h3>관상첩 전체 열람</h3>
+    <ul class="gwant big">
+      <li>제3첩부터 제10첩까지 여덟 장 전부</li>
+      <li>얼굴 십이궁 열두 자리와 자리마다 선 백귀</li>
+      <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
+      <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
+      <li>다시 오시면 지난번과 견주어 드립니다</li>
+    </ul>
+    <div class="price">
+      <div class="s">출시 기념가</div>
+      <div class="b" id="pay-price"></div>
+      <div class="n">한 번 내시면 이 기기에서 다시 받지 않습니다</div>
+    </div>
   </div>
-  <ul class="gwant big">
-    <li>제3첩부터 제10첩까지 여덟 장 전부</li>
-    <li>얼굴 십이궁 열두 자리와 자리마다 선 백귀</li>
-    <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
-    <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
-  </ul>
-  <img class="seerpay" src="img/seer/pose-5.webp" alt="" loading="lazy">
-  <button class="btn hot" id="pay-now">복채 내고 전부 열기 <span class="ar">→</span></button>
+  <button class="btn hot" id="pay-now">관상첩 모두 열기 <span class="ar">→</span></button>
   <p class="hint small">열람을 시작하면 환불이 제한됩니다. 결제하시면 이용약관과 환불규정에 동의한 것으로 봅니다.</p>
   <button class="btn ghost" data-go="s-free">돌아가기</button>
 </section>
