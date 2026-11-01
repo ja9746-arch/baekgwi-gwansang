@@ -1170,11 +1170,16 @@ function makeCheop(R, C, age, sex){
       String(b.p||"").split(/(?<=[.!?])\s+/).forEach(x=>{ const k=같(x); if(k.length>12) 선말.add(k); });
       (b.list||[]).forEach(x=> 선말.add(같(x.d)));
     }
-    /* 백귀마다 붙은 넘기는 법·쓰는 법도 손님이 그 첩에서 읽는 글입니다 */
+    /* 백귀마다 붙은 넘기는 법·쓰는 법도 손님이 그 첩에서 읽는 글입니다.
+       그리고 이것은 뒤에 오는 첩의 할 것에서도 다시 쓰면 안 됩니다 —
+       제8첩에서 "윗대에 안부 한 줄"을 읽고 제10첩에서 또 읽게 됩니다. */
     for (const w of (c.gwi||[])){
       if (w.말) 선말.add(같(w.말));
-      if (w.처방 && w.처방.l) w.처방.l.forEach(t=> 선말.add(같(t)));
+      if (w.처방 && w.처방.l) w.처방.l.forEach(t=>{ 선말.add(같(t)); 쓴할것.add(같(t)); });
     }
+    /* 제10첩의 올해 할 일·피할 것도 마찬가지입니다 */
+    (c.todo||[]).forEach(t=> 선말.add(같(t.t)));
+    (c.avoid||[]).forEach(t=> 선말.add(같(t.t)));
     /* 제9첩의 점·색·머리도 마찬가지입니다 */
     (c.jeom||[]).forEach(j=>{ 선말.add(같(j.t)); 선말.add(같(j.w)); });
     (c.gil||[]).forEach(g=> g.forEach(x=> 선말.add(같(x))));

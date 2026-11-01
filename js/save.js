@@ -256,6 +256,7 @@ function buildText(){
   L.push("[얼굴에서 잡힌 자리]");
   (C && C.list || []).forEach(h=> L.push(" · " + h.c.s));
   L.push("");
+  const 말 = ["트임","반반","막힘"];
   cheop.forEach(c=>{
     L.push(`[제${c.no}첩 ${c.title}]`);
     (c.body||[]).forEach(b=>{
@@ -263,6 +264,54 @@ function buildText(){
       if (b.p) String(b.p).split(/\n{2,}/).forEach(x=> x.trim() && L.push(x.trim()));
       (b.list||[]).forEach(x=> L.push(` · ${x.t} — ${x.d}`));
     });
+
+    /* 화면에만 그려지고 글에는 안 담기던 칸들 — 손님이 돈 내고 읽은 알맹이입니다 */
+    if (c.jari && c.jari.length){
+      L.push("— 얼굴 열두 자리");
+      c.jari.forEach(j=>{
+        L.push(` · ${j.n}(${j.bu}) — ${말[j.lv]}${j.boss ? " · 올해를 쥠" : ""}`);
+        [j.dx, j.rd, j.ac].filter(Boolean).forEach(t=> L.push(`    ${t}`));
+        if (j.gwi) L.push(`    선 것 — ${j.gwi.n}${j.gwi.h ? " "+j.gwi.h : ""}`);
+      });
+    }
+    if (c.gwi && c.gwi.length){
+      L.push("— 자네 얼굴에 선 셋");
+      c.gwi.forEach(g=>{
+        L.push(` · 제${g.rank}귀 ${g.g.n}${g.g.h ? " "+g.g.h : ""} — ${g.자리}`);
+        if (g.근거) L.push(`    ${g.근거}`);
+        if (g.말)   L.push(`    ${g.말}`);
+        if (g.처방 && g.처방.l && g.처방.l.length){
+          L.push(`    [${g.처방.t}]`);
+          g.처방.l.forEach(t=> L.push(`     · ${t}`));
+        }
+        if (g.두얼굴){
+          if (g.두얼굴[0]) L.push(`    복(福) — ${g.두얼굴[0].t}`);
+          if (g.두얼굴[1]) L.push(`    흉(凶) — ${g.두얼굴[1].t}`);
+        }
+      });
+    }
+    if (c.jeom && c.jeom.length){
+      L.push("— 점 찍을 자리");
+      c.jeom.forEach((j,i)=> L.push(` ${i+1}. ${j.t} — ${j.w}`));
+    }
+    if (c.gil && c.gil.length){
+      L.push("— 길한 색");
+      c.gil.forEach(g=> L.push(` · ${g[0]} — ${g[2]} — ${g[3]}`));
+      if (c.hyung) L.push(` · 꺼릴 색 ${c.hyung[0]} — ${c.hyung[2]}`);
+    }
+    if (c.mori) L.push(`— 머리\n${c.mori[0]} ${c.mori[1]}`);
+    if (c.verdict) L.push(`— 올해 — ${c.verdict}`);
+    if (c.todo && c.todo.length){
+      L.push("— 올해 할 일 셋");
+      c.todo.forEach((t,i)=> L.push(` ${i+1}. ${t.n ? t.n+" — " : ""}${t.t}`));
+    }
+    if (c.avoid && c.avoid.length){
+      L.push("— 피할 것 둘");
+      c.avoid.forEach(t=> L.push(` × ${t.n ? t.n+" — " : ""}${t.t}`));
+    }
+    if (c.go || c.stop)
+      L.push(`움직일 달 ${(c.go||[]).join("·")} · 멈출 달 ${(c.stop||[]).join("·")}`);
+
     if (c.할것 && c.할것.length){
       L.push("— 오늘부터 할 것");
       c.할것.forEach(x=> x && x.d && L.push(` · [${x.t}] ${x.d}`));
