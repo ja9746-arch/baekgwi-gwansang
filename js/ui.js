@@ -541,11 +541,11 @@ function renderVerdict(box, R, C){
          `<i class="${R.samjeong===n?"on":""}" style="flex:${t?sam[i]:1}"><u>${n}</u></i>`).join("") +
      `</div>
      <p class="vsay">${esc(
-        `자네 얼굴은 ${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴일세. ` +
+        `손님 얼굴은 ${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴입니다. ` +
         `둘 사이가 ${R.gyo.dan}이니, ${R.gyo.mal}`)}</p>
       <p class="vsay">${esc(
         `열두 자리 가운데 트인 데가 ${R.opened}곳, 막힌 데가 ${R.blocked}곳. ` +
-        `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}일세. ` +
+        `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}입니다. ` +
         (센것 ? `얼굴에서 가장 세게 선 자리는 ${센것.c.n} — ${끝말(센것.c.s)}` : ""))}</p>`;
 }
 const 끝말 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(t).trim()+".";
@@ -660,7 +660,7 @@ function renderParts(box, src, F, C){
   if (!src || !F || !F.rawAll){ box.hidden = true; return; }
   box.hidden = false;
   box.innerHTML = `<span class="gt">눈여겨볼 자리</span><div class="prow"></div>` +
-    `<p class="pfoot">자네 사진에서 그 자리만 오려 왔습니다. 사진은 기기 밖으로 나가지 않습니다.</p>`;
+    `<p class="pfoot">손님 사진에서 그 자리만 오려 왔습니다. 사진은 기기 밖으로 나가지 않습니다.</p>`;
   const row = box.querySelector(".prow");
   for (const k of ["이마","눈","코","입"]){
     const spec = PART[k];
@@ -692,7 +692,10 @@ function halBlock(list){
 /* ── 단서 한 줄 ───────────────────────────────── */
 function clueChip(e){
   const g = e.g > 0 ? "ok" : (e.g < 0 ? "bad" : "mid");
-  return `<li class="cl g${g}"><b>${esc(e.n)}</b><span>${esc(e.s)}</span></li>`;
+  /* 왼쪽에 한자말을 적어 두고 오른쪽 풀이에 또 한자말을 쓰면
+     "산근절(山根絶) — 산근이 눌렸습니다"가 되어 아무것도 못 풀어 줍니다. */
+  const 풀 = (typeof 쉽게민 === "function") ? 쉽게민(e.s) : e.s;
+  return `<li class="cl g${g}"><b>${esc(e.n)}</b><span>${esc(풀)}</span></li>`;
 }
 
 /* ── 무료로 보여 드리는 것 ────────────────────── */
@@ -805,7 +808,7 @@ function renderFree(){
   $("#free-tease").textContent =
     ST.R.blocked >= 3
       ? "아직 열지 않은 첩에 막힌 자리의 까닭이 적혀 있습니다. 그 자리를 모르고 지나시면 올해가 그대로 갑니다."
-      : "아직 열지 않은 첩에 자네가 쥐고 있으면서 모르는 것이 적혀 있습니다.";
+      : "아직 열지 않은 첩에 손님이 쥐고 계시면서 모르는 것이 적혀 있습니다.";
 }
 
 /* ── 복채 ─────────────────────────────────────── */
