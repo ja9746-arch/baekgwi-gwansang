@@ -170,7 +170,13 @@ function bindAsk(){
       const g = (typeof GUNG !== "undefined") && GUNG.find(G=>G.k === y.g);
       if (g){
         bu.textContent = g.n + "(" + g.h + ")";
-        mal.textContent = y.bu + " — " + g.d + " 쪽을 맡는 자리입니다.";
+        /* "번하(繁霞)"만 적어 두면 손님은 그게 얼굴 어디인지 모르십니다.
+           쉬운 자리 이름을 함께 적어 드립니다. */
+        const 쉬 = (typeof 쉽게민 === "function")
+          ? 쉽게민(g.bu).replace(/\s*\([^)]*\)\s*/g,"").replace(/\s+[\u4e00-\u9fff]+$/,"").trim()
+          : String(g.bu||"").replace(/\s*\([^)]*\)\s*/g,"").trim();
+        mal.textContent = y.bu + " — 얼굴에서 " + (쉬 || "그 자리") + " 쪽입니다. "
+          + g.d + " 쪽을 맡습니다.";
         pae.classList.add("on");
       }
     }catch(e){ pae.classList.remove("on"); }
@@ -183,8 +189,8 @@ function bindAsk(){
     ST.sex = b.dataset.sex;
     sexes.forEach(x=> x.setAttribute("aria-pressed", String(x===b)));
     note.textContent = ST.sex === "남"
-      ? "남좌여우(男左女右) — 자네는 남자이니 짝이 있는 여덟 자리는 몸의 왼쪽으로 봅니다."
-      : "남좌여우(男左女右) — 자네는 여자이니 짝이 있는 여덟 자리는 몸의 오른쪽으로 봅니다.";
+      ? "남자는 몸의 왼쪽을 본인 자리로 봅니다 — 남좌여우(男左女右)라 하지요. 짝이 있는 여덟 자리를 그 쪽으로 읽습니다."
+      : "여자는 몸의 오른쪽을 본인 자리로 봅니다 — 남좌여우(男左女右)라 하지요. 짝이 있는 여덟 자리를 그 쪽으로 읽습니다.";
     drawAge();
   }));
   ok.addEventListener("click", ()=> go("s-mirror"));
