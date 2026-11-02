@@ -232,7 +232,10 @@ async function read(){
   alive = false; clearInterval(걸음); clearTimeout(느림);
 
   if (!r.ok){
-    step(r.err, 100);
+    /* 못 읽었는데 막대를 100%로 채우면 다 된 것처럼 보입니다. 막대를 걷습니다. */
+    step(r.err, 0);
+    const gb = bar.parentElement; if (gb) gb.hidden = true;
+    say.classList.add("bad");
     $("#read-again").hidden = false;
     $("#read-tip").textContent = r.net
       ? "그물이 끊겼습니다. 잠시 뒤에 다시 해 주세요."
@@ -1046,6 +1049,19 @@ function faceMap(marks, opt){
 function bindMisc(){
   $("#read-again").addEventListener("click", ()=>{
     $("#read-again").hidden = true; $("#read-tip").textContent = "";
+    const gb2 = $("#readbar") && $("#readbar").parentElement;
+    if (gb2) gb2.hidden = false;
+    $("#read-say").classList.remove("bad");
+    go("s-mirror");
+  });
+  /* 무료 화면에서도 사진을 다시 올릴 수 있어야 합니다.
+     기울거나 앞머리에 덮인 채로 읽혔어도 손님이 고칠 길이 없었습니다. */
+  const redo = $("#free-redo");
+  if (redo) redo.addEventListener("click", ()=>{
+    $("#read-again").hidden = true; $("#read-tip").textContent = "";
+    const gb = $("#readbar") && $("#readbar").parentElement;
+    if (gb) gb.hidden = false;
+    $("#read-say").classList.remove("bad");
     go("s-mirror");
   });
   $$("[data-go]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));

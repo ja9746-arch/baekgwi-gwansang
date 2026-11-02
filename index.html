@@ -2523,6 +2523,22 @@ body{letter-spacing:-.004em}
 .jari li.gok em{color:#bda87f}
 .jari li.gbad em{color:#c0a08f}
 
+/* 못 읽었을 때 — 안내문과 같은 무게로 두면 손님이 오류인 줄 모릅니다 */
+#read-say.bad{display:flex;align-items:center;justify-content:center;gap:9px;
+  margin-top:24px;font-family:var(--serif);font-weight:700;
+  font-size:var(--fs-h3);color:#f0b9a4}
+#read-say.bad::before{content:"!";flex:none;width:23px;height:23px;display:grid;
+  place-items:center;border-radius:50%;border:1px solid rgba(214,96,76,.8);
+  font-size:14px;line-height:1;color:#e59177}
+#s-read .gbar[hidden]{display:none}
+
+/* 사진을 다시 올릴 길 — 없으면 새로고침밖에 방법이 없습니다 */
+.redo{margin:20px 0 0;text-align:center}
+.redo button{appearance:none;background:none;border:0;padding:12px 10px;cursor:pointer;
+  font-family:var(--serif);font-size:var(--fs-sm);color:var(--geum-dim);
+  border-bottom:1px solid rgba(201,162,74,.3)}
+.redo button::after{content:" ↻";color:rgba(201,162,74,.75)}
+
 </style>
 </head>
 <body>
@@ -2769,6 +2785,8 @@ body{letter-spacing:-.004em}
       <b>내 관상첩 모두 열기 <span class="ar">→</span></b>
       <span class="won" id="to-pay-won"></span></button>
   </div>
+
+  <p class="redo"><button type="button" id="free-redo">사진이 마음에 안 드시면 다시 비추기</button></p>
 </section>
 
 <!-- ── 복채 ────────────────────────────────────── -->
