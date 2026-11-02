@@ -2486,6 +2486,29 @@ body{letter-spacing:-.004em}
 /* 머리그림을 지나면 단추 띠가 올라옵니다 */
 .introbar .pbt b{font-weight:700}
 
+/* ── 거울 화면 — 찍는 요령을 한 덩이로 ────────────
+   정면·밝은 곳·가림 없이 석 칸과 "어떻게 찍으면 잘 보이나요"는
+   같은 이야기인데 단추가 그 사이를 갈라놓고 있었습니다.
+   누를 것을 먼저 두고, 요령은 한 칸에 모읍니다. */
+.shotbox{margin:20px 0 0;padding:14px 13px 4px;border-radius:3px;
+  border:1px solid rgba(201,162,74,.26);
+  background:linear-gradient(180deg,rgba(26,15,13,.72),rgba(12,6,8,.8))}
+.shotbox .shots{margin:0 0 2px}
+.shotbox .tips{margin:0;border:0;background:none;padding:0}
+.shotbox .tips summary{padding:11px 2px 12px}
+#s-mirror .two-btn{margin-top:20px}
+#s-mirror #mirror-note:empty{display:none}
+
+/* ── 첩 머리그림 — 잘리지 않게 ─────────────────────
+   세 가지가 겹쳐 그림이 잘려 보였습니다.
+   하나, 그림 자체를 16:9 로 떼어 둥근 것들이 위아래가 잘렸습니다 → 3:2 로 다시 떼었습니다.
+   둘, 두루마리 제목이 그림을 마흔 자나 덮고 있었습니다 → 열넉 자만 겹칩니다.
+   셋, 아래쪽 먹빛 띠가 그림의 76%를 덮고 있었습니다 → 46%만 덮습니다. */
+.cph img{aspect-ratio:3/2;object-position:50% 50%}
+.cph::after{height:46%;
+  background:linear-gradient(180deg,rgba(10,5,7,0),rgba(10,5,7,.42) 46%,rgba(10,5,7,.9))}
+.cpt{margin-top:-14px}
+
 </style>
 </head>
 <body>
@@ -2637,20 +2660,22 @@ body{letter-spacing:-.004em}
       </div>
     </div>
   </div>
-  <ul class="shots">
-    <li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="11" rx="7" ry="8.4"/><path d="M8.6 9.6h1.6M13.8 9.6h1.6M12 11v2.6M9.6 15.4q2.4 1.4 4.8 0"/></svg><b>정면</b></li>
-    <li><svg viewBox="0 0 24 24"><path d="M12 3.6v2M4.8 7.2l1.5 1.4M19.2 7.2l-1.5 1.4M3.6 14.4h2M18.4 14.4h2"/><path d="M12 7.6a4.6 4.6 0 0 0-2.6 8.4v1.6h5.2V16A4.6 4.6 0 0 0 12 7.6z"/><path d="M10.2 20h3.6"/></svg><b>밝은 곳</b></li>
-    <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.6"/><path d="M6.6 6.6l10.8 10.8"/></svg><b>가림 없이</b></li>
-  </ul>
-  <p class="hint" id="mirror-note"></p>
 
   <div class="two-btn">
-    <button class="btn" id="pick">사진첩에서 고르기</button>
+    <button class="btn hot" id="pick">사진첩에서 고르기 <span class="ar">→</span></button>
     <button class="btn ghost" id="snap">지금 찍기</button>
   </div>
   <input id="file" type="file" accept="image/*" hidden>
   <input id="shot" type="file" accept="image/*" capture="user" hidden>
 
+  <p class="hint" id="mirror-note"></p>
+
+  <div class="shotbox">
+  <ul class="shots">
+    <li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="11" rx="7" ry="8.4"/><path d="M8.6 9.6h1.6M13.8 9.6h1.6M12 11v2.6M9.6 15.4q2.4 1.4 4.8 0"/></svg><b>정면</b></li>
+    <li><svg viewBox="0 0 24 24"><path d="M12 3.6v2M4.8 7.2l1.5 1.4M19.2 7.2l-1.5 1.4M3.6 14.4h2M18.4 14.4h2"/><path d="M12 7.6a4.6 4.6 0 0 0-2.6 8.4v1.6h5.2V16A4.6 4.6 0 0 0 12 7.6z"/><path d="M10.2 20h3.6"/></svg><b>밝은 곳</b></li>
+    <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.6"/><path d="M6.6 6.6l10.8 10.8"/></svg><b>가림 없이</b></li>
+  </ul>
   <details class="tips">
     <summary>어떻게 찍으면 잘 보이나요</summary>
     <ul class="gsteps">
@@ -2661,6 +2686,9 @@ body{letter-spacing:-.004em}
     </ul>
     <p class="hint small">사진은 자네 기기 안에서만 처리됩니다. 서버로 보내지 않고 저장하지도 않습니다.</p>
   </details>
+
+  </div>
+
 
   <div class="say low">
     <span class="por"><img src="img/seer/pose-3.webp" alt=""></span>
