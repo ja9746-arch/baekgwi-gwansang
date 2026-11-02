@@ -32,6 +32,17 @@ const 은는 = w => w + jo(w,"은","는");
 /* 단서 한 줄은 늘 마침표로 끊고 다음 말을 잇습니다 */
 const 끝 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(t).trim() + ".";
 const 이가 = w => w + jo(w,"이","가");
+/* 받침이 없거나 ㄹ 받침이면 "로", 그 밖에는 "으로" */
+const 로으로 = w => {
+  let c = -1;
+  for (let i = String(w).length - 1; i >= 0; i--){
+    const u = String(w).charCodeAt(i);
+    if (u >= 0xAC00 && u <= 0xD7A3){ c = u; break; }
+  }
+  if (c < 0) return w + "으로";
+  const jong = (c - 0xAC00) % 28;
+  return w + ((jong === 0 || jong === 8) ? "로" : "으로");
+};
 const 을를 = w => w + jo(w,"을","를");
 
 /* ── 제비 ─────────────────────────────────────── */
@@ -59,13 +70,21 @@ function 이음고르기(arr, seed, salt){
   }
   return arr[dice(seed, salt, arr.length)];
 }
+/* 단서 가운데는 "서른 전에 한 번 크게 눌렸습니다"처럼 지나간 일로
+   못 박아 둔 것이 있습니다. 열아홉 손님께 그 말을 그대로 내면
+   있지도 않은 일을 있었다고 하는 꼴입니다. 아직 그 나이에 닿지
+   않으셨으면 앞일로 돌려 적습니다. */
+let _보는나이 = 40;
+function 단서말(c){
+  return (c && c.mY && _보는나이 < c.mY && c.mYm) ? c.mYm : (c ? c.m : "");
+}
 function clueLine(h, i, seed, salt, prev){
   let head = "";
   if (i > 0){
     const 뒤집 = prev && ((prev.c.g > 0 && h.c.g < 0) || (prev.c.g < 0 && h.c.g > 0));
     head = 이음고르기(뒤집 ? 이음다 : 이음같, seed, salt + i*7);
   }
-  return head + 끝(h.c.s) + " " + h.c.m;
+  return head + 끝(h.c.s) + " " + 단서말(h.c);
 }
 /* 세기에 따라 말을 더 세게 */
 function force(h){
@@ -194,6 +213,7 @@ function 궁걸름(R){
 
 /* ── 열 장을 짭니다 ─────────────────────────────── */
 function makeCheop(R, C, age, sex){
+  _보는나이 = age || 40;
   const seed = R.seed;
   const byT = C.byT;
   const G = {}; for (const j of R.jari) G[j.g.k] = j;
@@ -235,7 +255,7 @@ function makeCheop(R, C, age, sex){
       const arr = (C.byBu[bu] || []).filter(h=>!쓴부위.has(h.c.id) && !썼다.has(h.c.id));
       if (arr.length){
         const h = arr[0]; 쓴부위.add(h.c.id); 썼다.add(h.c.id);
-        return " " + 끝(h.c.s) + " " + h.c.m;
+        return " " + 끝(h.c.s) + " " + 단서말(h.c);
       }
     }
     return "";
@@ -310,7 +330,7 @@ function makeCheop(R, C, age, sex){
       "얼굴이 말하는 결",
       "이제 손님 얼굴에서 실제로 선 자리를 하나씩 짚겠습니다.",
       본.map(h=>h.c.id),
-      본.map(h=>({ t: h.c.s, d: h.c.m }))
+      본.map(h=>({ t: h.c.s, d: 단서말(h.c) }))
     ));
 
     const gi = GISAEK[R.gisaek];
@@ -373,7 +393,7 @@ function makeCheop(R, C, age, sex){
       "얼굴이 말하는 재물",
       "손님 얼굴에서 재물 쪽으로 선 자리입니다.",
       들.map(h=>h.c.id),
-      들.map(h=>({ t:h.c.s, d:h.c.m, g:1 }))
+      들.map(h=>({ t:h.c.s, d:단서말(h.c), g:1 }))
     ));
 
     const 샘 = 재흉.slice(0, 3);
@@ -389,7 +409,7 @@ function makeCheop(R, C, age, sex){
           : `손님은 여기가 트여 있습니다. ${jt.g.lv[0].rd}`) +
       (샘.length ? "" : " 크게 새는 자리는 얼굴에 보이지 않습니다. 새는 것은 자리가 아니라 버릇 쪽입니다."),
       샘.map(h=>h.c.id),
-      샘.length ? 샘.map(h=>({ t:h.c.s, d:h.c.m, g:-1 })) : null
+      샘.length ? 샘.map(h=>({ t:h.c.s, d:단서말(h.c), g:-1 })) : null
     ));
 
     c.body.push(단락(
@@ -700,7 +720,7 @@ function makeCheop(R, C, age, sex){
         : "") + " " +
       "\n\n" +
       (나이[1] && 나이[2]
-        ? `그다음은 ${나이[1].age}세에 ${나이[1].bu}, ${나이[2].age}세에 ${나이[2].bu}로 넘어갑니다. ` +
+        ? `그다음은 ${나이[1].age}세에 ${나이[1].bu}, ${나이[2].age}세에 ${로으로(나이[2].bu)} 넘어갑니다. ` +
           `자리가 바뀌는 해에는 늘 손님 바깥의 무언가가 먼저 움직입니다. ` +
           `사람이 들어오거나 나가고, 자리가 바뀌거나, 살던 데가 바뀌지요. ` +
           `손님이 정해서 바뀌는 것이 아니라 바뀐 뒤에 손님이 정하게 됩니다. ` +
@@ -833,7 +853,7 @@ function makeCheop(R, C, age, sex){
               ` 그 가운데서도 ${센것.c.s.replace(/\.$/,"")} — 이것이 손님의 첫 패입니다.`; })()
         : "크게 솟은 자리는 없습니다. 대신 고르게 섰습니다. 고른 얼굴은 한 번에 크게 쥐지는 못해도 무너지지 않습니다. 남들이 한 해 벌고 한 해 까먹는 동안 손님은 조금씩 쌓습니다. 그게 손님의 자리입니다.",
       길.map(h=>h.c.id),
-      길.length ? 길.map(h=>({ t: h.c.s, d: h.c.m, g:1 })) : null
+      길.length ? 길.map(h=>({ t: h.c.s, d: 단서말(h.c), g:1 })) : null
     ));
 
     c.body.push(단락(
@@ -860,7 +880,7 @@ function makeCheop(R, C, age, sex){
           ], seed, 139)
         : "크게 깎인 자리는 없습니다. 다만 고른 얼굴은 큰 것을 한 번에 쥐기 어렵습니다. 손님의 약점은 어느 한 자리가 아니라, 어느 자리도 도드라지지 않아 남이 손님을 기억하기 어렵다는 것입니다. 그러니 일로 보이시면 됩니다.",
       흉.map(h=>h.c.id),
-      흉.length ? 흉.map(h=>({ t: h.c.s, d: h.c.m, g:-1 })) : null
+      흉.length ? 흉.map(h=>({ t: h.c.s, d: 단서말(h.c), g:-1 })) : null
     ));
 
     const 막 = R.jari.filter(j=>j.lv===2);
@@ -1210,7 +1230,7 @@ function makeCheop(R, C, age, sex){
         ? "손님 얼굴에서 가장 센 자리와, 가장 깎이는 자리입니다. 올해는 이 둘만 들고 가셔도 됩니다."
         : "손님 얼굴은 고릅니다. 고른 얼굴은 크게 흔들리지 않습니다. 그것이 손님의 가장 큰 자리입니다.",
       [C.gil[0], C.hyung[0]].filter(Boolean).map(h=>h.c.id),
-      [C.gil[0], C.hyung[0]].filter(Boolean).map(h=>({ t:h.c.s, d:h.c.m, g:h.c.g }))
+      [C.gil[0], C.hyung[0]].filter(Boolean).map(h=>({ t:h.c.s, d:단서말(h.c), g:h.c.g }))
     ));
     c.body.push(단락(
       "원안법사의 당부",

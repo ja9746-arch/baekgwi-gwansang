@@ -2432,6 +2432,10 @@ body{letter-spacing:-.004em}
 .kvtext.on .gtitle{font-size:clamp(16.5px,4.4vw,19px);line-height:1.68}
 
 /* 두 가지 약속 — 무료 배지와 자물쇠는 시안에서 떼어 온 것입니다 */
+.backagain{margin:0 0 12px;padding:11px 14px;border:1px solid rgba(201,162,77,.34);
+  border-radius:12px;background:rgba(201,162,77,.07);color:#d9c9a8;
+  font-size:clamp(12.5px,3.4vw,14px);line-height:1.62;word-break:keep-all;text-align:center}
+.backagain b{color:#f0dfb6;font-weight:700}
 .vow2{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:1px;
   background:rgba(201,162,74,.2);border:1px solid rgba(201,162,74,.22);
   border-radius:3px;overflow:hidden}
@@ -2565,6 +2569,9 @@ body{letter-spacing:-.004em}
     </div>
   </div>
 
+  <p class="backagain" id="backagain" hidden>이미 복채를 내신 분입니다.
+    <b>같은 사진을 다시 비추시면</b> 열 장이 그대로 다시 열립니다 — 복채는 다시 받지 않습니다.</p>
+
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
 
   <ul class="vow2">
@@ -2616,7 +2623,7 @@ body{letter-spacing:-.004em}
   </div>
 
   <div class="say low">
-    <span class="por"><img src="img/seer/face-mirror.webp" alt=""></span>
+    <span class="por"><img src="img/seer/face-mirror.webp" alt="" loading="lazy" width="224" height="245"></span>
     <div class="txt">
       <p class="nm">원안법사 圓安法師</p>
       <p>나는 원광법사께 상(相) 보는 법을 배운 사람일세.</p>
@@ -2721,7 +2728,7 @@ body{letter-spacing:-.004em}
 
 
   <div class="say low">
-    <span class="por"><img src="img/seer/pose-3.webp" alt=""></span>
+    <span class="por"><img src="img/seer/pose-3.webp" alt="" loading="lazy" width="224" height="280"></span>
     <div class="txt">
       <p class="nm">원안법사 圓安法師</p>
       <p>얼굴을 고치고 오실 것 없네. 오늘 자네 얼굴 그대로가 읽을 것일세.</p>

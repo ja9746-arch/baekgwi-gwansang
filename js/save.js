@@ -343,9 +343,17 @@ function buildText(){
 async function saveSheet(btn){
   const cv = buildPoster();
   if (!cv){ toast("아직 읽은 것이 없습니다."); return; }
-  const blob = await new Promise(r=> cv.toBlob(r, "image/png", 0.95));
+  /* png 로 구우면 넉 자 가까이 나옵니다. 관상첩에는 사진이 들어 있어
+     png 가 득이 없고, 넉 자짜리를 카카오톡으로 올리자면 손님이 한참
+     기다리십니다. 같은 그림이 jpeg 로는 반 자가 채 안 됩니다. */
+  let blob = await new Promise(r=> cv.toBlob(r, "image/jpeg", 0.92));
+  let 끝이름 = "jpg", 결 = "image/jpeg";
+  if (!blob){   /* 혹 jpeg 를 못 굽는 기기면 png 로 돌아갑니다 */
+    blob = await new Promise(r=> cv.toBlob(r, "image/png"));
+    끝이름 = "png"; 결 = "image/png";
+  }
   if (!blob){ toast("그림을 만들지 못했습니다."); return; }
-  const file = new File([blob], "백귀관상.png", { type:"image/png" });
+  const file = new File([blob], "백귀관상." + 끝이름, { type:결 });
 
   /* 하나 — 기기의 공유로 넘깁니다 (앱 안의 창에서 가장 잘 듣습니다) */
   try{
@@ -360,7 +368,7 @@ async function saveSheet(btn){
   try{
     const a = document.createElement("a");
     if (!inApp() && "download" in a){
-      a.href = url; a.download = "백귀관상.png";
+      a.href = url; a.download = "백귀관상." + 끝이름;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(()=>URL.revokeObjectURL(url), 4000);
       toast("관상첩을 내려받았습니다.");

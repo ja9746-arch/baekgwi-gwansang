@@ -21,7 +21,21 @@ const $$ = (s, r)=> Array.from((r||document).querySelectorAll(s));
 const esc = (t)=> String(t==null?"":t).replace(/[&<>"]/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" }[c]));
 const won = (n)=> n.toLocaleString("ko-KR") + "원";
 
+/* ── 뒤로 가기 ────────────────────────────────────
+   전화기의 뒤로 가기는 "한 걸음 물러난다"는 뜻으로 눌립니다.
+   그런데 이 자리는 쪽이 하나뿐이라, 그냥 두면 복채를 내고 읽던
+   손님이 뒤로 한 번 눌러 통째로 나가 버리십니다.
+   그래서 화면이 바뀔 때마다 걸음을 하나씩 쌓아 둡니다. */
+const 읽어야하는화면 = ["s-free","s-pay","s-cheop","s-end"];
+let _되돌림중 = false;
 function go(id){
+  if (!_되돌림중){
+    try{
+      const 지금 = (history.state && history.state.scr) || null;
+      if (지금 === null) history.replaceState({ scr:id }, "");
+      else if (지금 !== id) history.pushState({ scr:id }, "");
+    }catch(e){}
+  }
   $$(".screen").forEach(s=> s.hidden = (s.id !== id));
   document.documentElement.setAttribute("data-scene", id);
   window.scrollTo({ top:0, behavior:"instant" });
@@ -33,6 +47,18 @@ function go(id){
   s.style.animation = "none"; void s.offsetHeight; s.style.animation = "";
   s.dispatchEvent(new CustomEvent("enter"));
 }
+window.addEventListener("popstate", (e)=>{
+  let id = (e.state && e.state.scr) || "s-intro";
+  /* 새로고침 뒤에 뒤로 눌러 읽던 자리로 돌아오면 속이 비어 있습니다.
+     읽은 것이 없으면 들머리로 보내 드립니다. */
+  if (읽어야하는화면.indexOf(id) >= 0 && !ST.R) id = "s-intro";
+  /* 이미 복채를 내신 분께 복채 받는 화면을 다시 보이면 놀라십니다.
+     뒤로 가다 그 자리에 닿으면 한 걸음 더 물러나 무료 화면으로 보냅니다. */
+  if (id === "s-pay" && ST.paid) id = "s-free";
+  _되돌림중 = true;
+  try { go(id); } finally { _되돌림중 = false; }
+});
+
 /* 그림이 한 번 그려질 틈을 줍니다 */
 const breathe = ()=> new Promise(r=> requestAnimationFrame(()=> requestAnimationFrame(()=> setTimeout(r, 30))));
 function toast(msg){
@@ -68,6 +94,8 @@ function bindPaybar(){
   let 켜짐 = false;
   단추.addEventListener("click", ()=>{
     bar.classList.remove("on"); bar.hidden = true; 켜짐 = false;
+    /* 복채를 이미 내신 분은 복채 화면을 건너뜁니다 */
+    if (ST.paid && ST.R){ try { renderCheop(); } catch(e){} go("s-cheop"); return; }
     go("s-pay");                       /* go 는 화면을 넘기는 함수입니다 */
   });
   const 보기 = ()=>{
@@ -766,7 +794,13 @@ function renderFree(){
 
 /* ── 복채 ─────────────────────────────────────── */
 function bindPay(){
-  $("#to-pay").addEventListener("click", ()=> go("s-pay"));
+  /* 이미 복채를 내신 분이면 복채 화면을 거치지 않고 바로 열어 드립니다.
+     "복채는 다시 받지 않습니다" 해 놓고 복채 화면을 내밀면 거짓말이 됩니다. */
+  function 열기(){
+    if (ST.paid && ST.R){ renderCheop(); go("s-cheop"); return; }
+    go("s-pay");
+  }
+  $("#to-pay").addEventListener("click", 열기);
   /* 관상도의 불 켜진 자리를 누르면 그 첩으로 갑니다 */
   document.addEventListener("click", (e)=>{
     const d = e.target.closest && e.target.closest("[data-cheop]");
@@ -778,7 +812,7 @@ function bindPay(){
   /* 봉인 명판의 열기 — 첩마다 달려 있어 한 군데서 받습니다 */
   document.addEventListener("click", (e)=>{
     const b = e.target.closest && e.target.closest("[data-pay]");
-    if (b) go("s-pay");
+    if (b) 열기();
   });
   $("#pay-price").innerHTML =
     (PRICE.list ? `<del>${won(PRICE.list)}</del>` : "") +
@@ -787,7 +821,9 @@ function bindPay(){
   $$("#to-pay-won, #pay-now-won").forEach(e=> e.textContent = won(PRICE.now) + " · 한 번만");
   $("#pay-now").addEventListener("click", async ()=>{
     const ok = await openCheckout(PRICE.now);
-    if (!ok){ toast("복채를 받지 못했습니다."); return; }
+    /* 손님이 스스로 무르신 때가 대부분입니다.
+       "받지 못했습니다"는 일이 어긋난 것처럼 들려 놀라게 합니다. */
+    if (!ok){ toast("복채는 받지 않았습니다. 마음이 서시면 다시 눌러 주세요."); return; }
     ST.paid = true;
     try { localStorage.setItem(KEY_PAID, "1"); } catch(e){}
     renderCheop();
@@ -1067,14 +1103,44 @@ function bindMisc(){
   });
   $$("[data-go]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));
   try { ST.paid = localStorage.getItem(KEY_PAID) === "1"; } catch(e){}
+  /* 복채를 내신 분이 새로고침하거나 다시 들어오시면 첩이 비어 있습니다.
+     재 놓은 수는 사진마다 적어 두었으니, 같은 사진이면 같은 첩이
+     그대로 다시 납니다. 그 길을 말씀드려 두지 않으면
+     "돈 내고 읽던 게 없어졌다"가 됩니다. */
+  if (ST.paid && !ST.R){ const b = $("#backagain"); if (b) b.hidden = false; }
 }
 
 /* ── 시작 ─────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", ()=>{
+  /* 처음 보이는 화면을 첫 걸음으로 적어 둡니다.
+     이걸 안 적어 두면 첫 go() 가 걸음을 쌓지 못해,
+     뒤로 한 번에 자리를 떠나게 됩니다. */
+  try{
+    if (!(history.state && history.state.scr)){
+      const 첫 = $$(".screen").find(x=>!x.hidden);
+      history.replaceState({ scr: (첫 && 첫.id) || "s-intro" }, "");
+    }
+  }catch(e){}
   bindSound();
   bindPaybar();
   bindIntro(); bindAsk(); bindMirror(); bindPay(); bindMisc();
   try { bindSave(); } catch(e){}
-  /* 얼굴 읽는 기계를 미리 깨워 둡니다 — 손님이 사진을 고르는 동안 */
-  setTimeout(()=>{ try { wakeMesh(); } catch(e){} }, 1200);
+  /* 얼굴 읽는 기계는 4메가가 넘습니다. 들어오자마자 받아 두면
+     구경만 하고 나가는 분께도 4메가를 물립니다. 그래서 "해 보겠다"는
+     낌새가 보일 때 깨웁니다 — 단추를 짚거나, 아래로 한참 내려갔을 때.
+     그 뒤로도 나이·성별을 고르고 사진을 집는 동안이 남아 있어
+    기다리는 시간은 늘지 않습니다. */
+  {
+    let 깼나 = false;
+    const 깨우기 = ()=>{ if(깼나) return; 깼나 = true;
+      try { wakeMesh(); } catch(e){} };
+    ["#go-ask","#ask-ok","#file","#free-redo"].forEach(sel=>{
+      const el = document.querySelector(sel);
+      if (el) el.addEventListener("pointerdown", 깨우기, { once:true, passive:true });
+    });
+    const 내려감 = ()=>{ if (window.scrollY > 700) 깨우기(); };
+    window.addEventListener("scroll", 내려감, { passive:true });
+    /* 아무 낌새가 없어도 한참 머무시면 그때는 미리 받아 둡니다 */
+    setTimeout(깨우기, 25000);
+  }
 });
