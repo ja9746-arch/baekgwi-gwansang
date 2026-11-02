@@ -676,7 +676,8 @@ function renderFree(){
   const list = sealCheop(ST.cheop);
   const fpara = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? 글월(b.p) : "") +
     (b.list ? `<ul class="jari">` + b.list.map(x=>
-      `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
+      `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span>` +
+      (x.e ? `<em>${esc(x.e)}</em>` : "") + `</li>`
     ).join("") + `</ul>` : "");
 
   /* 열 장을 모두 내어 놓습니다. 먼저 열어 드리는 두 장은 절반까지 읽히고,
@@ -909,7 +910,8 @@ function renderCheop(){
     const art = `img/cheop/c${String(c.no).padStart(2,"0")}.webp`;
     const para = (b)=> `<h4>${esc(b.h)}</h4>` + (b.p ? 글월(b.p) : "") +
       (b.list ? `<ul class="jari">` + b.list.map(x=>
-        `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span></li>`
+        `<li${x.g>0?' class="gok"':x.g<0?' class="gbad"':''}><b>${esc(x.t)}</b><span>${esc(x.d)}</span>` +
+      (x.e ? `<em>${esc(x.e)}</em>` : "") + `</li>`
       ).join("") + `</ul>` : "");
     let inner = (c.body.length ? `<div class="lead juru">${para(c.body[0])}</div>` : "")
               + c.body.slice(1).map(para).join("");
@@ -996,10 +998,16 @@ function faceMap(marks, opt){
             const leg = "아래 셋 가운데 손님께 맞는 자리를 짚어 드립니다";
             return realFace(mk, { legend:leg })
                 || faceMap(mk, { alt:"점 찍을 자리 셋", legend:leg }); })()
-        + `<ul class="moles">` + c.jeom.map((j,i)=>`<li><b><i class="n">${i+1}</i>${esc(j.t)}</b><span>${esc(j.w)}</span></li>`).join("") + `</ul>
+        + `<ul class="moles">` + c.jeom.map((j,i)=>
+            `<li><b><i class="n">${i+1}</i>${esc(j.t)}</b><span>${esc(j.w)}</span>` +
+            (j.e ? `<em>${esc(j.e)}</em>` : "") + `</li>`).join("") + `</ul>
         <h5>길한 색</h5>
-        <ul class="cols">` + c.gil.map(g=>`<li><i style="background:${esc(g[1])}"></i><b>${esc(g[0])}</b><span>${esc(g[2])} — ${esc(g[3])}</span></li>`).join("") +
-        `<li class="gno"><i style="background:${esc(c.hyung[1])}"></i><b>${esc(c.hyung[0])}</b><span>${esc(c.hyung[2])}</span></li></ul>
+        <ul class="cols">` + c.gil.map(g=>
+          `<li><i style="background:${esc(g[1])}"></i><b>${esc(g[0])}</b><span>${esc(g[2])} — ${esc(g[3])}</span>` +
+          (g[4] ? `<em>${esc(g[4])}</em>` : "") + `</li>`).join("") +
+        `<li class="gno"><i style="background:${esc(c.hyung[1])}"></i><b>${esc(c.hyung[0])}</b>` +
+        `<span>${esc(c.hyung[2])} — ${esc(c.hyung[3]||"")}</span>` +
+        (c.hyung[4] ? `<em>${esc(c.hyung[4])}</em>` : "") + `</li></ul>
         <h5>머리</h5>
         <p class="mori"><b>${esc(c.mori[0])}</b> ${esc(c.mori[1])}</p>
       </div>`;

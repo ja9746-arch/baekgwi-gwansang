@@ -368,8 +368,10 @@ function prescribe(R){
   const oh = OH[R.hyeong];
   const gi = GISAEK[R.gisaek];
 
-  /* 점자리 — 올해를 쥔 궁에서 */
-  const jeom = (JEOM[R.boss.g.k] || JEOM["명"]).slice();
+  /* 점자리 — 올해를 쥔 궁에서. 자리마다 바랄 것을 함께 답니다. */
+  const jk = JEOM[R.boss.g.k] ? R.boss.g.k : "명";
+  const je = (typeof JEOM_E !== "undefined" && JEOM_E[jk]) || [];
+  const jeom = JEOM[jk].map((p,i)=> Object.assign({}, p, { e: je[i] || "" }));
 
   /* 색 — 그릇의 길색 둘, 그리고 지금 기운이 누르는 색 하나.
      같은 형상이라도 고쳐야 할 자리가 다르면 쓰는 데가 달라집니다. */
@@ -390,7 +392,10 @@ function prescribe(R){
       "청":["쪽빛","#2a4a6b"], "적":["다홍","#b9372c"], "황":["치자","#c8a02e"],
       "백":["백자","#ddd6c7"], "흑":["먹빛","#1d1a1a"] }[R.gisaek];
     hyung = [saekColor[0], saekColor[1], "올해는 몸에 지니지 마세요",
-             "지금 도는 "+R.gisaek+"기가 손님 그릇을 누르는 색입니다"];
+             "지금 도는 "+R.gisaek+"기가 손님 그릇을 누르는 색입니다",
+             "올해 손님 얼굴에 도는 " + R.gisaek + "기가 타고난 " + R.hyeong +
+             "의 그릇을 누르고 있습니다. 그 기운과 같은 색을 몸에 지니면 누르는 쪽에 힘을 보태는 꼴이라, " +
+             "되던 일도 한 박자씩 늦어집니다. 올해만 피하시면 됩니다 — 기색은 반년이면 바뀝니다."];
   }
 
   /* 머리 — 그릇에 삼정을 더해 */

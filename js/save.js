@@ -271,7 +271,8 @@ function buildText(){
     (c.body||[]).forEach(b=>{
       if (b.h) L.push("— " + b.h);
       if (b.p) String(b.p).split(/\n{2,}/).forEach(x=> x.trim() && L.push(x.trim()));
-      (b.list||[]).forEach(x=> L.push(` · ${x.t} — ${x.d}`));
+      (b.list||[]).forEach(x=>{ L.push(` · ${x.t} — ${x.d}`);
+        if (x.e) L.push(`    ${x.e}`); });
     });
 
     /* 화면에만 그려지고 글에는 안 담기던 칸들 — 손님이 돈 내고 읽은 알맹이입니다 */
@@ -301,12 +302,17 @@ function buildText(){
     }
     if (c.jeom && c.jeom.length){
       L.push("— 점 찍을 자리");
-      c.jeom.forEach((j,i)=> L.push(` ${i+1}. ${j.t} — ${j.w}`));
+      c.jeom.forEach((j,i)=>{ L.push(` ${i+1}. ${j.t} — ${j.w}`);
+        if (j.e) L.push(`    ${j.e}`); });
     }
     if (c.gil && c.gil.length){
       L.push("— 길한 색");
-      c.gil.forEach(g=> L.push(` · ${g[0]} — ${g[2]} — ${g[3]}`));
-      if (c.hyung) L.push(` · 꺼릴 색 ${c.hyung[0]} — ${c.hyung[2]}`);
+      c.gil.forEach(g=>{ L.push(` · ${g[0]} — ${g[2]} — ${g[3]}`);
+        if (g[4]) L.push(`    ${g[4]}`); });
+      if (c.hyung){
+        L.push(` · 꺼릴 색 ${c.hyung[0]} — ${c.hyung[2]} — ${c.hyung[3]||""}`);
+        if (c.hyung[4]) L.push(`    ${c.hyung[4]}`);
+      }
     }
     if (c.mori) L.push(`— 머리\n${c.mori[0]} ${c.mori[1]}`);
     if (c.verdict) L.push(`— 올해 — ${c.verdict}`);

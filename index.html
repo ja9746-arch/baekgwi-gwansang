@@ -1474,9 +1474,16 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .moles li,.cols li{display:grid;grid-template-columns:132px 1fr;gap:11px;align-items:center;
   padding:12px 13px;background:rgba(8,4,5,.6);border:1px solid rgba(201,162,74,.18)}
 .cols li{grid-template-columns:18px 54px 1fr}
+.cols li{row-gap:0}
 .moles li b,.cols li b{font-family:var(--serif);font-size:var(--fs-sm);color:#f0dcb8;word-break:keep-all;
   white-space:nowrap}
 .moles li span,.cols li span{font-size:var(--fs-sm);color:#c0b2a0;line-height:1.7}
+/* 자리와 색마다 왜 그런지를 한 단락으로 — 이름표만으로는 쓸 데가 없습니다 */
+.moles li,.cols li{align-items:start}
+.moles li em,.cols li em{grid-column:1/-1;display:block;margin:9px 0 1px;padding-top:9px;
+  border-top:1px dashed rgba(201,162,74,.22);font-style:normal;
+  font-size:var(--fs-sm);line-height:1.85;color:#a89478;word-break:keep-all}
+.cols li.gno em{color:#bd9a8c;border-top-color:rgba(192,54,42,.28)}
 .cols li i{width:18px;height:18px;border:1px solid rgba(255,255,255,.26);border-radius:2px}
 .cols li.gno{border-color:rgba(192,54,42,.4)}
 .cols li.gno b{color:#e9a893}
@@ -2508,6 +2515,13 @@ body{letter-spacing:-.004em}
 .cph::after{height:46%;
   background:linear-gradient(180deg,rgba(10,5,7,0),rgba(10,5,7,.42) 46%,rgba(10,5,7,.9))}
 .cpt{margin-top:-14px}
+
+/* 유년 띠·목록에 붙는 풀이 한 줄 */
+.jari li em{display:block;margin:7px 0 0;padding-top:7px;font-style:normal;
+  border-top:1px dashed rgba(201,162,74,.22);
+  font-size:var(--fs-sm);line-height:1.85;color:#a89478;word-break:keep-all}
+.jari li.gok em{color:#bda87f}
+.jari li.gbad em{color:#c0a08f}
 
 </style>
 </head>
