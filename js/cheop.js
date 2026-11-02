@@ -244,11 +244,14 @@ function makeCheop(R, C, age, sex){
     const oh = OH[R.hyeong];
     /* 윤곽과 삼정은 바로 앞에서 오행형상·삼정으로 말했습니다.
        같은 말을 두 번 하지 않도록 여기서는 빼고 뽑습니다. */
-    let 본 = 뽑기(byT.본성.filter(h=>h.c.bu!=="윤곽"), 4);
+    /* 얼굴에서 실제로 잡힌 단서가 손님마다 가장 다른 것입니다 —
+       두 얼굴이 단서를 겹치는 정도는 평균 넷 가운데 하나뿐입니다.
+       그러니 여기서 넉넉히 꺼내 쓰는 것이 풀이를 손님 것으로 만드는 길입니다. */
+    let 본 = 뽑기(byT.본성.filter(h=>h.c.bu!=="윤곽"), 6);
     /* 본성 쪽이 모자라면 얼굴에서 가장 세게 선 것으로 채웁니다.
        무료로 보여 드리는 칸이 비면 안 됩니다. */
-    if (본.length < 3){
-      const 더 = 뽑기(C.list.filter(h=>h.c.bu!=="윤곽" && h.c.bu!=="삼정"), 4 - 본.length);
+    if (본.length < 5){
+      const 더 = 뽑기(C.list.filter(h=>h.c.bu!=="윤곽" && h.c.bu!=="삼정"), 6 - 본.length);
       본 = 본.concat(더);
     }
     c.ev = ev(본, 4);
@@ -357,7 +360,7 @@ function makeCheop(R, C, age, sex){
       []
     ));
 
-    const 들 = 재길.concat(재중).slice(0, 2);
+    const 들 = 재길.concat(재중).slice(0, 4);
     if (들.length) c.body.push(단락(
       "얼굴이 말하는 재물",
       "손님 얼굴에서 재물 쪽으로 선 자리입니다.",
@@ -365,7 +368,7 @@ function makeCheop(R, C, age, sex){
       들.map(h=>({ t:h.c.s, d:h.c.m, g:1 }))
     ));
 
-    const 샘 = 재흉.slice(0, 2);
+    const 샘 = 재흉.slice(0, 3);
     c.body.push(단락(
       "새는 자리",
       `전택궁(田宅宮)은 눈두덩입니다. 쌓아 두는 것, 묶어 둔 것, 집을 맡습니다. ` +

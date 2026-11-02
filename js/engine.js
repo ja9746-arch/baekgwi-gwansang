@@ -253,10 +253,14 @@ function gradeAll(m){
   out.__z = zz;
   out.__cov = ks.filter(k=>cov[k]);
   /* 어느 얼굴에도 가진 것과 고칠 것이 함께 있어야 풀이가 섭니다.
-     고르게 뭉친 얼굴이면 높은 차례·낮은 차례로 조금 벌려 줍니다. */
+     고르게 뭉친 얼굴이면 높은 차례·낮은 차례로 조금 벌려 줍니다.
+
+     다만 억지로 셋까지 끌어올리면, 자로 잰 값이 서로 다른 두 얼굴이
+     같은 꼴로 뭉개집니다. 마흔한 장으로 재어 보니 셋이면 두 얼굴이 겹치고
+     둘이면 마흔한 장이 모두 갈립니다. 둘만 세워 두고 나머지는 자가 정하게 둡니다. */
   const order = ks.map((k,i)=>({k, z:z[i]})).sort((a,b)=>b.z-a.z);
   let open = ks.filter(k=>out[k]===0).length;
-  for(let i=0; open<3 && i<order.length; i++)
+  for(let i=0; open<2 && i<order.length; i++)
     if(out[order[i].k]!==0){ out[order[i].k]=0; open++; }
   let block = ks.filter(k=>out[k]===2).length;
   for(let i=order.length-1; block<2 && i>=0; i--)

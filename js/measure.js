@@ -151,17 +151,25 @@ function readSkin(canvas, F, sex){
     gung[k] = patch(px, W, H, b.x*W/F.W, b.y*H/F.H, rad);
   }
 
-  /* 앞머리·모자가 덮은 자리는 살빛이 아니라 머리카락을 읽습니다.
-     그 자리를 그대로 두면 관록·복덕·부모가 거짓으로 "막힘"이 됩니다.
-     살이 분명한 자리(산근)와 견주어, 훨씬 어둡거나 결이 거칠면 가린 것으로 봅니다. */
-  const ref = Math.max(gung["질액"] ? gung["질액"].L : 0, meanL, 1);
-  const refSd = Math.max(gung["질액"] ? gung["질액"].sd : 10, 5);
+  /* 앞머리·모자·수염·안경이 덮은 자리는 살빛이 아니라 머리카락이나 테를 읽습니다.
+     그 자리를 그대로 두면 관록·복덕·부모·노복이 거짓으로 "막힘"이 됩니다.
+
+     견줄 자리를 산근 하나로 삼으면 안경 쓴 얼굴에서 그 기준이 먼저 무너집니다 —
+     안경다리와 코받침이 바로 산근에 얹히니까요. 그래서 열두 자리의 밝은 쪽
+     여섯째 값(60분위)을 기준으로 씁니다. 한두 자리가 덮여도 기준은 안 흔들립니다. */
+  const Ls = [];
+  for (const k in gung){ if (gung[k].n) Ls.push(gung[k].L); }
+  Ls.sort((a,b)=>a-b);
+  const 분위 = (arr, q) => arr.length ? arr[Math.min(arr.length-1, Math.floor(arr.length*q))] : 0;
+  const ref = Math.max(분위(Ls, 0.60), meanL * 0.86, 1);
   const covered = {};
   for(const k in gung){
     const g = gung[k];
     if(!g.n){ covered[k] = false; continue; }
     const r = g.L / ref;
-    covered[k] = (r < 0.70) || (g.sd > refSd*2.2 && r < 0.92);
+    /* 거칠기는 그 자리 제 기준으로 잽니다. 한 자로 재면 코끝이 늘 걸립니다. */
+    const 제결 = (typeof GUNG_SD !== "undefined" && GUNG_SD[k]) || 6;
+    covered[k] = (r < 0.70) || (g.sd > 제결 * 2.4 && r < 0.90);
   }
 
   return {
