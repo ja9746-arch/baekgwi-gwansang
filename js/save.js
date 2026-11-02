@@ -268,6 +268,7 @@ function buildText(){
   const 말 = ["트임","반반","막힘"];
   cheop.forEach(c=>{
     L.push(`[제${c.no}첩 ${c.title}]`);
+    if (c.한마디) L.push(`한마디로 — ${c.한마디}`);
     (c.body||[]).forEach(b=>{
       if (b.h) L.push("— " + b.h);
       if (b.p) String(b.p).split(/\n{2,}/).forEach(x=> x.trim() && L.push(x.trim()));

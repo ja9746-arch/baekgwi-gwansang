@@ -547,6 +547,16 @@ const 끝말 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(
 /* ── 열두 자리 맛보기 ────────────────────────────
    트였는지 막혔는지까지는 무료로 보여 드립니다.
    자리마다 무엇을 해야 하는지와 선 백귀가 제7첩입니다. */
+/* 열두 자리 목록의 부위 이름 — 손님이 가장 많이 보는 칸입니다.
+   여기에 "천창(天倉)"이라 적혀 있으면 그 줄은 읽히지 않습니다.
+   쉬운 말을 세우고 한자는 작게 뒤에 붙입니다. */
+function 부위말(bu){
+  const t = String(bu || "");
+  const 쉬 = (typeof 쉽게민 === "function") ? 쉽게민(t) : t;
+  const 한 = (t.match(/\(([\u4e00-\u9fff]+)\)/) || [])[1] || "";
+  const 몸 = (쉬 === t ? t.replace(/\s*\([\u4e00-\u9fff]+\)\s*/, "") : 쉬).trim();
+  return 한 ? `${몸} ${한}` : 몸;
+}
 function renderGung12(box, R){
   if (!box || !R || !R.jari) return;
   box.hidden = false;
@@ -554,7 +564,7 @@ function renderGung12(box, R){
   box.innerHTML = `<span class="gt">자네 얼굴의 열두 자리</span>
     <ul class="g12">` + R.jari.map(j=>
       `<li class="l${j.lv}${j.g.k===R.boss.g.k?" now":""}">
-         <b>${esc(j.g.n)}</b><em>${esc(j.g.bu)}</em>
+         <b>${esc(j.g.n)}</b><em>${esc(부위말(j.g.bu))}</em>
          <i>${말[j.lv]}</i><span>${esc(j.g.d)}</span></li>`).join("") +
     `</ul>
      ${(R.가린자리 && R.가린자리.length)
@@ -762,7 +772,7 @@ function renderFree(){
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
       <div class="cpt juru${c.sealed ? " shut" : ""}">${tag}
         <span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-      <div class="cpb">${머리}${나머지}${c.sealed ? "" : halBlock(c.할것)}${veilBlock(c)}</div>
+      <div class="cpb">${(!c.sealed && c.한마디) ? `<p class="hanmadi"><b>한마디로</b>${esc(c.한마디)}</p>` : ""}${머리}${나머지}${c.sealed ? "" : halBlock(c.할것)}${veilBlock(c)}</div>
     </article>`;
   }).join("");
 
@@ -1072,7 +1082,7 @@ function faceMap(marks, opt){
     return `<article class="cp open full">
       <div class="cph"><img src="${art}" alt="" loading="lazy"></div>
       <div class="cpt juru"><span class="no">제${c.no}첩</span><h3>${esc(c.title)}</h3><p>${esc(c.sub)}</p></div>
-      <div class="cpb">${inner}
+      <div class="cpb">${c.한마디 ? `<p class="hanmadi"><b>한마디로</b>${esc(c.한마디)}</p>` : ""}${inner}
         ${halBlock(c.할것)}
         ${c.si ? `<div class="si"><span>시기</span><p>${esc(c.si)}</p></div>` : ""}
         ${c.act ? `<div class="act"><span>풀 길</span><p>${esc(c.act)}</p></div>` : ""}
