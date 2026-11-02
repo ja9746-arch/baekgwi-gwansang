@@ -341,10 +341,19 @@ function divine(m, age, sex){
     const lv = lvAll[G.k];
     const pool = G.pool.filter(x=>보류.indexOf(x)<0);
     const bg = pickFrom(pool.length?pool:G.pool, seed, i*31 + lv);
-    return { g:G, lv, bg, z: (zAll[G.k]===undefined ? 0 : zAll[G.k]) };
+    /* 덮인 자리는 빛을 빼고 모양으로만 보았으니, 짚는 말도
+       빛·금·그늘을 말하지 않는 쪽(cdx)으로 바꿔 끼웁니다. */
+    let g = G;
+    if (가린자리.indexOf(G.k) >= 0 && G.lv[lv] && G.lv[lv].cdx){
+      g = Object.assign({}, G, { lv: G.lv.map((o,n)=> n===lv ? Object.assign({}, o, {dx:o.cdx}) : o) });
+    }
+    return { g, lv, bg, z: (zAll[G.k]===undefined ? 0 : zAll[G.k]) };
   });
-  /* 실제로 가장 환한 자리와 가장 그늘진 자리 */
-  const byZ = jari.slice().sort((a,b)=>b.z-a.z);
+  /* 실제로 가장 환한 자리와 가장 그늘진 자리.
+     덮인 자리는 빛이 아니라 모양에서 나온 값이라 "환하다/그늘졌다"고
+     말할 수 없습니다. 그래서 고를 때 빼고, 뺄 것이 너무 많으면 그때만 씁니다. */
+  const 성한것 = jari.filter(j => 가린자리.indexOf(j.g.k) < 0);
+  const byZ = (성한것.length >= 4 ? 성한것 : jari).slice().sort((a,b)=>b.z-a.z);
   const brightest = byZ[0], darkest = byZ[byZ.length-1];
 
   /* 올해를 쥔 자리 */
@@ -432,7 +441,11 @@ function summarize(R){
   /* 할 일은 고쳐야 할 데에서 나옵니다. 우두머리를 맨 앞에 두고,
      막힌 자리, 반반, 그래도 모자라면 트인 자리 순으로 셋을 고릅니다. */
   /* 우두머리가 막혔거나 서성이면 맨 앞에, 비켜섰으면 막힌 자리 뒤에 둡니다 */
-  const rest = [block, mid, open].map(a=>a.filter(j=>j!==R.boss));
+  /* 덮인 자리는 빛을 못 봤으니, 같은 등급이면 맨 뒤로 미룹니다.
+     안 그러면 "올해 할 일 셋"이 전부 안경·앞머리에 가렸던 자리로 채워집니다. */
+  const 덮임 = (j)=> (R.가린자리||[]).indexOf(j.g.k) >= 0;
+  const 뒤로 = (a)=> a.filter(j=>!덮임(j)).concat(a.filter(덮임));
+  const rest = [block, mid, open].map(a=>뒤로(a.filter(j=>j!==R.boss)));
   const order = (R.boss.lv>=1)
     ? [R.boss].concat(rest[0], rest[1], rest[2])
     : rest[0].concat([R.boss], rest[1], rest[2]);
@@ -441,6 +454,18 @@ function summarize(R){
     if(todo.length>=3) break;
     if(todo.some(x=>x.k===j.g.k)) continue;
     todo.push({ k:j.g.k, n:j.g.n, t:j.g.lv[j.lv].ac });
+  }
+
+  /* 셋이 전부 덮인 자리로 차면, 손님은 "안 보이는 데만 가지고 말하네"
+     하십니다. 그래서 하나는 성히 본 자리로 바꿔 끼웁니다.
+     올해를 쥔 자리는 해와 묶여 있으니 그것만은 두고, 뒤엣것부터 바꿉니다. */
+  if (todo.length === 3 && todo.every(x=>(R.가린자리||[]).indexOf(x.k) >= 0)){
+    const 성한 = order.find(j => !덮임(j) && !todo.some(x=>x.k===j.g.k));
+    if (성한){
+      let i = todo.length - 1;
+      while (i > 0 && todo[i].k === R.boss.g.k) i--;
+      todo[i] = { k:성한.g.k, n:성한.g.n, t:성한.g.lv[성한.lv].ac };
+    }
   }
 
   /* 피할 것은 막힌 데에서. 할 일과 겹치지 않는 자리를 먼저 씁니다. */

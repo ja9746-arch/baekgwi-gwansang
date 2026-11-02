@@ -314,7 +314,7 @@ function buildText(){
         if (c.hyung[4]) L.push(`    ${c.hyung[4]}`);
       }
     }
-    if (c.mori) L.push(`— 머리\n${c.mori[0]} ${c.mori[1]}`);
+    if (c.mori) L.push(`— 머리\n${c.mori[0]}. ${c.mori[1]}`);
     if (c.verdict) L.push(`— 올해 — ${c.verdict}`);
     if (c.todo && c.todo.length){
       L.push("— 올해 할 일 셋");
