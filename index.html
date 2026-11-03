@@ -1446,6 +1446,8 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 .gu .dx{color:#c0b2a0}
 .gu .rd{color:#e6d9c7}
 .gu .ac{color:#e8c377;border-left:2px solid rgba(201,162,74,.45);padding-left:10px}
+/* 앞 첩에서 이미 읽으신 자리는 그 첩을 가리킵니다 */
+.gu .jref{color:#9a8d7c;font-size:var(--fs-label);font-style:italic}
 .gu .gw{display:flex;align-items:center;gap:10px;margin-top:13px;padding-top:12px;
   border-top:1px dashed rgba(201,162,74,.2)}
 .gu .gw img{width:58px;height:35px;object-fit:cover;border:1px solid rgba(201,162,74,.34);
@@ -2477,10 +2479,14 @@ body{letter-spacing:-.004em}
   word-break:keep-all;letter-spacing:-.01em}
 .hanmadi b{display:block;margin-bottom:5px;color:#c9a24a;font-weight:700;
   font-size:clamp(12.5px,3.2vw,13.5px);letter-spacing:.12em}
-.backagain{margin:0 0 12px;padding:11px 14px;border:1px solid rgba(201,162,77,.34);
+.backagain{margin:0 0 14px;padding:14px 15px;border:1px solid rgba(201,162,77,.34);
   border-radius:12px;background:rgba(201,162,77,.07);color:#d9c9a8;
-  font-size:clamp(12.5px,3.4vw,14px);line-height:1.62;word-break:keep-all;text-align:center}
+  font-size:clamp(12.9px,3.4vw,14px);line-height:1.66;word-break:keep-all;text-align:center}
 .backagain b{color:#f0dfb6;font-weight:700}
+.backagain .bawhen{margin:0 0 6px;font-family:var(--serif);font-size:var(--fs-label);
+  letter-spacing:.08em;color:#c9a24a}
+.backagain .bamal{margin:0}
+.backagain .ba-go{margin-top:12px;width:100%;min-height:48px}
 .vow2{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:1px;
   background:rgba(201,162,74,.2);border:1px solid rgba(201,162,74,.22);
   border-radius:3px;overflow:hidden}
@@ -2614,8 +2620,11 @@ body{letter-spacing:-.004em}
     </div>
   </div>
 
-  <p class="backagain" id="backagain" hidden>이미 복채를 내신 분입니다.
-    <b>같은 사진을 다시 비추시면</b> 열 장이 그대로 다시 열립니다 — 복채는 다시 받지 않습니다.</p>
+  <div class="backagain" id="backagain" hidden>
+    <p class="bawhen" id="ba-when" hidden></p>
+    <p class="bamal" id="ba-mal"></p>
+    <button class="btn ghost ba-go" id="ba-go" hidden>읽던 관상첩 이어 보기 <span class="ar">→</span></button>
+  </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
 

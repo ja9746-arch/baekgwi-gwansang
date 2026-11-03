@@ -300,6 +300,8 @@ async function read(){
   /* 지난번에 오셨다면 그때와 견주어 둡니다 */
   try { ST.prev = compareReading(loadReading(), ST.R); } catch(e){ ST.prev = null; }
   saveReading(ST.R);
+  /* 사흘 동안은 사진 없이도 이 첩이 그대로 다시 납니다 */
+  try { saveFull(r.F, r.m, ST.age, ST.sex); } catch(e){}
 
   step(`자네 얼굴에서 ${ST.C.count} 자리가 섰네.`, 100);
   await sleep(700);
@@ -913,6 +915,11 @@ function realFace_(marks, opt){
   const y산근    = Y(168);
   const y준두    = Y(1);
   const y입      = Y(13);
+  /* 지고(턱 옆)는 얼굴 가운뎃줄이 아니라 턱선 위에 있는 자리입니다.
+     입과 턱끝 사이를 가운뎃줄에서 곧게 나누면, 가장자리에서는 턱선 밖
+     목주름에 떨어집니다 — 살집이 있는 얼굴일수록 많이 벗어납니다.
+     그래서 아래턱 테두리 점(150·379)에 바로 걸어 둡니다. */
+  const y턱옆    = 가(Y(150), Y(379));
   /* 자 눈금 → 손님 얼굴의 실제 자리 */
   const 눈금 = [
     [  4, y이마 - 높*0.05 ],
@@ -929,7 +936,7 @@ function realFace_(marks, opt){
     [ 64, y준두 ],
     [ 70, 가(y준두, y입, 0.45) ],          /* 인중 */
     [ 74, y입 ],
-    [ 86, 가(y입, y턱, 0.62) ],            /* 지고 */
+    [ 86, Math.min(가(y입, y턱, 0.62), y턱옆 - 높*0.015) ],   /* 지고 — 턱선 안으로 */
     [ 96, y턱 + 높*0.03 ]
   ];
   const my = gy => {
@@ -1025,9 +1032,10 @@ function faceMap(marks, opt){
         <div class="gu gl${j.lv}${j.boss?" gboss":""}">
           <div class="guh"><b>${esc(j.n)}</b><span>${esc(j.bu)}</span>
             <i class="lv">${["트임","반반","막힘"][j.lv]}</i>${j.boss?'<i class="bs">올해</i>':""}</div>
-          <p class="dx">${esc(j.dx)}</p>
-          <p class="rd">${esc(j.rd)}</p>
-          <p class="ac">${esc(j.ac)}</p>
+          ${j.dx?`<p class="dx">${esc(j.dx)}</p>`:""}
+          ${j.rd?`<p class="rd">${esc(j.rd)}</p>`:""}
+          ${j.ac?`<p class="ac">${esc(j.ac)}</p>`:""}
+          ${j.ref?`<p class="jref">${esc(j.ref)}</p>`:""}
           <div class="gw"><img src="${esc(j.gwi.img)}" alt="" loading="lazy">
             <span>${esc(j.gwi.n)}${j.gwi.h?` <i>${esc(j.gwi.h)}</i>`:""}</span></div>
         </div>`).join("") + `</div>`;
@@ -1044,8 +1052,8 @@ function faceMap(marks, opt){
           ${g.처방 && g.처방.l.length ? `<div class="gfix"><b>${esc(g.처방.t)}</b><ul>` +
             g.처방.l.map(t=>`<li>${esc(t)}</li>`).join("") + `</ul></div>` : ""}
           <div class="two">
-            <div class="gt gok"><b>복(福)</b><span>${esc(g.두얼굴[0].t)}</span></div>
-            <div class="gt gbad"><b>흉(凶)</b><span>${esc(g.두얼굴[1].t)}</span></div>
+            <div class="gt gok"><b>복(福)</b><span>${esc((g.두얼굴[0]||{}).t||"")}</span></div>
+            <div class="gt gbad"><b>흉(凶)</b><span>${esc((g.두얼굴[1]||{}).t||"")}</span></div>
           </div>
         </div>`).join("") + `</div>`;
     }
@@ -1121,12 +1129,68 @@ function bindMisc(){
     go("s-mirror");
   });
   $$("[data-go]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));
+  { const b = $("#ba-go"); if (b) b.addEventListener("click", 이어보기); }
   try { ST.paid = localStorage.getItem(KEY_PAID) === "1"; } catch(e){}
-  /* 복채를 내신 분이 새로고침하거나 다시 들어오시면 첩이 비어 있습니다.
-     재 놓은 수는 사진마다 적어 두었으니, 같은 사진이면 같은 첩이
-     그대로 다시 납니다. 그 길을 말씀드려 두지 않으면
-     "돈 내고 읽던 게 없어졌다"가 됩니다. */
-  if (ST.paid && !ST.R){ const b = $("#backagain"); if (b) b.hidden = false; }
+  다시오심();
+}
+
+/* ── 다시 오신 손님 ───────────────────────────────
+   복채를 내고 읽던 중에 뒤로 한 번 눌렀다고 첩이 사라지면
+   돈을 잃은 기분이 듭니다. 사흘 동안은 들고 있다가 그대로 내어 드리고,
+   사흘이 지났으면 같은 사진을 다시 올리는 길을 알려 드립니다. */
+const 셈날 = n => ["","하루","이틀","사흘","나흘","닷새","엿새","이레","여드레","아흐레","열흘",
+  "열하루","열이틀","열사흘"][n] || (n + "일");
+function 다시오심(){
+  const 칸 = $("#backagain"); if (!칸) return;
+  if (ST.R){ 칸.hidden = true; return; }
+  const 언제 = $("#ba-when"), 말 = $("#ba-mal"), 단추 = $("#ba-go");
+  let 보일까 = false;
+  try{
+    const 전 = loadReading();
+    if (전 && 전.t){
+      const 날 = Math.floor((Date.now() - 전.t) / 86400000);
+      언제.textContent = 날 <= 0 ? "오늘 다시 오셨습니다"
+        : 날 === 1 ? "어제 보시고 하루 만입니다"
+        : 날 < 14 ? ("지난번 보신 지 " + 셈날(날) + "째입니다")
+        : 날 < 60 ? ("지난번 보신 지 " + Math.round(날/7) + "주 만입니다")
+        : ("지난번 보신 지 " + Math.round(날/30) + "달 만입니다");
+      언제.hidden = false; 보일까 = true;
+    } else 언제.hidden = true;
+  }catch(e){ 언제.hidden = true; }
+  let 보관 = null;
+  try { 보관 = loadFull(); } catch(e){}
+  if (보관 && ST.paid){
+    const 시 = Math.floor((보관.남은시간 || 0) / 3600000);
+    const 남말 = 시 >= 24 ? (Math.floor(시/24) + "일 " + (시%24) + "시간") : (Math.max(1,시) + "시간");
+    말.innerHTML = "읽으시던 <b>관상첩 열 장이 그대로 남아 있습니다.</b> " +
+      "사진을 다시 올리지 않으셔도 됩니다 — 앞으로 " + esc(남말) + " 동안 여기 있습니다.";
+    단추.hidden = false; 보일까 = true;
+  } else if (ST.paid){
+    말.innerHTML = "이미 복채를 내신 분입니다. <b>같은 사진을 다시 비추시면</b> " +
+      "열 장이 그대로 다시 열립니다 — 복채는 다시 받지 않습니다.";
+    단추.hidden = true; 보일까 = true;
+  } else { 말.textContent = ""; 단추.hidden = true; }
+  칸.hidden = !보일까;
+}
+
+/* 들고 있던 수로 첩을 그대로 다시 냅니다 — 사진은 담지 않았으니 얼굴 그림만 빕니다 */
+function 이어보기(){
+  let v = null;
+  try { v = loadFull(); } catch(e){}
+  if (!v){ toast("들고 있던 첩이 없습니다."); 다시오심(); return; }
+  try{
+    ST.age = v.age; ST.sex = v.sex;
+    ST.F = v.F; ST.m = v.m; ST.img = null; ST.note = null; ST.word = null;
+    ST.R = divine(v.m, v.age, v.sex);
+    ST.C = readClues(v.F, 궁걸름(ST.R));
+    ST.cheop = makeCheop(ST.R, ST.C, v.age, v.sex);
+    ST.prev = null;
+    renderFree(); renderCheop(); go("s-cheop");
+    toast("읽으시던 자리로 돌아왔습니다.");
+  }catch(e){
+    toast("첩을 다시 내지 못했습니다. 사진을 한 번 더 올려 주세요.");
+    clearFull(); 다시오심();
+  }
 }
 
 /* ── 시작 ─────────────────────────────────────── */

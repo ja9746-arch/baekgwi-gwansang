@@ -344,8 +344,11 @@ function divine(m, age, sex){
     /* 덮인 자리는 빛을 빼고 모양으로만 보았으니, 짚는 말도
        빛·금·그늘을 말하지 않는 쪽(cdx)으로 바꿔 끼웁니다. */
     let g = G;
-    if (가린자리.indexOf(G.k) >= 0 && G.lv[lv] && G.lv[lv].cdx){
-      g = Object.assign({}, G, { lv: G.lv.map((o,n)=> n===lv ? Object.assign({}, o, {dx:o.cdx}) : o) });
+    if (가린자리.indexOf(G.k) >= 0 && G.lv[lv] && (G.lv[lv].cdx || G.lv[lv].cac)){
+      /* 할 것(ac)도 "환하게 두세요"처럼 빛을 말하는 수가 있습니다.
+         덮인 자리는 빛을 안 말하는 쪽(cac)으로 바꿔 끼웁니다. */
+      g = Object.assign({}, G, { lv: G.lv.map((o,n)=> n===lv
+            ? Object.assign({}, o, o.cdx?{dx:o.cdx}:{}, o.cac?{ac:o.cac}:{}) : o) });
     }
     return { g, lv, bg, z: (zAll[G.k]===undefined ? 0 : zAll[G.k]) };
   });
@@ -487,11 +490,13 @@ function summarize(R){
   const bgLast = bg[0].charCodeAt(bg[0].length-1);
   const bgJo = (bgLast>=0xAC00 && bgLast<=0xD7A3 && (bgLast-0xAC00)%28!==0) ? "이" : "가";
   const dan = {
-    "생(生)":    { s:"밀어도 되는 해",   d:"기운이 손님 그릇을 받칩니다. 하려던 것을 하세요." },
-    "겹침":      { s:"한쪽으로 몰리는 해", d:"그릇과 기운이 같은 갈래라 색이 짙어집니다. 크게 되거나 크게 상합니다." },
-    "설(洩)":    { s:"새는 해",         d:"쓰는 데가 많아 모이지 않습니다. 벌이보다 새는 자리를 먼저 막으세요." },
-    "극(剋)":    { s:"눌리는 해",       d:"재주가 있어도 올해는 안 펴집니다. 손님 탓이 아니에요. 버티는 것이 이기는 겁니다." },
-    "반극(反剋)":{ s:"밀면 되지만 뒤가 상하는 해", d:"밀어붙이면 되기는 합니다. 다만 뒤가 상해요. 한 번에 다 가지려 하지 마세요." }
+    /* 제1첩에서 사이를 짚고, 제6첩에서 바꿀 것을 적습니다.
+       여기는 마지막 장이니 올해 할 셈 한 줄만 둡니다. */
+    "생(生)":    { s:"밀어도 되는 해",   d:"하려던 것을 올해 안에 하십시오." },
+    "겹침":      { s:"한쪽으로 몰리는 해", d:"고르는 데 공을 들이십시오. 고른 뒤는 쉽습니다." },
+    "설(洩)":    { s:"새는 해",         d:"벌이를 늘리기 전에 나가는 데 하나를 끊으십시오." },
+    "극(剋)":    { s:"눌리는 해",       d:"올해는 버티는 쪽이 이깁니다. 손님 탓이 아닙니다." },
+    "반극(反剋)":{ s:"밀면 되지만 뒤가 상하는 해", d:"어디서 손을 뗄지 먼저 정하고 시작하십시오." }
   }[R.gyo.dan] || { s:"", d:"" };
 
   return {
@@ -551,3 +556,53 @@ function compareReading(prev, R){
            prevBoss: prev.boss, prevHyeong: prev.hyeong, prevGisaek: prev.gisaek,
            gisaekMoved: prev.gisaek !== R.gisaek };
 }
+
+/* ── 14. 사흘 동안 관상첩을 들고 있기 ──────────────
+   복채를 내고 읽던 중에 뒤로 한 번 눌렀다고 첩이 사라지면
+   손님은 돈을 잃은 기분이 듭니다. 그렇다고 평생 들고 있으면
+   그건 "다시보기"가 되어 버리고요. 사흘만 들고 있습니다.
+
+   사진은 여기에도 담지 않습니다 — 거울 앞에서 드린 약속입니다.
+   담는 것은 잰 수뿐이고, 그 수로 같은 첩이 그대로 다시 납니다.
+   얼굴 그림만 비는데, 그건 같은 사진을 다시 올리시면 돌아옵니다. */
+const KEEP_FULL = "baekgwi-gwansang-keep3";
+const KEEP_DAYS = 3;
+
+function saveFull(F, m, age, sex){
+  try{
+    if (!F || !m) return;
+    const 점 = p => ({ x: Math.round(p.x*10)/10, y: Math.round(p.y*10)/10 });
+    const Fo = {};
+    for (const k in F){
+      if (k === "raw" || k === "unrot") continue;        /* 되살릴 때 쓰지 않습니다 */
+      const v = F[k];
+      if (typeof v === "function") continue;
+      if (k === "rawAll" && Array.isArray(v)){ Fo[k] = v.map(점); continue; }
+      if (k === "pts" && v && typeof v === "object"){
+        const o = {}; for (const n in v) if (v[n]) o[n] = 점(v[n]);
+        Fo[k] = o; continue;
+      }
+      Fo[k] = v;
+    }
+    const mo = {};
+    for (const k in m){ if (k === "F") continue; mo[k] = m[k]; }
+    localStorage.setItem(KEEP_FULL, JSON.stringify({
+      t: Date.now(), age, sex, F: Fo, m: mo
+    }));
+  }catch(e){}
+}
+
+/* 사흘이 지났으면 없는 것으로 봅니다 */
+function loadFull(){
+  try{
+    const v = JSON.parse(localStorage.getItem(KEEP_FULL) || "null");
+    if (!v || !v.F || !v.m || !v.t) return null;
+    const 지난날 = (Date.now() - v.t) / 86400000;
+    if (지난날 > KEEP_DAYS || 지난날 < -1){ clearFull(); return null; }
+    v.F.raw = v.F.rawAll;        /* 기울기를 자리로 재는 길을 그대로 탑니다 */
+    v.m.F = v.F;
+    v.남은시간 = Math.max(0, KEEP_DAYS*86400000 - (Date.now() - v.t));
+    return v;
+  }catch(e){ return null; }
+}
+function clearFull(){ try{ localStorage.removeItem(KEEP_FULL); }catch(e){} }
