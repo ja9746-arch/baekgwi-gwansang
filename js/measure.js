@@ -58,13 +58,18 @@ function inPoly(x, y, poly){
 }
 
 /* 점 둘레로 작은 상자를 놓고 그 안의 빛을 잽니다. */
-function patch(px, W, H, cx, cy, r){
+function patch(px, W, H, cx, cy, r, kR, kG, kB){
+  /* 얼굴 평균(meanL)은 흰 기준으로 보정한 픽셀로 내는데 여기만 날 것을 쓰면,
+     누런 전등 아래 사진에서 열두 자리 빛이 한꺼번에 같은 쪽으로 밀립니다.
+     같은 자로 재야 견줄 수 있습니다. */
+  kR = kR || 1; kG = kG || 1; kB = kB || 1;
   let n=0, sL=0, sL2=0, sR=0, sG=0, sB=0;
   const x0=Math.max(0,Math.round(cx-r)), x1=Math.min(W-1,Math.round(cx+r));
   const y0=Math.max(0,Math.round(cy-r)), y1=Math.min(H-1,Math.round(cy+r));
   for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){
     const dx=x-cx, dy=y-cy; if(dx*dx+dy*dy > r*r) continue;
-    const i=(y*W+x)*4, R=px[i], G=px[i+1], B=px[i+2];
+    const i=(y*W+x)*4;
+    const R=Math.min(255,px[i]*kR), G=Math.min(255,px[i+1]*kG), B=Math.min(255,px[i+2]*kB);
     const L = R*0.299 + G*0.587 + B*0.114;
     n++; sL+=L; sL2+=L*L; sR+=R; sG+=G; sB+=B;
   }
@@ -141,14 +146,14 @@ function readSkin(canvas, F, sex){
   const meanL=sL/n, sd=Math.sqrt(Math.max(0,sL2/n-meanL*meanL));
 
   /* 열두 자리의 빛 — 점이 가리킨 자리에서 바로 */
-  const spots = gungSpots(F);
+  const spots = gungSpots(F, sex);
   const rad = Math.max(3, F.FW * (W/F.W) * 0.055);
   const gung = {};
   for(const k in spots){
     const q = spots[k];
     /* spots 는 돌려놓은 자리이므로 그림 자리로 되돌립니다 */
     const b = F.unrot(q);
-    gung[k] = patch(px, W, H, b.x*W/F.W, b.y*H/F.H, rad);
+    gung[k] = patch(px, W, H, b.x*W/F.W, b.y*H/F.H, rad, kR, kG, kB);
   }
 
   /* 앞머리·모자·수염·안경이 덮은 자리는 살빛이 아니라 머리카락이나 테를 읽습니다.
@@ -165,11 +170,19 @@ function readSkin(canvas, F, sex){
   const covered = {};
   for(const k in gung){
     const g = gung[k];
-    if(!g.n){ covered[k] = false; continue; }
+    /* 이마나 턱이 잘린 사진에서는 점이 화면 밖으로 나가 한 픽셀도 못 셉니다.
+       그때 covered 를 false 로 두면 L=0 이 그대로 z 로 들어가 그 자리가
+       "막힘"으로 떨어지고, 사진에 없는 살을 두고 그늘졌다고 적게 됩니다.
+       못 본 자리는 덮인 자리와 같게 잡습니다. */
+    if(!g.n){ covered[k] = true; continue; }
     const r = g.L / ref;
     /* 거칠기는 그 자리 제 기준으로 잽니다. 한 자로 재면 코끝이 늘 걸립니다. */
     const 제결 = (typeof GUNG_SD !== "undefined" && GUNG_SD[k]) || 6;
-    covered[k] = (r < 0.70) || (g.sd > 제결 * 2.4 && r < 0.90);
+    /* 밝기도 그 자리 제 기준으로 봅니다. 열두 자리를 한 자로 재면
+       눈두덩이나 눈꼬리처럼 본디 그늘진 자리가 늘 "덮였다"가 됩니다.
+       그 자리가 보통 얼마나 밝은지(GUNG_BASE)에 견주어 봅니다. */
+    const 제밝 = (typeof GUNG_LIT !== "undefined" && GUNG_LIT[k]) ? GUNG_LIT[k] : 1;
+    covered[k] = (r < 제밝 * 0.70) || (g.sd > 제결 * 2.4 && r < 제밝 * 0.90);
   }
 
   return {

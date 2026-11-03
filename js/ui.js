@@ -4,6 +4,21 @@
 /* ── 값 ───────────────────────────────────────── */
 const PRICE = { now: 9900, list: null };     /* list 는 기념값이 끝난 뒤 실제로 받을 값. 받을 뜻이 없으면 null */
 const DEMO_CHECKOUT = true;                  /* 결제대행사를 붙이면 false 로 */
+
+/* ── 사업자 ───────────────────────────────────────
+   전자상거래법 제13조가 적으라는 것들입니다. 한 군데만 채우면
+   바닥글·사업자정보·개인정보 처리방침에 한꺼번에 섭니다.
+   아직 안 받은 것은 null 로 두세요 — 그 줄은 "준비 중"으로 나갑니다. */
+const BIZ = {
+  상호:    "온미라이프",
+  대표자:  "김민철",
+  등록번호: null,          /* 사업자등록번호 — 예 "123-45-67890" */
+  통신판매: null,          /* 통신판매업 신고번호 — 예 "제2026-울산북구-0000호" */
+  주소:    null,          /* 사업장 주소 */
+  전화:    "1866-0423",
+  메일:    "ja9746@naver.com",
+  호스팅:  "Vercel Inc."
+};
 const KEY_PAID = "baekgwi-gwansang-paid";
 const KEY_LAST = "baekgwi-gwansang-last";
 
@@ -157,7 +172,8 @@ function bindAsk(){
 
   function check(){
     const a = parseInt(age.value, 10);
-    ok.disabled = !(a >= 14 && a <= 90 && ST.sex);
+    /* 유년운기부위는 열다섯부터 셉니다. 자도 열다섯에서 시작합니다. */
+    ok.disabled = !(a >= 15 && a <= 90 && ST.sex);
   }
   function drawAge(){
     const a = parseInt(age.value,10) || 33;
@@ -261,7 +277,7 @@ async function read(){
   const 걸음 = setInterval(()=>{ if(!alive) return; pct = Math.min(30, pct + 1.4); bar.style.width = pct + "%"; }, 700);
 
   let r;
-  try { r = await readFace(ST.img); }
+  try { r = await readFace(ST.img, ST.sex); }
   catch(e){ r = { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
   alive = false; clearInterval(걸음); clearTimeout(느림);
 
@@ -451,14 +467,16 @@ function 글월(t){
    누르면 그 자리를 맡은 첩으로 갑니다. */
 /* 가운데 줄에 선 자리는 이름을 얼굴 바깥으로 빼고 실로 잇습니다.
    그러지 않으면 코 이름표가 입을, 입 이름표가 턱을 덮습니다. */
+/* dy — 이름표를 위아래로 미는 몫(px). 320 같은 좁은 기기에서
+   미간과 눈, 이마와 눈썹의 이름표가 서로 겹치던 것을 띄웁니다. */
 const CHART = [
-  { i:[103,332,10], nm:"이마",  sub:"초년", no:4, side:"l", out:58 },
-  { i:[9],          nm:"미간",  sub:"명궁", no:1, side:"r", out:58 },
-  { i:[105],        nm:"눈썹",  sub:"인연", no:3, side:"l", out:14 },
-  { i:[263],        nm:"눈",    sub:"인상", no:3, side:"r", out:14 },
-  { i:[116],        nm:"광대",  sub:"조력", no:6, side:"l", out:14 },
-  { i:[1],          nm:"코",    sub:"재물", no:2, side:"r", out:64 },
-  { i:[13],         nm:"입",    sub:"표현", no:3, side:"l", out:64 },
+  { i:[103,332,10], nm:"이마",  sub:"초년", no:4, side:"l", out:58, dy:-12 },
+  { i:[9],          nm:"미간",  sub:"명궁", no:1, side:"r", out:58, dy:-14 },
+  { i:[105],        nm:"눈썹",  sub:"인연", no:3, side:"l", out:14, dy:8 },
+  { i:[263],        nm:"눈",    sub:"인상", no:3, side:"r", out:14, dy:14 },
+  { i:[116],        nm:"광대",  sub:"조력", no:6, side:"l", out:14, dy:6 },
+  { i:[1],          nm:"코",    sub:"재물", no:2, side:"r", out:64, dy:0 },
+  { i:[13],         nm:"입",    sub:"표현", no:3, side:"l", out:64, dy:4 },
   /* 152 는 턱 끝이라 그 자리에 불을 켜면 목으로 내려갑니다.
      승장(18)을 두 몫 잡아 턱 한복판에 올립니다. */
   { i:[152,18,18],  nm:"턱",    sub:"말년", no:5, side:"c", out:0 }
@@ -500,7 +518,7 @@ function renderChart(box, src, F, R){
   const dots = CHART.map(c=>{
     const q = pos(c);
     return `<button class="cdot c${c.side}" data-cheop="${c.no}" type="button"
-       style="left:${q.x.toFixed(2)}%;top:${q.y.toFixed(2)}%;--out:${c.out}px"
+       style="left:${q.x.toFixed(2)}%;top:${q.y.toFixed(2)}%;--out:${c.out}px;--dy:${c.dy||0}px"
        aria-label="${esc(c.nm)}(${esc(c.sub)}) — 제${c.no}첩으로">
        <i class="pin"></i>
        <span class="lab"><b>${esc(c.nm)}</b><em>${esc(c.sub)}</em></span></button>`;
@@ -526,7 +544,8 @@ function renderVerdict(box, R, C){
     ["五行", R.hyeong + "형", oh ? oh.ja : "", oh ? oh.sul : ""],
     ["氣色", R.gisaek + "기", gi ? gi.ja : "", gi ? (gi.mal||"").split(".")[0] : ""],
     ["三停", R.samjeong + "정", "",
-      t ? `상 ${pc(0)} · 중 ${pc(1)} · 하 ${pc(2)}` : "위·가운데·아래의 몫"],
+      /* 한 줄에 들어가야 칸 둘의 키가 맞습니다 */
+      t ? `상중하 ${pc(0)}·${pc(1)}·${pc(2)}%` : "위·가운데·아래의 몫"],
     ["流年", R.boss.g.n, "", `${R.age}세 · ${R.yun.bu}`]
   ];
   box.innerHTML =
@@ -543,12 +562,12 @@ function renderVerdict(box, R, C){
          `<i class="${R.samjeong===n?"on":""}" style="flex:${t?sam[i]:1}"><u>${n}</u></i>`).join("") +
      `</div>
      <p class="vsay">${esc(
-        `손님 얼굴은 ${R.hyeong}의 그릇에 ${R.gisaek}기가 도는 얼굴입니다. ` +
-        `둘 사이가 ${R.gyo.dan}이니, ${R.gyo.mal}`)}</p>
+        /* 그릇과 기운은 바로 위 두 칸에 이미 서 있습니다.
+           여기서 또 적으면 손님은 같은 줄을 두 번 읽습니다. */
+        `이 둘 사이가 ${R.gyo.dan}입니다. ${R.gyo.mal}`)}</p>
       <p class="vsay">${esc(
-        `열두 자리 가운데 트인 데가 ${R.opened}곳, 막힌 데가 ${R.blocked}곳. ` +
-        `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}입니다. ` +
-        (센것 ? `얼굴에서 가장 세게 선 자리는 ${센것.c.n} — ${끝말(센것.c.s)}` : ""))}</p>`;
+        `열두 자리 가운데 트인 데가 ${셈말(R.opened)}, 막힌 데가 ${셈말(R.blocked)}입니다. ` +
+        `가장 환한 데는 ${R.brightest.g.n}이고 가장 그늘진 데는 ${R.darkest.g.n}입니다.`)}</p>`;
 }
 const 끝말 = t => /[.!?]$/.test(String(t).trim()) ? String(t).trim() : String(t).trim()+".";
 
@@ -703,12 +722,14 @@ function clueChip(e){
 /* ── 무료로 보여 드리는 것 ────────────────────── */
 function renderFree(){
   const R = ST.R, C = ST.C;
-  $("#free-count").textContent = C.count;
+  /* "16 자리가 섰네" 보다 "열여섯 자리가 섰네" 가 술사의 말씨입니다 */
+  $("#free-count").textContent = 셈말(C.count);
   const w = $("#read-word"); if (w) w.textContent = ST.word || "";
+  /* 아래 "한눈에 보는 자네 얼굴" 칸이 트인 데·막힌 데를 셉니다.
+     머리글에서 또 세면 한 화면에서 같은 셈을 두 번 읽히게 됩니다. */
   $("#free-head").innerHTML =
     `자네 얼굴은 <b>${esc(R.hyeong)}형(${esc(OH[R.hyeong].ja)})</b>의 그릇에 ` +
-    `<b>${esc(R.gisaek)}기(${esc(GISAEK[R.gisaek].ja)})</b>가 도는 얼굴일세. ` +
-    `열두 자리 가운데 트인 데가 <b>${R.opened}</b>곳, 막힌 데가 <b>${R.blocked}</b>곳이고.`;
+    `<b>${esc(R.gisaek)}기(${esc(GISAEK[R.gisaek].ja)})</b>가 도는 얼굴일세.`;
 
   /* 얼굴에서 실제로 잡힌 자리 */
   /* 여덟 개만 보여 주면 "열여섯 자리가 섰다"고 해 놓고 반을 감추는 꼴입니다.
@@ -717,7 +738,8 @@ function renderFree(){
     n:h.c.n, s:h.c.s, g:h.c.g
   })).join("");
   $("#free-clue-more").textContent =
-    `이 ${C.count} 자리가 아래 열 장의 근거입니다. 여기 없는 말은 적지 않았습니다.`;
+    `이 ${셈말(C.count)} 자리와 얼굴 열두 궁의 빛, 둘이 아래 열 장의 근거입니다. ` +
+    `어림으로 적은 말은 없습니다.`;
 
   /* 읽은 것을 한 판에, 그리고 손님 얼굴에서 네 자리를 오려 보여 드립니다 */
   renderChart($("#free-chart"), ST.img, ST.F, R);
@@ -753,7 +775,7 @@ function renderFree(){
       <div class="veiled" aria-hidden="true">${inner}</div>
       <div class="veilsay"><i class="vlock" aria-hidden="true"></i>
         <div class="vt">
-          <b>${c.sealed ? "봉인되어 있습니다" : "이 뒤로 " + n + "마디가 더 있습니다"}</b>
+          <b>${c.sealed ? "봉인되어 있습니다" : "이 뒤로 " + 셈말(n) + " 마디가 더 있습니다"}</b>
           <span>${c.sealed ? "복채를 내시면 이 첩이 통째로 풀립니다" : (목 || "복채를 내시면 끝까지 읽힙니다")}</span>
         </div>
         <button class="vopen" type="button" data-pay="1">열기</button>
@@ -1131,7 +1153,37 @@ function bindMisc(){
   $$("[data-go]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));
   { const b = $("#ba-go"); if (b) b.addEventListener("click", 이어보기); }
   try { ST.paid = localStorage.getItem(KEY_PAID) === "1"; } catch(e){}
+  사업자적기();
   다시오심();
+}
+
+/* 사업자 칸 — 한 군데(BIZ)에서 끌어다 세 자리에 세웁니다 */
+function 사업자적기(){
+  const 줄 = [
+    ["상호",            BIZ.상호],
+    ["대표자",          BIZ.대표자],
+    ["사업자등록번호",   BIZ.등록번호],
+    ["통신판매업 신고",  BIZ.통신판매],
+    ["사업장 주소",     BIZ.주소],
+    ["고객센터",        BIZ.전화],
+    ["전자우편",        BIZ.메일],
+    ["호스팅",          BIZ.호스팅]
+  ];
+  const box = $("#bizlist");
+  if (box) box.innerHTML = 줄.map(([k,v])=>
+    `<li><b>${esc(k)}</b><span${v?"":' class="yet"'}>${esc(v || "정식 운영 시작과 함께 적습니다")}</span></li>`
+  ).join("");
+  const own = $("#privacy-owner");
+  if (own) own.textContent =
+    `${BIZ.대표자} · ${BIZ.전화} · ${BIZ.메일} — 개인정보 열람·정정·삭제를 원하시면 이리로 알려 주십시오.`;
+  const foot = $("#foot-org");
+  if (foot) foot.textContent =
+    [BIZ.상호, "대표 " + BIZ.대표자, BIZ.등록번호 ? "사업자등록번호 " + BIZ.등록번호 : null,
+     BIZ.전화, BIZ.메일].filter(Boolean).join(" · ");
+  /* 결제대행사를 안 붙인 동안에는 그 사실을 적어 둡니다 */
+  const dn = $("#demonote"); if (dn) dn.hidden = !DEMO_CHECKOUT;
+  const pb = $("#paybar-won");
+  if (pb && DEMO_CHECKOUT) pb.textContent = "시험 운영 — 복채 없이 열립니다";
 }
 
 /* ── 다시 오신 손님 ───────────────────────────────

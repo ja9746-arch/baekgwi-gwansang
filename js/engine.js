@@ -50,8 +50,10 @@ const _본것 = new Map();
 const 적을것 = ["sam","ratio","taper","boxy","이마높","이마폭","이마모서리","미길","미꺾","미안",
   "미각","미간","눈길","눈높","눈각","눈사이","와잠","콧대길","산근폭","코폭","콧볼폭","준두",
   "콧대휨","인중길","입폭","입술","윗술","입각","턱길","턱각","지각","광대","어긋남","쏠림","흔들림"];
-const 적을빛 = ["meanL","sd","mR","mG","mB","sam","left","right","gung",
-  "ratio","taper","boxy","bandW"];   /* 이 넷을 빼먹으면 그릇과 제비가 흔들립니다 */
+const 적을빛 = ["meanL","sd","mR","mG","mB","sam","left","right","gung","covered",
+  "ratio","taper","boxy","bandW"];   /* 이 넷을 빼먹으면 그릇과 제비가 흔들립니다.
+  covered 가 빠져 있어서, 같은 사진을 다시 올리면 빛은 캐시에서 꺼내 쓰고
+  덮임 판정만 새로 해 "안경을 벗고 다시 비추시면" 이 있다 없다 했습니다. */
 function loadMeasured(fp){
   try {
     const all = JSON.parse(localStorage.getItem(KEEP_M) || "{}");
@@ -75,7 +77,7 @@ function saveMeasured(fp, F, m){
 }
 
 /* ── 1. 사진 한 장을 읽습니다 ────────────────────── */
-async function readFace(srcEl){
+async function readFace(srcEl, sex){
   const cv = toCanvas(srcEl, 720);
   if(!cv) return { err:"그림을 열지 못했습니다" };
 
@@ -87,13 +89,18 @@ async function readFace(srcEl){
   const F = measure(pts, cv.width, cv.height);
   if(!F) return { err:"얼굴이 너무 작습니다" };
 
-  let m = readSkin(cv, F, null);
+  /* 남좌여우 — 짝이 있는 여덟 자리를 어느 쪽에서 읽을지가 성별로 갈립니다.
+     여태 null 을 넘기고 있어서 화면에서 한 약속이 셈에는 없었습니다. */
+  let m = readSkin(cv, F, sex);
   if(!m) return { err:"빛이 모자랍니다", F, canvas:cv, soft:true };
 
   /* 한 번 본 사진이면 그때 잰 수를 그대로 씁니다.
      기계가 볼 때마다 머리카락 굵기만큼 다르게 읽어, 그냥 두면
      같은 얼굴에 다른 말을 하게 됩니다. */
-  const fp = fingerprint(cv);
+  /* 자리가 성별로 갈리니 지문도 성별까지 묶어 둡니다.
+     안 그러면 남으로 한 번, 여로 한 번 볼 때 묵은 빛을 꺼내 씁니다. */
+  const fp0 = fingerprint(cv);
+  const fp = fp0 ? (fp0 + "|" + (sex || "")) : null;
   if (fp){
     const kept = _본것.get(fp) || loadMeasured(fp);
     if (kept && kept.F && kept.m){
@@ -223,7 +230,9 @@ function gradeAll(m){
     "전택": [["미안", 1]],
     "처첩": [["눈길", .5], ["눈각", .5]],
     "질액": [["산근폭", 1]],
-    "남녀": [["와잠", 1]],
+    /* 와잠 하나로는 사람 사이 벌어짐이 0.7픽셀뿐이라 자식·기다림 자리 등급이
+       통째로 잡음이었습니다. 또렷하게 재지는 눈높이를 함께 겁니다. */
+    "남녀": [["와잠", .6], ["눈높", .4]],
     "재백": [["준두", .6], ["콧볼폭", .4]],
     "노복": [["지각", .6], ["턱길", .4]]
   };
@@ -365,7 +374,11 @@ function divine(m, age, sex){
   /* 지난 일을 짚을 나이 — 유년 부위가 바뀌는 길목 중 하나 */
   const marks = [19,22,25,28,31,35,38,41,44,48,51,56,60,64,70];
   const past  = marks.filter(a => a <= age-1);
-  const hitAge = past.length ? past[past.length-1] : Math.max(15, age-2);
+  /* marks 의 맨 앞이 열아홉이라 열넷~열여덟에서는 past 가 빕니다.
+     그때 Math.max(15, age-2) 가 나이보다 커져, 열네 살 손님께
+     "15세 무렵 … 지났습니다"라고 적고 있었습니다. 나이를 넘지 못하게 둡니다. */
+  const hitAge = past.length ? past[past.length-1]
+               : Math.max(1, Math.min(age - 1, Math.max(15, age - 2)));
   const hitYun = yunOf(hitAge, sex);
 
   /* 무게 — 막힌 자리가 몇인가 */

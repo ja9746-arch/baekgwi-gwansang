@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0507">
-<meta name="description" content="원안법사가 얼굴에 새겨진 기운을 읽습니다. 얼굴 점 468개를 재어 삼정·십이궁·유년운기부위로 타고난 그릇과 올해의 흐름을 살핍니다.">
+<meta name="description" content="원안법사가 얼굴에 새겨진 기운을 읽습니다. 얼굴 점 468개를 재어 삼정·십이궁·유년운기부위로 타고난 그릇과 올해의 흐름을 살피는 오락 서비스입니다.">
 <title>백귀관상 — 원안법사</title>
 <link rel="icon" type="image/png" sizes="64x64" href="img/favicon.png">
 <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="백귀관상">
 <meta property="og:title" content="백귀관상 — 원안법사">
-<meta property="og:description" content="얼굴을 한 번 비춰주세요. 얼굴에는 자네가 살아온 흔적이 남아 있지.">
+<meta property="og:description" content="얼굴을 한 번 비춰 보시게. 얼굴에는 자네가 살아온 흔적이 남아 있지.">
 <meta property="og:url" content="https://baekgwi-gwansang.vercel.app/">
 <meta property="og:image" content="https://baekgwi-gwansang.vercel.app/img/og.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -689,6 +689,22 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 .doc h3{font-family:var(--serif);font-size:var(--fs-h3);color:var(--geum-hot);
   margin:20px 0 8px;display:flex;align-items:center;gap:8px}
 .doc h3:first-child{margin-top:0}
+/* 사업자 칸 — 적을 것과 아직 못 적은 것 */
+.bizlist{list-style:none;margin:6px 0 0;padding:0}
+.bizlist li{display:flex;gap:12px;padding:9px 0;align-items:baseline;
+  border-bottom:1px dashed rgba(201,162,74,.18)}
+.bizlist li:last-child{border-bottom:0}
+.bizlist b{flex:none;width:112px;font-weight:400;font-size:var(--fs-label);
+  letter-spacing:.04em;color:var(--geum-dim)}
+.bizlist span{font-size:var(--fs-sm);color:var(--jae)}
+.bizlist .yet{color:#8c7f6e;font-style:italic}
+/* 오락 서비스임을 들머리와 복채 화면에 한 줄씩 */
+.playnote{margin:12px 0 0;padding:0 10px;text-align:center;font-size:var(--fs-label);
+  line-height:1.7;color:#9a8d7c;text-wrap:balance}
+.demonote{margin:12px 0 0;padding:11px 14px;border-radius:2px;
+  border:1px solid rgba(201,162,74,.34);background:rgba(42,23,8,.5);
+  font-size:var(--fs-sm);line-height:1.75;color:#e6d9c7}
+.demonote b{color:#f0d79c;font-weight:400}
 .doc h3::before{content:"";width:10px;height:1px;background:var(--geum-dim);flex:none}
 .doc p{margin:0 0 9px;font-size:var(--fs-sm);line-height:1.95;color:#ded2c0}
 .doc ul{margin:0 0 9px;padding-left:1.1em}
@@ -1789,6 +1805,10 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
   filter:none;opacity:1;
   -webkit-mask-image:linear-gradient(180deg,#000 0,#000 36%,rgba(0,0,0,.5) 74%,transparent 98%);
   mask-image:linear-gradient(180deg,#000 0,#000 36%,rgba(0,0,0,.5) 74%,transparent 98%)}
+/* 바로 위 주석대로 — 무엇이 적혀 있는지는 보이고 글자는 안 잡혀야 합니다.
+   언젠가 .veiled 에 filter:none 을 걸어 두는 바람에 봉인된 여덟 장의
+   글이 그대로 읽히고 있었습니다. 소제목만 또렷하게 두고 글은 흐립니다. */
+.veiled p,.veiled li{filter:blur(3.4px) saturate(.85) contrast(.92);opacity:.8}
 /* 소제목은 또렷하게 — 무슨 얘긴지는 보여야 합니다 */
 .veiled h4{color:#e6c478;filter:none;opacity:1;margin-top:20px;
   font-size:var(--fs-h3);letter-spacing:.01em;
@@ -2181,7 +2201,9 @@ body{letter-spacing:-.004em}
   animation:cpulse 2.6s ease-in-out infinite}
 @keyframes cpulse{0%,100%{box-shadow:0 0 0 3px rgba(240,207,134,.18),0 0 10px 2px rgba(240,190,100,.42)}
   50%{box-shadow:0 0 0 5px rgba(240,207,134,.09),0 0 16px 5px rgba(240,190,100,.66)}}
-.cdot .lab{position:absolute;top:50%;transform:translateY(-50%);
+/* 좁은 기기에서는 그림이 작아지는데 글자는 안 작아져, 미간과 눈처럼
+   가까운 두 이름표가 서로 겹칩니다. 자리마다 위아래로 조금씩 밀어 둡니다. */
+.cdot .lab{position:absolute;top:50%;transform:translateY(calc(-50% + var(--dy,0px)));
   display:flex;flex-direction:column;line-height:1.16;white-space:nowrap;
   /* 밝은 사진에서는 이름이 살갗에 묻힙니다 — 옅은 그늘을 깝니다 */
   padding:2px 9px 3px;border-radius:14px;
@@ -2627,6 +2649,7 @@ body{letter-spacing:-.004em}
   </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
+  <p class="playnote">재미로 보는 오락 서비스입니다 — 의료·법률·재무 판단의 근거로 삼지 마세요.</p>
 
   <ul class="vow2">
     <li><i class="v-free">무료</i><b>앞의 두 장은 복채 없이</b><span>읽어 보시고 정하시면 됩니다</span></li>
@@ -2646,8 +2669,8 @@ body{letter-spacing:-.004em}
       <li><b>얼굴 십이궁 열두 자리</b><span>트임·반반·막힘과 자리마다 선 백귀까지</span></li>
       <li><b>오늘부터 할 것</b><span>첩마다 몸으로·표정으로·올해 안에 — 읽고 덮지 않게</span></li>
     </ul>
-    <p class="pfnote">얼굴에서 <i>백 가지 자리</i>를 자로 재어 손님 얼굴에 실제로 선 것만 짚습니다.
-      누구에게나 맞는 말은 적지 않습니다.</p>
+    <p class="pfnote">얼굴에서 <i>백 가지</i>를 자로 재어, 손님 얼굴에 해당하는 자리만 골라 적습니다.
+      누구에게나 들어맞는 말은 쓰지 않습니다.</p>
   </div>
 
   <ol class="step3">
@@ -2681,13 +2704,13 @@ body{letter-spacing:-.004em}
     <div class="txt">
       <p class="nm">원안법사 圓安法師</p>
       <p>나는 원광법사께 상(相) 보는 법을 배운 사람일세.</p>
-      <p>자네 얼굴에 새겨진 이야기를 하나씩 읽어드리지. 두 장 읽어 보고 정하시게나.</p>
+      <p>자네 얼굴에 새겨진 이야기를 하나씩 읽어 드리지. 두 장 읽어 보고 정하시게나.</p>
     </div>
   </div>
 
   <div class="lastcall">
     <p class="eyebrow">복채</p>
-    <p class="lw"><b id="intro-won">—</b><span>한 번만 내시면 열 장이 모두 열립니다</span></p>
+    <p class="lw"><b id="intro-won">—</b><span>이 기기에서 한 번만 내시면 열 장이 모두 열립니다</span></p>
     <p class="lno">먼저 두 장을 읽어 보시고 정하셔도 늦지 않습니다.</p>
     <button class="btn hot" id="go-ask2">얼굴 보이고 두 장 먼저 읽기 <span class="ar">→</span></button>
   </div>
@@ -2699,16 +2722,18 @@ body{letter-spacing:-.004em}
   <h2 class="sect">자네 나이와 성별을<br>알려 주시게.</h2>
   <p class="sectsub">얼굴은 나이마다 읽는 자리가 다릅니다 — 열다섯은 이마 꼭대기,
     마흔 언저리는 눈, 쉰은 코끝, 예순은 입. 그래서 나이를 여쭙습니다.
-    짝이 있는 여덟 자리는 남녀가 보는 쪽이 달라 성별도 함께 여쭙고요.</p>
+    성별도 함께 여쭙습니다.</p>
 
   <div class="fields">
     <div class="field">
       <span>나 이</span>
       <div class="agewrap">
         <div class="agebar">
-          <input id="age" type="range" min="14" max="90" step="1" value="33"
+          <!-- 유년운기부위는 열다섯부터 셉니다. 열넷을 고를 수 있게 두면
+               화면에는 "14세"라 적히고 셈은 15세로 돌아갑니다. -->
+          <input id="age" type="range" min="15" max="90" step="1" value="33"
                  aria-label="나이" aria-valuetext="33세">
-          <div class="ageticks"><span>14</span><span>39</span><span>64</span><span>90</span></div>
+          <div class="ageticks"><span>15</span><span>40</span><span>65</span><span>90</span></div>
         </div>
         <b id="age-now">33<i>세</i></b>
       </div>
@@ -2748,7 +2773,7 @@ body{letter-spacing:-.004em}
           </svg>
         </div>
         <p class="gmph">얼굴 사진 올리기</p>
-        <p class="gmpv">여기를 누르시게</p>
+        <p class="gmpv">여기를 눌러 주세요</p>
       </div>
     </div>
   </div>
@@ -2761,7 +2786,8 @@ body{letter-spacing:-.004em}
   <input id="shot" type="file" accept="image/*" capture="user" hidden>
 
   <p class="safenote"><i aria-hidden="true">🔒</i><span><b>사진은 이 기기 안에서만 읽습니다.</b>
-    서버로 보내지 않고, 사진 자체는 어디에도 저장하지 않습니다. 남는 것은 잰 수치뿐입니다.</span></p>
+    서버로 보내지 않고, 사진 자체는 어디에도 저장하지 않습니다.
+    기기에 남는 것은 얼굴에서 잰 수치뿐이고, 그 수치도 사흘 뒤 저절로 지워집니다.</span></p>
 
   <p class="hint" id="mirror-note"></p>
 
@@ -2779,7 +2805,8 @@ body{letter-spacing:-.004em}
       <li>앞머리로 이마를 덮지 마세요. 관록궁과 명궁이 가립니다.</li>
       <li>모자와 선글라스는 벗어 주세요.</li>
     </ul>
-    <p class="hint small">사진은 손님 기기 안에서만 처리됩니다. 서버로 보내지 않고 저장하지도 않습니다.</p>
+    <p class="hint small">사진은 손님 기기 안에서만 읽습니다. 서버로 보내지 않고 사진은 저장하지도 않습니다.
+      기기에 남는 것은 얼굴에서 잰 수치뿐이고, 사흘 뒤 저절로 지워집니다.</p>
   </details>
 
   </div>
@@ -2859,7 +2886,9 @@ body{letter-spacing:-.004em}
   <div class="payart"><img src="img/obj/book.webp" alt="" loading="lazy"><i></i></div>
   <p class="eyebrow">복채</p>
   <h2 class="sect big">봉인된 관상첩을<br>열어보시겠나?</h2>
-  <p class="sectsub">보이지 않는 자리까지 살펴, 자네만의 관상첩 열 장을 끝까지 열어 드립니다.</p>
+  <p class="sectsub">보이지 않는 자리까지 살펴, 손님만의 관상첩 열 장을 끝까지 열어 드립니다.</p>
+  <p class="demonote" id="demonote" hidden>지금은 시험 운영 기간이라 <b>실제 결제가 이루어지지 않습니다.</b>
+    복채 없이 열람하실 수 있습니다.</p>
   <div class="paybox"><i class="cn"></i>
     <h3>관상첩 전체 열람</h3>
     <ul class="gwant big">
@@ -2867,17 +2896,21 @@ body{letter-spacing:-.004em}
       <li>얼굴 십이궁 열두 자리와 자리마다 선 백귀</li>
       <li>점 찍을 자리 · 길한 색 · 어울리는 머리</li>
       <li>올해 할 일 셋, 피할 것 둘, 움직일 달</li>
-      <li>다시 오시면 지난번과 견주어 드립니다</li>
+      <!-- 지난번과 견주기는 무료 화면에도 나옵니다. 복채 값으로 적어 두면
+           손님이 "낸 값에 든 것"으로 아시게 되니, 복채로만 되는 것을 적습니다. -->
+      <li>사흘 안에 다시 오시면 사진 없이 그대로 이어 보기</li>
     </ul>
     <div class="price">
-      <div class="s">출시 기념가</div>
+      <div class="s">복 채</div>
       <div class="b" id="pay-price"></div>
-      <div class="n">한 번 내시면 이 기기에서 다시 받지 않습니다</div>
+      <div class="n">이 기기에서 한 번만 받습니다 — 브라우저 저장소를 비우시거나
+        다른 기기로 오시면 다시 내셔야 합니다</div>
     </div>
   </div>
-  <p class="prenote">복채를 내시면 <b>바로 열람이 시작되어 환불이 제한됩니다.</b>
-    디지털 콘텐츠라 그렇습니다. 열기 전이라면 고객센터로 알려 주시고요.
-    누르시면 <button type="button" class="flink inline" data-go="s-legal">이용약관</button>과 환불규정에 동의하신 것으로 봅니다.</p>
+  <p class="prenote">복채를 내시면 바로 열람이 시작됩니다. <b>이미 열어 보신 첩은 그 부분에 한해 청약철회가 제한됩니다.</b>
+    아직 열지 않으셨다면 결제일로부터 이레 안에 고객센터로 알려 주시면 전액 돌려드립니다.
+    아래를 누르시면 이 안내와 <button type="button" class="flink inline" data-go="s-legal">이용약관</button>에 동의하신 것으로 봅니다.
+    재미로 보는 오락 서비스이며, 의료·법률·재무 판단의 근거가 아닙니다.</p>
   <button class="btn hot two" id="pay-now">
     <b>복채 내고 모두 열기 <span class="ar">→</span></b>
     <span class="won" id="pay-now-won"></span></button>
@@ -2891,7 +2924,9 @@ body{letter-spacing:-.004em}
   <div id="cheop-all"></div>
   <div class="keep">
     <span class="kt">관상첩 간직하기</span>
-    <p class="kd">열어 본 관상첩은 여기서 사라집니다. 그림으로 받아 두시거나 글로 베껴 두시면 언제든 다시 보실 수 있습니다.</p>
+    <p class="kd">이 화면을 닫으면 글은 사라집니다. 다만 얼굴에서 잰 수치는 이 기기에 사흘 남으니,
+      그 안에 다시 오시면 들머리에서 이어 보실 수 있습니다.
+      사흘 뒤에도 보시려면 그림으로 받아 두시거나 글로 베껴 두세요.</p>
     <div class="krow">
       <button class="btn hot" type="button" data-save>그림으로 받기</button>
       <button class="btn" type="button" data-copy>글로 베끼기</button>
@@ -2909,7 +2944,9 @@ body{letter-spacing:-.004em}
   <p class="sectsub">얼굴에 새겨진 이야기를 모두 읽었습니다. 얼굴은 해마다 달라집니다. 반년쯤 뒤에 다시 오시면 어느 자리가 달라졌는지 짚어 드리지요.</p>
   <div class="keep">
     <span class="kt">관상첩 간직하기</span>
-    <p class="kd">열어 본 관상첩은 여기서 사라집니다. 그림으로 받아 두시거나 글로 베껴 두시면 언제든 다시 보실 수 있습니다.</p>
+    <p class="kd">이 화면을 닫으면 글은 사라집니다. 다만 얼굴에서 잰 수치는 이 기기에 사흘 남으니,
+      그 안에 다시 오시면 들머리에서 이어 보실 수 있습니다.
+      사흘 뒤에도 보시려면 그림으로 받아 두시거나 글로 베껴 두세요.</p>
     <div class="krow">
       <button class="btn hot" type="button" data-save>그림으로 받기</button>
       <button class="btn" type="button" data-copy>글로 베끼기</button>
@@ -2933,26 +2970,85 @@ body{letter-spacing:-.004em}
     <button class="flink" data-go="s-privacy">개인정보</button>
     <button class="flink" data-go="s-biz">사업자정보</button>
   </div>
-  <p class="org">온미라이프 · 고객센터 1866-0423 · ja9746@naver.com</p>
+  <p class="org" id="foot-org">온미라이프</p>
   <p class="org">운세는 재미로 보는 것입니다.</p>
 </footer>
 
 <section id="s-legal" class="screen doc" hidden>
   <h2 class="sect">이용약관</h2>
-  <p>백귀관상은 관상 해석을 보여 주는 오락 서비스입니다. 해석 내용은 의료·법률·재무상의 조언이 아니며, 이를 근거로 한 판단의 책임은 이용자에게 있습니다.</p>
-  <p>복채를 내고 열람을 시작하면 환불이 제한됩니다. 결제 후 첩을 열기 전이라면 고객센터로 알려 주세요.</p>
+
+  <h3>제1조 (서비스의 성격)</h3>
+  <p>백귀관상은 올리신 얼굴 사진에서 잰 수치로 관상 해석을 보여 주는 <b>오락 서비스</b>입니다.
+    해석 내용은 의료·법률·재무상의 조언이 아니며, 이를 근거로 한 판단과 그 결과의 책임은 이용자에게 있습니다.
+    사람의 운명이나 장래를 보증하지 않습니다.</p>
+
+  <h3>제2조 (이용 자격)</h3>
+  <p>만 14세 미만은 이용하실 수 없습니다. 미성년자가 법정대리인의 동의 없이 결제한 경우,
+    본인 또는 법정대리인이 그 결제를 취소하실 수 있습니다.</p>
+
+  <h3>제3조 (요금과 열람 범위)</h3>
+  <p>제1첩과 제2첩은 복채 없이 읽으실 수 있습니다. 복채를 내시면 제3첩부터 제10첩까지 여덟 장이 모두 열립니다.</p>
+  <p>복채는 <b>결제하신 기기의 브라우저 단위로 한 번만</b> 받습니다. 그 기기에서는 다시 받지 않습니다.
+    다만 브라우저 저장소를 비우시거나 다른 기기·다른 브라우저로 오시면 열람 기록이 남아 있지 않아 다시 내셔야 합니다.
+    회원 가입이 없는 서비스라 그렇습니다.</p>
+
+  <h3>제4조 (청약철회와 환불)</h3>
+  <p>결제일로부터 이레 안에 청약철회하실 수 있습니다. 다만 <b>이미 열어 보신 첩은 그 부분에 한해
+    청약철회가 제한</b>됩니다(전자상거래 등에서의 소비자보호에 관한 법률 제17조 제2항 제5호).
+    아직 열지 않으셨다면 전액 돌려드립니다.</p>
+  <p>표시·광고와 다르거나 계약 내용과 다르게 이행된 때에는, 그 사실을 안 날부터 서른 날,
+    공급받은 날부터 석 달 안에 청약철회하실 수 있습니다.</p>
+  <p>환불은 고객센터로 알려 주시면 영업일 사흘 안에 결제하신 수단으로 돌려드립니다.</p>
+
+  <h3>제5조 (해석과 분쟁)</h3>
+  <p>이 약관에 적지 않은 것은 전자상거래법, 약관규제법 등 관계 법령과 상관례에 따릅니다.
+    분쟁이 생기면 먼저 고객센터로 알려 주시고, 협의가 되지 않으면 소비자분쟁해결기준(공정거래위원회 고시)에 따릅니다.</p>
+
   <button class="btn ghost" data-go="s-intro">닫기</button>
 </section>
 <section id="s-privacy" class="screen doc" hidden>
   <h2 class="sect">개인정보 처리방침</h2>
-  <p>올리신 얼굴 사진은 이용자의 기기 안에서만 처리됩니다. 서버로 전송되지 않고 저장되지도 않습니다.</p>
-  <p>판정 결과만(사진 없이) 기기의 브라우저에 적어 두었다가, 다시 오셨을 때 지난번과 견주어 보여 드립니다. 브라우저 저장소를 비우면 함께 지워집니다.</p>
-  <p>관상첩을 그림으로 받으시면 그 그림은 기기 안에서 만들어져 기기에 저장됩니다. 그림에는 올리신 얼굴이 함께 담기니, 남에게 보내실 때 한 번 살펴보시고 보내 주세요.</p>
+
+  <h3>한 줄로</h3>
+  <p><b>사진은 손님 기기 밖으로 나가지 않습니다.</b> 서버로 보내지 않고, 사진 자체는 어디에도 저장하지 않습니다.
+    기기에 남는 것은 얼굴에서 잰 수치와 판정 결과뿐이고, 그것도 사흘 뒤 저절로 지워집니다.</p>
+
+  <h3>처리하는 것</h3>
+  <p>나이, 성별, 그리고 올리신 사진에서 잰 얼굴 수치(길이·너비·기울기 따위의 숫자)입니다.
+    이름·전화번호·주소 같은 것은 받지 않습니다. 회원 가입이 없습니다.</p>
+
+  <h3>어디서 처리하나</h3>
+  <p>사진을 읽고 수치를 재는 일은 모두 손님 기기의 브라우저 안에서 이루어집니다.
+    사진은 서버로 전송되지 않으며, 저희는 손님의 사진을 받지도 보지도 못합니다.</p>
+
+  <h3>얼마나 두나</h3>
+  <p>잰 수치와 판정 결과는 손님 기기의 브라우저 저장소에 <b>사흘</b> 동안 남습니다.
+    사흘이 지나면 저절로 지워집니다. 열람권(복채를 내셨다는 표시)은 그 기기에 계속 남습니다.
+    브라우저 저장소를 비우시면 둘 다 그 자리에서 지워집니다.</p>
+
+  <h3>그림으로 받으실 때</h3>
+  <p>관상첩을 그림으로 받으시면 그 그림은 기기 안에서 만들어져 기기 사진첩에 저장됩니다.
+    그림에는 올리신 얼굴이 함께 담기니, 남에게 보내실 때 한 번 살펴보시고 보내 주세요.</p>
+
+  <h3>맡기는 곳</h3>
+  <p>결제 처리를 위해 결제대행사에 결제 정보가 전달됩니다. 정식 결제를 시작하면 이 자리에 대행사 이름을 적어 두겠습니다.
+    그 밖에 개인정보를 제3자에게 넘기거나 맡기지 않습니다.</p>
+
+  <h3>손님의 권리</h3>
+  <p>저장된 것이 손님 기기 안에만 있으므로, 브라우저 저장소를 비우시면 언제든 손수 지우실 수 있습니다.
+    그 밖에 열람·정정·삭제·처리정지를 원하시면 아래로 알려 주십시오.</p>
+
+  <h3>만 14세 미만</h3>
+  <p>만 14세 미만 아동은 이용하실 수 없으며, 그 정보를 받지 않습니다.</p>
+
+  <h3>개인정보 보호책임자</h3>
+  <p id="privacy-owner">—</p>
+
   <button class="btn ghost" data-go="s-intro">닫기</button>
 </section>
 <section id="s-biz" class="screen doc" hidden>
   <h2 class="sect">사업자정보</h2>
-  <p>상호 온미라이프 · 고객센터 1866-0423 · 전자우편 ja9746@naver.com</p>
+  <ul class="bizlist" id="bizlist"></ul>
   <button class="btn ghost" data-go="s-intro">닫기</button>
 </section>
 <div class="paybar introbar" id="introbar" hidden>
@@ -2960,20 +3056,20 @@ body{letter-spacing:-.004em}
   <button class="btn hot" id="introbar-go">얼굴 보이기</button>
 </div>
 <div class="paybar" id="paybar" hidden>
-  <p class="pbt"><b id="paybar-n">여덟 장이 봉인되어 있습니다</b><span>복채 9,900원 · 한 번만</span></p>
+  <p class="pbt"><b id="paybar-n">여덟 장이 봉인되어 있습니다</b><span id="paybar-won">복채 9,900원 · 이 기기에서 한 번만</span></p>
   <button class="btn hot" id="paybar-go">전부 열기</button>
 </div>
 
 </div>
-<script src="js/baekgwi.js?v=20261103a"></script>
-<script src="js/gungsang.js?v=20261103a"></script>
-<script src="js/face.js?v=20261103a"></script>
-<script src="js/measure.js?v=20261103a"></script>
-<script src="js/clues.js?v=20261103a"></script>
-<script src="js/engine.js?v=20261103a"></script>
-<script src="js/cheop.js?v=20261103a"></script>
-<script src="js/sound.js?v=20261103a"></script>
-<script src="js/save.js?v=20261103a"></script>
-<script src="js/ui.js?v=20261103a"></script>
+<script src="js/baekgwi.js?v=20261103b"></script>
+<script src="js/gungsang.js?v=20261103b"></script>
+<script src="js/face.js?v=20261103b"></script>
+<script src="js/measure.js?v=20261103b"></script>
+<script src="js/clues.js?v=20261103b"></script>
+<script src="js/engine.js?v=20261103b"></script>
+<script src="js/cheop.js?v=20261103b"></script>
+<script src="js/sound.js?v=20261103b"></script>
+<script src="js/save.js?v=20261103b"></script>
+<script src="js/ui.js?v=20261103b"></script>
 </body>
 </html>
