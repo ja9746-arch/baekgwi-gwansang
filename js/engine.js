@@ -162,6 +162,11 @@ function pickGisaek(m){
   const zWarm = (warm - 0.0914) / 0.0393;
   const zGb   = (gb   - 0.0449) / 0.0257;
 
+  /* 흑백으로 찍었거나 색을 다 뺀 사진은 핏기가 0에 가깝습니다. 그걸 그대로
+     재면 누구에게나 백기가 섭니다. 색을 못 읽은 것이니 바탕인 황으로 두고,
+     읽지 못했다는 사실을 적어 둡니다 — 없는 것을 있다고 하지 않습니다. */
+  if (chae < 0.035){ m.색못읽음 = true; return "황"; }
+
   /* 흑기는 한쪽에만 진 그늘로만 봅니다. 사진이 어두운 것은 사진 이야기라
      따로 여쭙니다. 그늘이 아주 짙을 때만 흑으로 봅니다. */
   if (geuneul > 0.52) return "흑";
@@ -180,15 +185,20 @@ function pickGisaek(m){
 }
 
 /* ── 5. 삼정을 가린다 ─────────────────────────────── */
+/* 사람들 사이에서 잰 세 마디의 복판과 흔들림 — 얼굴 41장에서 나왔습니다.
+   아래 마디는 누구나 길어서, 그 얼굴 안에서만 보면 늘 아래가 이깁니다. */
+const SAM_BASE = [[0.3271,0.0112],[0.3196,0.0181],[0.3526,0.0214]];
+function samZ(m){
+  const F = m.F;
+  if (!F || !F.sam) return null;
+  return [0,1,2].map(i => (F.sam[i] - SAM_BASE[i][0]) / SAM_BASE[i][1]);
+}
 function pickSamjeong(m){
   /* 삼정은 세 마디의 길이로 봅니다. 밝기로 보면 세 마디가 거의 같아
      아무 뜻도 못 담고, 폭으로 보면 이마가 늘 이깁니다.
      그 얼굴 안에서가 아니라 사람들 사이에서 견주어야 갈립니다. */
-  const F = m.F;
-  if (F && F.sam){
-    const z = [ (F.sam[0]-0.3271)/0.0112,
-                (F.sam[1]-0.3196)/0.0181,
-                (F.sam[2]-0.3526)/0.0214 ];
+  const z = samZ(m);
+  if (z){
     const i = z.indexOf(Math.max.apply(null, z));
     return ["상","중","하"][i];
   }
@@ -314,6 +324,7 @@ function divine(m, age, sex){
   const hyeong  = pickHyeong(m);
   const gisaek  = pickGisaek(m);
   const samjeong= pickSamjeong(m);
+  const 삼정잣대 = samZ(m);          /* 사람들과 견준 거리 — 첩에서 숫자를 풀 때 씁니다 */
   const gyo     = hyeongGisaekMal(hyeong, gisaek);
   const yun     = yunOf(age, sex);
 
@@ -352,14 +363,27 @@ function divine(m, age, sex){
     const bg = pickFrom(pool.length?pool:G.pool, seed, i*31 + lv);
     /* 덮인 자리는 빛을 빼고 모양으로만 보았으니, 짚는 말도
        빛·금·그늘을 말하지 않는 쪽(cdx)으로 바꿔 끼웁니다. */
-    let g = G;
-    if (가린자리.indexOf(G.k) >= 0 && G.lv[lv] && (G.lv[lv].cdx || G.lv[lv].cac)){
-      /* 할 것(ac)도 "환하게 두세요"처럼 빛을 말하는 수가 있습니다.
-         덮인 자리는 빛을 안 말하는 쪽(cac)으로 바꿔 끼웁니다. */
-      g = Object.assign({}, G, { lv: G.lv.map((o,n)=> n===lv
-            ? Object.assign({}, o, o.cdx?{dx:o.cdx}:{}, o.cac?{ac:o.cac}:{}) : o) });
-    }
-    return { g, lv, bg, z: (zAll[G.k]===undefined ? 0 : zAll[G.k]) };
+    const z = (zAll[G.k]===undefined ? 0 : zAll[G.k]);
+    /* 등급이 같으면 글자까지 같아지던 데를 가릅니다.
+       dx·rd·ac 를 여러 갈래로 적어 두고, 그 자리에서 잰 값으로 한 갈래를 뽑습니다.
+       같은 등급 안의 갈래끼리는 뜻이 같고 짚는 데만 다릅니다.
+       세 등급을 다 풀어 두어, 다른 등급 글을 꺼내 쓰는 데서도 묶음이 새지 않게 합니다. */
+    const 눈 = (()=>{ /* 잰 값에서 고른 정수 — 사람마다 다르고 늘 같습니다 */
+      const a = Math.round((z + 12) * 1000), b = (seed|0) + i * 7919;
+      let h = (a ^ Math.imul(b, 2654435761)) >>> 0;
+      h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
+      return (h ^ (h >>> 16)) >>> 0; })();
+    const 뽑기 = (v, 몇)=> Array.isArray(v) ? (v.length ? v[몇 % v.length] : "") : v;
+    const 덮 = 가린자리.indexOf(G.k) >= 0;
+    const g = Object.assign({}, G, { lv: G.lv.map((o, n)=>{
+      if (!o) return o;
+      const 틀 = n * 5;
+      return Object.assign({}, o, {
+        dx: 뽑기((덮 && o.cdx) ? o.cdx : o.dx, (눈 >>> 틀) >>> 0),
+        rd: 뽑기(o.rd,                          (눈 >>> (틀 + 11)) >>> 0),
+        ac: 뽑기((덮 && o.cac) ? o.cac : o.ac,  (눈 >>> (틀 + 21)) >>> 0)
+      }); }) });
+    return { g, lv, bg, z };
   });
   /* 실제로 가장 환한 자리와 가장 그늘진 자리.
      덮인 자리는 빛이 아니라 모양에서 나온 값이라 "환하다/그늘졌다"고
@@ -387,7 +411,7 @@ function divine(m, age, sex){
 
   /* 기색은 빛을 탑니다. 어둡거나 날아간 사진이면 그 사실을 숨기지 않습니다. */
   const light = (m.meanL < 118) ? "어둠" : (m.meanL > 228 ? "날림" : "");
-  return { seed, hyeong, gisaek, samjeong, gyo, yun, gyeol, gyeolMom, ju, sex, age, pick3, light, 가린자리,
+  return { seed, hyeong, gisaek, samjeong, 삼정잣대, 삼정복판:SAM_BASE.map(v=>v[0]), gyo, yun, gyeol, gyeolMom, ju, sex, age, pick3, light, 가린자리,
            brightest, darkest,
            jari, boss, hitAge, hitYun, blocked, opened, m };
 }

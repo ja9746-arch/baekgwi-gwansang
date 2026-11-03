@@ -53,13 +53,23 @@ function go(id){
   }
   $$(".screen").forEach(s=> s.hidden = (s.id !== id));
   document.documentElement.setAttribute("data-scene", id);
-  window.scrollTo({ top:0, behavior:"instant" });
+  /* 묵은 사파리는 behavior:"instant" 를 모릅니다. 여기서 던지면 아래 줄이
+     한 줄도 안 돌아, 읽기 화면이 막대 0 인 채로 멈춥니다. */
+  try { window.scrollTo({ top:0, behavior:"instant" }); }
+  catch(e){ try { window.scrollTo(0,0); } catch(e2){} }
   const s = $("#"+id);
   if (!s) return;
   /* 화면이 넘어갈 때마다 스미는 결을 다시 틉니다.
      이걸 안 하면 다음 일이 무거울 때(얼굴 읽기 같은) 결이 틔지 못하고
      화면이 투명한 채로 멈춥니다. */
   s.style.animation = "none"; void s.offsetHeight; s.style.animation = "";
+  /* 화면이 통째로 바뀌었는데 초점은 앞 화면 자리에 남습니다. 자판으로 오시는
+     분은 탭을 처음부터 다시 눌러야 하고, 소리로 읽는 분은 바뀐 줄도 모릅니다.
+     새 화면의 제목으로 초점을 옮겨 둡니다. */
+  try{
+    const h = s.querySelector("h1, h2.sect, h2");
+    if (h){ h.setAttribute("tabindex","-1"); h.focus({ preventScroll:true }); }
+  }catch(e){}
   s.dispatchEvent(new CustomEvent("enter"));
 }
 window.addEventListener("popstate", (e)=>{
@@ -78,7 +88,9 @@ window.addEventListener("popstate", (e)=>{
 const breathe = ()=> new Promise(r=> requestAnimationFrame(()=> requestAnimationFrame(()=> setTimeout(r, 30))));
 function toast(msg){
   let t = $("#toast");
-  if(!t){ t = document.createElement("div"); t.id="toast"; t.className="toast"; document.body.appendChild(t); }
+  if(!t){ t = document.createElement("div"); t.id="toast"; t.className="toast";
+          t.setAttribute("role","status"); t.setAttribute("aria-live","polite");
+          document.body.appendChild(t); }
   t.textContent = msg; t.classList.add("on");
   clearTimeout(t._t); t._t = setTimeout(()=> t.classList.remove("on"), 2600);
 }
@@ -91,6 +103,19 @@ function bindSound(){
   const b = $("#snd");
   if (!b || typeof Sound === "undefined") { if(b) b.hidden = true; return; }
   const 적기 = (on)=>{ try{ localStorage.setItem("baekgwi-gwansang-snd", on?"1":"0"); }catch(e){} };
+  /* 적어만 두고 읽는 데가 없어서, 켜 두신 분이 다시 와도 늘 꺼진 채였습니다.
+     다만 손님이 안 만졌는데 먼저 울리면 브라우저가 막습니다 —
+     켤 뜻만 기억해 두었다가 첫 두드림에 틔웁니다. */
+  let 켤뜻 = false;
+  try { 켤뜻 = localStorage.getItem("baekgwi-gwansang-snd") === "1"; } catch(e){}
+  if (켤뜻){
+    b.setAttribute("aria-pressed", "true");
+    b.setAttribute("aria-label", "배경음 끄기");
+    const 틔우기 = ()=>{ try{ if (!Sound.on) Sound.toggle(); }catch(e){}
+      removeEventListener("pointerdown", 틔우기); removeEventListener("keydown", 틔우기); };
+    addEventListener("pointerdown", 틔우기, { once:true });
+    addEventListener("keydown", 틔우기, { once:true });
+  }
   b.addEventListener("click", ()=>{
     const on = Sound.toggle();
     b.setAttribute("aria-pressed", String(!!on));
@@ -212,20 +237,97 @@ function bindAsk(){
   ok.addEventListener("click", ()=> go("s-mirror"));
 }
 
+/* 사진의 가로·세로만 머리글에서 떠 옵니다 — 다 펼치지 않습니다.
+   jpeg·png·webp·gif 를 봅니다. 모르는 꼴이면 null 을 돌려 주고,
+   그때는 줄이지 않고 그대로 펼칩니다. */
+async function 머리글크기(f){
+  try{
+    const buf = new Uint8Array(await f.slice(0, 65536).arrayBuffer());
+    const u16 = (i, le)=> le ? (buf[i] | (buf[i+1] << 8)) : ((buf[i] << 8) | buf[i+1]);
+    const u32 = (i, le)=> le ? (buf[i] | (buf[i+1]<<8) | (buf[i+2]<<16) | (buf[i+3]<<24))
+                             : ((buf[i]<<24) | (buf[i+1]<<16) | (buf[i+2]<<8) | buf[i+3]);
+    /* png */
+    if (buf[0]===0x89 && buf[1]===0x50 && buf[2]===0x4e && buf[3]===0x47)
+      return { w: u32(16, false) >>> 0, h: u32(20, false) >>> 0 };
+    /* gif */
+    if (buf[0]===0x47 && buf[1]===0x49 && buf[2]===0x46)
+      return { w: u16(6, true), h: u16(8, true) };
+    /* webp */
+    if (buf[0]===0x52 && buf[1]===0x49 && buf[2]===0x46 && buf[3]===0x46 &&
+        buf[8]===0x57 && buf[9]===0x45 && buf[10]===0x42 && buf[11]===0x50){
+      const kind = String.fromCharCode(buf[12], buf[13], buf[14], buf[15]);
+      if (kind === "VP8 ") return { w: u16(26, true) & 0x3fff, h: u16(28, true) & 0x3fff };
+      if (kind === "VP8L"){
+        const b = buf[21] | (buf[22]<<8) | (buf[23]<<16) | (buf[24]<<24);
+        return { w: (b & 0x3fff) + 1, h: ((b >>> 14) & 0x3fff) + 1 };
+      }
+      if (kind === "VP8X")
+        return { w: (buf[24] | (buf[25]<<8) | (buf[26]<<16)) + 1,
+                 h: (buf[27] | (buf[28]<<8) | (buf[29]<<16)) + 1 };
+      return null;
+    }
+    /* jpeg — 토막을 건너뛰며 SOF 를 찾습니다 */
+    if (buf[0]===0xff && buf[1]===0xd8){
+      let i = 2;
+      while (i + 9 < buf.length){
+        if (buf[i] !== 0xff){ i++; continue; }
+        const m = buf[i+1];
+        if (m === 0xff){ i++; continue; }
+        if (m === 0xd8 || m === 0x01 || (m >= 0xd0 && m <= 0xd7)){ i += 2; continue; }
+        const len = u16(i+2, false);
+        if (len < 2) return null;
+        if ((m >= 0xc0 && m <= 0xcf) && m !== 0xc4 && m !== 0xc8 && m !== 0xcc)
+          return { w: u16(i+7, false), h: u16(i+5, false) };
+        i += 2 + len;
+      }
+    }
+  }catch(e){}
+  return null;
+}
+
 /* ── 거울 — 얼굴 비추기 ───────────────────────── */
 function bindMirror(){
   const file = $("#file"), shot = $("#shot"), pick = $("#pick");
   const hole = $("#hole"), note = $("#mirror-note");
 
-  const take = (inp)=> inp.addEventListener("change", ()=>{
+  /* 안내는 거울 아래에 있어 전화기에서는 한 쪽 반을 내려야 보입니다.
+     못 연 사진을 고르신 분 눈에는 아무 일도 안 일어난 것으로 보입니다.
+     토스트로도 함께 알려 드립니다. */
+  const 알림 = (t)=>{ note.textContent = t; try{ toast(t); }catch(e){} };
+  const take = (inp)=> inp.addEventListener("change", async ()=>{
     const f = inp.files && inp.files[0];
+    inp.value = "";
     if(!f) return;
+    /* 그림이 아닌 파일(pdf·zip)이나 브라우저가 못 여는 사진(heic)은 먼저 거릅니다 */
+    if (f.type && f.type.indexOf("image/") !== 0){
+      알림("그림 파일이 아닌 것 같습니다. 사진첩에서 사진 한 장을 골라 주세요."); return; }
+    if (f.size > 40 * 1024 * 1024){
+      알림("사진이 너무 큽니다. 조금 작은 사진으로 해 주시겠어요?"); return; }
+    note.textContent = "";
+    /* 억 화소짜리를 그대로 Image 에 물리면 값싼 전화기는 탭이 죽습니다.
+       받을 수 있는 기기에서는 디코드하면서 바로 줄여 받습니다.
+       다만 작은 사진을 억지로 키우면 없던 결이 생겨 기색을 잘못 읽습니다.
+       그래서 머리글만 먼저 떠서 큰 쪽이 1600을 넘을 때만 줄입니다. */
+    try{
+      if (typeof createImageBitmap === "function"){
+        const 자 = await 머리글크기(f);
+        let 옵션 = null;
+        if (자 && 자.w && 자.h && Math.max(자.w, 자.h) > 1600){
+          const k = 1600 / Math.max(자.w, 자.h);
+          옵션 = { resizeWidth: Math.max(1, Math.round(자.w * k)),
+                  resizeHeight: Math.max(1, Math.round(자.h * k)), resizeQuality: "high" };
+        }
+        const bm = 옵션 ? await createImageBitmap(f, 옵션).catch(()=> createImageBitmap(f))
+                        : await createImageBitmap(f);
+        if (bm && bm.width){ ST.img = bm; look(); return; }
+      }
+    }catch(e){}
     const url = URL.createObjectURL(f);
     const img = new Image();
     img.onload = ()=>{ ST.img = img; URL.revokeObjectURL(url); look(); };
-    img.onerror = ()=>{ URL.revokeObjectURL(url); note.textContent = "그림을 열지 못했습니다. 다른 사진으로 해 보시겠어요?"; };
+    img.onerror = ()=>{ URL.revokeObjectURL(url);
+      알림("그림을 열지 못했습니다. 다른 사진으로 해 보시겠어요?"); };
     img.src = url;
-    inp.value = "";
   });
   take(file); take(shot);
   pick.addEventListener("click", ()=> file.click());
@@ -261,8 +363,17 @@ function bindMirror(){
   }
 }
 
+/* 읽는 데 서너 초가 듭니다. 그동안 손님이 뒤로 가거나 사진을 다시 올리면
+   앞 읽기가 그대로 돌아, 물러나 계신 손님을 몇 초 뒤에 끌고 갑니다.
+   더 나쁜 것은 그사이 바뀐 나이로 풀이가 나가는 일입니다.
+   읽기마다 번호를 쥐고, 번호가 바뀌면 그 읽기는 조용히 물러납니다. */
+let 읽기번호 = 0;
+
 /* ── 얼굴을 읽습니다 ──────────────────────────── */
 async function read(){
+  const 내번호 = ++읽기번호;
+  const 나 = ST.age, 성 = ST.sex;          /* 시작할 때 쥔 값으로 끝까지 */
+  const 나간 = ()=> 내번호 !== 읽기번호;
   const bar = $("#readbar"), say = $("#read-say"), cv = $("#readcv");
   const step = (t, p)=>{ say.textContent = t; bar.style.width = p + "%"; };
 
@@ -277,9 +388,10 @@ async function read(){
   const 걸음 = setInterval(()=>{ if(!alive) return; pct = Math.min(30, pct + 1.4); bar.style.width = pct + "%"; }, 700);
 
   let r;
-  try { r = await readFace(ST.img, ST.sex); }
+  try { r = await readFace(ST.img, 성); }
   catch(e){ r = { err:"얼굴을 읽는 기계를 못 깨웠습니다", net:true }; }
   alive = false; clearInterval(걸음); clearTimeout(느림);
+  if (나간()) return;
 
   if (!r.ok){
     /* 못 읽었는데 막대를 100%로 채우면 다 된 것처럼 보입니다. 막대를 걷습니다. */
@@ -307,20 +419,22 @@ async function read(){
 
   step("열두 자리의 빛을 보고 있습니다…", 62);
   await sleep(420);
-  ST.R = divine(r.m, ST.age, ST.sex);
+  if (나간()) return;
+  ST.R = divine(r.m, 나, 성);
   ST.C = readClues(r.F, 궁걸름(ST.R));
 
-  step("백 가지 가운데 자네 얼굴의 것을 고르고 있습니다…", 84);
+  step("백 가지 가운데 손님 얼굴의 것을 고르고 있습니다…", 84);
   await sleep(420);
-  ST.cheop = makeCheop(ST.R, ST.C, ST.age, ST.sex);
+  ST.cheop = makeCheop(ST.R, ST.C, 나, 성);
   /* 지난번에 오셨다면 그때와 견주어 둡니다 */
   try { ST.prev = compareReading(loadReading(), ST.R); } catch(e){ ST.prev = null; }
   saveReading(ST.R);
   /* 사흘 동안은 사진 없이도 이 첩이 그대로 다시 납니다 */
-  try { saveFull(r.F, r.m, ST.age, ST.sex); } catch(e){}
+  try { saveFull(r.F, r.m, 나, 성); } catch(e){}
 
-  step(`자네 얼굴에서 ${ST.C.count} 자리가 섰네.`, 100);
+  step(`손님 얼굴에서 ${셈말(ST.C.count)} 자리가 섰습니다.`, 100);
   await sleep(700);
+  if (나간()) return;
   renderFree();
   go("s-free");
 }
@@ -860,10 +974,21 @@ function bindPay(){
   $("#pay-price").innerHTML =
     (PRICE.list ? `<del>${won(PRICE.list)}</del>` : "") +
     `${won(PRICE.now)}`;
-  /* 값을 단추 안에도 적습니다 — 누르기 전에 한 번 더 찾게 하지 않습니다 */
-  $$("#to-pay-won, #pay-now-won").forEach(e=> e.textContent = won(PRICE.now) + " · 한 번만");
-  $("#pay-now").addEventListener("click", async ()=>{
-    const ok = await openCheckout(PRICE.now);
+  /* 값을 단추 안에도 적습니다 — 누르기 전에 한 번 더 찾게 하지 않습니다.
+     다만 시험 운영 동안에는 실제로 받지 않으니, 값을 적어 두면
+     적힌 것과 실제가 달라집니다. 그때는 시험 운영이라고만 적습니다. */
+  $$("#to-pay-won, #pay-now-won").forEach(e=> e.textContent =
+      DEMO_CHECKOUT ? "시험 운영 · 복채 없이" : (won(PRICE.now) + " · 한 번만"));
+  let 결제중 = false;
+  $("#pay-now").addEventListener("click", async (ev)=>{
+    /* 누름이 줄에 쌓이면 창이 두 번 뜨고, 대행사를 붙인 뒤에는 두 번 긁힙니다 */
+    if (결제중) return;
+    if (ST.paid && ST.R){ renderCheop(); go("s-cheop"); return; }
+    결제중 = true;
+    const 단 = ev.currentTarget; if (단) 단.disabled = true;
+    let ok = false;
+    try { ok = await openCheckout(PRICE.now); }
+    finally { 결제중 = false; if (단) 단.disabled = false; }
     /* 손님이 스스로 무르신 때가 대부분입니다.
        "받지 못했습니다"는 일이 어긋난 것처럼 들려 놀라게 합니다. */
     if (!ok){ toast("복채는 받지 않았습니다. 마음이 서시면 다시 눌러 주세요."); return; }
@@ -1153,6 +1278,16 @@ function bindMisc(){
   $$("[data-go]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));
   { const b = $("#ba-go"); if (b) b.addEventListener("click", 이어보기); }
   try { ST.paid = localStorage.getItem(KEY_PAID) === "1"; } catch(e){}
+  /* 비공개 모드나 저장소를 막아 둔 기기에서는 적어도 조용히 실패합니다.
+     그대로 두면 복채를 내신 분이 새로고침 한 번에 봉인 화면으로 떨어지는데
+     까닭을 한마디도 못 듣습니다. 미리 알려 드립니다. */
+  try{
+    localStorage.setItem("baekgwi-gwansang-test", "1");
+    localStorage.removeItem("baekgwi-gwansang-test");
+  }catch(e){
+    const n = $("#storenote");
+    if (n) n.hidden = false;
+  }
   사업자적기();
   다시오심();
 }

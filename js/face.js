@@ -83,7 +83,10 @@ function loadScript(src){
   });
 }
 
-/* 얼굴 점을 찍는 기계를 한 번만 깨웁니다. */
+/* 얼굴 점을 찍는 기계를 한 번만 깨웁니다.
+   그물이 느리거나 중간에서 막히면 받아 오다 영영 멈춥니다. 아래 읽기에는
+   열두 초 제한이 걸려 있지만 그건 깨운 뒤의 일이라 이 구간을 못 덮습니다.
+   스물다섯 초를 넘기면 끊고, 끊긴 약속은 비워 두어 다음에 다시 받습니다. */
 async function wakeMesh(){
   if (_mesh) return _mesh;
   if (_meshBusy) return _meshBusy;
@@ -116,6 +119,11 @@ async function wakeMesh(){
     _mesh = fm;
     return fm;
   })();
+  /* 스물다섯 초 안에 안 깨어나면 끊습니다 */
+  _meshBusy = Promise.race([
+    _meshBusy,
+    new Promise((_, no)=> setTimeout(()=> no(new Error("얼굴 읽는 눈을 늦게까지 못 받았습니다")), 25000))
+  ]).catch(e=>{ _meshBusy = null; _mesh = null; throw e; });
   return _meshBusy;
 }
 

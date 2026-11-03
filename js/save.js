@@ -342,11 +342,23 @@ function buildText(){
 
 /* ── 간직하기 ───────────────────────────────────── */
 async function saveSheet(btn){
+  try { return await saveSheet_(btn); }
+  catch(e){ toast("그림을 만들지 못했습니다. 화면을 갈무리해 주세요."); }
+}
+async function saveSheet_(btn){
   const cv = buildPoster();
   if (!cv){ toast("아직 읽은 것이 없습니다."); return; }
   /* png 로 구우면 넉 자 가까이 나옵니다. 관상첩에는 사진이 들어 있어
      png 가 득이 없고, 넉 자짜리를 카카오톡으로 올리자면 손님이 한참
      기다리십니다. 같은 그림이 jpeg 로는 반 자가 채 안 됩니다. */
+  /* toBlob 이 없는 묵은 기기에서는 여기서 던져, 단추가 조용히 죽었습니다 */
+  if (typeof cv.toBlob !== "function"){
+    try{
+      const url0 = cv.toDataURL("image/jpeg", 0.92);
+      showSheet(url0, "백귀관상.jpg");
+      return;
+    }catch(e){ toast("그림을 만들지 못했습니다. 화면을 갈무리해 주세요."); return; }
+  }
   let blob = await new Promise(r=> cv.toBlob(r, "image/jpeg", 0.92));
   let 끝이름 = "jpg", 결 = "image/jpeg";
   if (!blob){   /* 혹 jpeg 를 못 굽는 기기면 png 로 돌아갑니다 */
@@ -381,26 +393,51 @@ async function saveSheet(btn){
   showSheet(url);
 }
 
+/* 관상첩을 띄우는 창 — 손님 손가락이 갇히지 않게 세 가지를 지킵니다.
+   하나, 읽어 주는 기계가 "창"이라고 알아듣게 role·aria 를 붙입니다.
+   둘, 글쇠 esc 로 닫힙니다.
+   셋, 열 때 닫기 단추로 초점을 옮기고, 닫을 때 눌렀던 데로 돌려 줍니다. */
+let _돌아갈데 = null;
+function closeSheet(){
+  const box = $("#sheetbox"); if (!box || box.hidden) return;
+  box.hidden = true;
+  document.documentElement.style.overflow = "";
+  const img = box.querySelector("img");
+  /* 다 쓴 blob 은 놓아 줍니다 — 안 놓으면 사진 한 장씩 메모리에 쌓입니다 */
+  try{ if (img && img.src && img.src.indexOf("blob:") === 0) URL.revokeObjectURL(img.src); }catch(e){}
+  try{ if (_돌아갈데 && _돌아갈데.focus) _돌아갈데.focus(); }catch(e){}
+  _돌아갈데 = null;
+}
 function showSheet(url){
   let box = $("#sheetbox");
   if (!box){
     box = document.createElement("div");
     box.id = "sheetbox"; box.className = "sheetbox";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", "관상첩 그림");
     box.innerHTML = `<div class="sbbar">
-      <p class="sbsay">관상첩을 <b>길게 눌러</b> 사진첩에 저장하시게나.</p>
+      <p class="sbsay">관상첩을 <b>길게 눌러</b> 사진첩에 저장해 주세요.</p>
       <button class="sbx" type="button" data-sbclose aria-label="닫기">\u2715</button>
     </div>
     <div class="sbin"><img alt="백귀관상 관상첩"></div>`;
     document.body.appendChild(box);
     box.addEventListener("click", (e)=>{
-      if (e.target === box || e.target.closest("[data-sbclose]")){
-        box.hidden = true; document.documentElement.style.overflow = "";
-      }
+      if (e.target === box || e.target.closest("[data-sbclose]")) closeSheet();
+    });
+    /* 창 안에서만 초점이 돌게 묶어 둡니다 — 단추가 하나라 그 하나에 머뭅니다 */
+    box.addEventListener("keydown", (e)=>{
+      if (e.key === "Escape"){ e.preventDefault(); closeSheet(); return; }
+      if (e.key === "Tab"){ e.preventDefault();
+        const x = box.querySelector(".sbx"); if (x) x.focus(); }
     });
   }
+  _돌아갈데 = (document.activeElement && document.activeElement !== document.body)
+              ? document.activeElement : null;
   box.querySelector("img").src = url;
   box.hidden = false; box.scrollTop = 0;
   document.documentElement.style.overflow = "hidden";
+  const x = box.querySelector(".sbx"); if (x) { try{ x.focus(); }catch(e){} }
 }
 
 async function copySheet(){
@@ -414,10 +451,17 @@ async function copySheet(){
   /* clipboard 를 막아 둔 창에서는 옛 방법으로 */
   try{
     const ta = document.createElement("textarea");
-    ta.value = t; ta.style.position="fixed"; ta.style.opacity="0";
-    document.body.appendChild(ta); ta.select();
-    document.execCommand("copy"); ta.remove();
-    toast("관상첩을 글로 베꼈습니다.");
+    ta.value = t; ta.readOnly = true;
+    ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { ta.setSelectionRange(0, t.length); } catch(e){}
+    /* execCommand 는 실패해도 던지지 않고 false 를 돌려줍니다.
+       그 값을 안 보고 "베꼈습니다"를 띄우고 있었습니다 — 아이폰에서 흔합니다. */
+    const 됐나 = document.execCommand("copy");
+    ta.remove();
+    if (됐나) toast("관상첩을 글로 베꼈습니다.");
+    else toast("베끼지 못했습니다. 그림으로 받아 두시겠어요?");
   }catch(e){ toast("베끼지 못했습니다. 화면을 갈무리해 주세요."); }
 }
 

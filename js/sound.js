@@ -77,6 +77,9 @@ const Sound = (function(){
     clearInterval(timer); clearInterval(beat);
     try{ bus.gain.cancelScheduledValues(ctx.currentTime);
          bus.gain.linearRampToValueAtTime(0, ctx.currentTime+0.8); }catch(e){}
+    /* 소리를 줄이기만 하면 울림통은 계속 돕니다. 전화기에서는 그것만으로도
+       배터리가 답니다. 다 줄어든 뒤에 울림통을 재웁니다 — 다시 켜면 깹니다. */
+    setTimeout(()=>{ try{ if(!on && ctx && ctx.state === "running") ctx.suspend(); }catch(e){} }, 1000);
   }
   return {
     toggle(){ if(on){ stop(); return false; } return start(); },

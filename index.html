@@ -19,10 +19,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" href="img/seer/face-pray.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -429,6 +429,8 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
 /* 올해 걸리는 자리 패 */
 .yunpae{display:flex;align-items:stretch;gap:12px;margin-top:14px;padding:13px 14px;
   border:1px solid rgba(201,162,74,.26);background-color:rgba(8,5,6,.7)}
+/* 가운뎃점으로 이은 말은 쪼개지면 다음 줄이 "·"로 시작합니다 */
+.nb{white-space:nowrap}
 .yunpae .bu{font-family:var(--serif);font-size:var(--fs-h3);color:#f0e2c9;white-space:nowrap;
   display:flex;flex-direction:column;justify-content:center}
 .yunpae .bu small{font-size:var(--fs-label);letter-spacing:.2em;color:var(--geum-dim);margin-bottom:3px}
@@ -487,11 +489,6 @@ input[type=range]:focus-visible{outline:2px solid rgba(232,195,119,.7);outline-o
   font-family:var(--serif);font-size:var(--fs-h2);color:var(--hi);margin-top:var(--s4);
   text-shadow:0 2px 12px rgba(0,0,0,.95);transition:opacity .3s}
 /* 양옆에 가는 금선을 둘러 한 줄짜리 말에 무게를 줍니다 */
-#readOrder{position:relative;margin-top:var(--s5);padding:0 var(--s5)}
-#readOrder::before,#readOrder::after{content:"";position:absolute;top:50%;width:32px;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(214,172,86,.55));}
-#readOrder::before{left:0}
-#readOrder::after{right:0;transform:scaleX(-1)}
 .order b{color:var(--geum-hot);font-weight:400}
 
 /* 마디 안의 꼭지 — 이게 무슨 기능인지 먼저 밝힙니다 */
@@ -1808,15 +1805,16 @@ input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;cur
 /* 바로 위 주석대로 — 무엇이 적혀 있는지는 보이고 글자는 안 잡혀야 합니다.
    언젠가 .veiled 에 filter:none 을 걸어 두는 바람에 봉인된 여덟 장의
    글이 그대로 읽히고 있었습니다. 소제목만 또렷하게 두고 글은 흐립니다. */
-.veiled p,.veiled li{filter:blur(3.4px) saturate(.85) contrast(.92);opacity:.8}
+.veiled p,.veiled li{filter:blur(4.6px) saturate(.85) contrast(.92);opacity:.78}
 /* 소제목은 또렷하게 — 무슨 얘긴지는 보여야 합니다 */
 .veiled h4{color:#e6c478;filter:none;opacity:1;margin-top:20px;
   font-size:var(--fs-h3);letter-spacing:.01em;
   text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .veiled h4:first-child{margin-top:0}
 .veiled h4::before{display:none}
-/* 본문만 흐립니다 */
-.veiled p,.veiled .jari{filter:blur(4.6px);opacity:.72;user-select:none}
+/* 본문만 흐립니다 — 위 한 줄과 같은 세기로 둡니다. 전에는 p 는 4.6,
+   li 는 3.4 로 갈려 있어서 목록 글자만 읽혔습니다. */
+.veiled p,.veiled li,.veiled .jari{filter:blur(4.6px);opacity:.72;user-select:none}
 .veiled .jari li b{filter:blur(3px)}
 .veil::after{display:none}
 /* 봉랍 명판 */
@@ -2473,7 +2471,11 @@ body{letter-spacing:-.004em}
   font-size:var(--fs-label);line-height:1.72;color:#b7a894;word-break:keep-all;text-align:left}
 .prenote b{color:#e8d4ad;font-weight:700}
 .prenote .flink.inline{display:inline;padding:0;min-height:0;font-size:inherit;letter-spacing:0;
-  color:#d9bd83;text-decoration:underline;vertical-align:baseline}
+  color:#d9bd83;text-decoration:underline;vertical-align:baseline;position:relative}
+/* 글 안에 든 고리라 글자 높이(24px)밖에 안 됩니다. 손가락은 그보다 큽니다.
+   글줄은 그대로 두고, 눌리는 자리만 위아래로 넓혀 둡니다. */
+.prenote .flink.inline::after{content:"";position:absolute;left:-6px;right:-6px;
+  top:50%;height:44px;transform:translateY(-50%)}
 
 /* 사진을 건네는 순간이 가장 망설여지는 자리입니다. 거기서 한 번 더 말씀드립니다 */
 .safenote{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;padding:12px 14px;
@@ -2633,7 +2635,7 @@ body{letter-spacing:-.004em}
 <!-- ── 관상소 입장 ─────────────────────────────── -->
 <section id="s-intro" class="screen">
   <div class="kv tall">
-    <img src="img/seer/face-pray.webp" alt="" loading="eager">
+    <img src="img/seer/face-pray.webp" alt="" loading="eager" fetchpriority="high" width="880" height="880">
     <div class="kvveil"></div>
     <div class="kvtext on">
       <h1 class="logo"><img src="img/title.webp" alt="백귀관상"></h1>
@@ -2649,7 +2651,7 @@ body{letter-spacing:-.004em}
   </div>
 
   <button class="btn hot" id="go-ask">원안법사에게 얼굴 보이기 <span class="ar">→</span></button>
-  <p class="playnote">재미로 보는 오락 서비스입니다 — 의료·법률·재무 판단의 근거로 삼지 마세요.</p>
+  <p class="playnote">재미로 보는 오락 서비스입니다 — <span class="nb">의료·법률·재무</span> 판단의 근거로 삼지 마세요.</p>
 
   <ul class="vow2">
     <li><i class="v-free">무료</i><b>앞의 두 장은 복채 없이</b><span>읽어 보시고 정하시면 됩니다</span></li>
@@ -2782,14 +2784,14 @@ body{letter-spacing:-.004em}
     <button class="btn hot" id="pick">사진첩에서 고르기 <span class="ar">→</span></button>
     <button class="btn ghost" id="snap">지금 찍기</button>
   </div>
-  <input id="file" type="file" accept="image/*" hidden>
-  <input id="shot" type="file" accept="image/*" capture="user" hidden>
+  <input id="file" type="file" accept="image/*" aria-label="사진첩에서 얼굴 사진 고르기" hidden>
+  <input id="shot" type="file" accept="image/*" capture="user" aria-label="지금 얼굴 사진 찍기" hidden>
 
   <p class="safenote"><i aria-hidden="true">🔒</i><span><b>사진은 이 기기 안에서만 읽습니다.</b>
     서버로 보내지 않고, 사진 자체는 어디에도 저장하지 않습니다.
     기기에 남는 것은 얼굴에서 잰 수치뿐이고, 그 수치도 사흘 뒤 저절로 지워집니다.</span></p>
 
-  <p class="hint" id="mirror-note"></p>
+  <p class="hint" id="mirror-note" role="status" aria-live="polite"></p>
 
   <div class="shotbox">
   <ul class="shots">
@@ -2832,15 +2834,15 @@ body{letter-spacing:-.004em}
   </div>
   </div>
   <div class="gbar"><i id="readbar"></i></div>
-  <p class="hint" id="read-say">얼굴의 기운을 살피는 중입니다…</p>
-  <p class="hint" id="read-tip"></p>
+  <p class="hint" id="read-say" role="status" aria-live="polite">얼굴의 기운을 살피는 중입니다…</p>
+  <p class="hint" id="read-tip" role="status" aria-live="polite"></p>
   <p class="hint small" id="read-word"></p>
   <button class="btn ghost" id="read-again" hidden>다시 비추기</button>
 </section>
 
 <!-- ── 무료로 보여 드리는 것 ───────────────────── -->
 <section id="s-free" class="screen" hidden>
-  <div class="band"><img src="img/ui/band-read.webp" alt="" loading="eager"><i></i></div>
+  <div class="band"><img src="img/ui/band-read.webp" alt="" loading="lazy"><i></i></div>
   <p class="eyebrow">원안법사가 읽은 것</p>
   <h2 class="sect">자네 얼굴에서 <b id="free-count">—</b> 자리가 섰네.</h2>
   <p class="sectsub" id="free-head"></p>
@@ -2907,10 +2909,13 @@ body{letter-spacing:-.004em}
         다른 기기로 오시면 다시 내셔야 합니다</div>
     </div>
   </div>
+  <p class="demonote" id="storenote" hidden>이 기기는 브라우저 저장소가 막혀 있습니다.
+    <b>창을 닫으면 열람 기록이 남지 않습니다.</b> 비공개 모드를 끄시거나, 다 읽으신 뒤
+    그림으로 받아 두시는 편이 안전합니다.</p>
   <p class="prenote">복채를 내시면 바로 열람이 시작됩니다. <b>이미 열어 보신 첩은 그 부분에 한해 청약철회가 제한됩니다.</b>
     아직 열지 않으셨다면 결제일로부터 이레 안에 고객센터로 알려 주시면 전액 돌려드립니다.
     아래를 누르시면 이 안내와 <button type="button" class="flink inline" data-go="s-legal">이용약관</button>에 동의하신 것으로 봅니다.
-    재미로 보는 오락 서비스이며, 의료·법률·재무 판단의 근거가 아닙니다.</p>
+    재미로 보는 오락 서비스이며, <span class="nb">의료·법률·재무</span> 판단의 근거가 아닙니다.</p>
   <button class="btn hot two" id="pay-now">
     <b>복채 내고 모두 열기 <span class="ar">→</span></b>
     <span class="won" id="pay-now-won"></span></button>
@@ -2979,11 +2984,11 @@ body{letter-spacing:-.004em}
 
   <h3>제1조 (서비스의 성격)</h3>
   <p>백귀관상은 올리신 얼굴 사진에서 잰 수치로 관상 해석을 보여 주는 <b>오락 서비스</b>입니다.
-    해석 내용은 의료·법률·재무상의 조언이 아니며, 이를 근거로 한 판단과 그 결과의 책임은 이용자에게 있습니다.
+    해석 내용은 <span class="nb">의료·법률·재무</span>상의 조언이 아니며, 이를 근거로 한 판단과 그 결과의 책임은 이용자에게 있습니다.
     사람의 운명이나 장래를 보증하지 않습니다.</p>
 
   <h3>제2조 (이용 자격)</h3>
-  <p>만 14세 미만은 이용하실 수 없습니다. 미성년자가 법정대리인의 동의 없이 결제한 경우,
+  <p>만 15세 미만은 이용하실 수 없습니다(나이를 적는 칸이 열다섯부터 열립니다). 미성년자가 법정대리인의 동의 없이 결제한 경우,
     본인 또는 법정대리인이 그 결제를 취소하실 수 있습니다.</p>
 
   <h3>제3조 (요금과 열람 범위)</h3>
@@ -3038,8 +3043,8 @@ body{letter-spacing:-.004em}
   <p>저장된 것이 손님 기기 안에만 있으므로, 브라우저 저장소를 비우시면 언제든 손수 지우실 수 있습니다.
     그 밖에 열람·정정·삭제·처리정지를 원하시면 아래로 알려 주십시오.</p>
 
-  <h3>만 14세 미만</h3>
-  <p>만 14세 미만 아동은 이용하실 수 없으며, 그 정보를 받지 않습니다.</p>
+  <h3>만 15세 미만</h3>
+  <p>만 15세 미만은 이용하실 수 없으며, 그 정보를 받지 않습니다. 나이를 적는 칸 자체가 열다섯부터 열립니다.</p>
 
   <h3>개인정보 보호책임자</h3>
   <p id="privacy-owner">—</p>
@@ -3061,15 +3066,15 @@ body{letter-spacing:-.004em}
 </div>
 
 </div>
-<script src="js/baekgwi.js?v=20261103c"></script>
-<script src="js/gungsang.js?v=20261103c"></script>
-<script src="js/face.js?v=20261103c"></script>
-<script src="js/measure.js?v=20261103c"></script>
-<script src="js/clues.js?v=20261103c"></script>
-<script src="js/engine.js?v=20261103c"></script>
-<script src="js/cheop.js?v=20261103c"></script>
-<script src="js/sound.js?v=20261103c"></script>
-<script src="js/save.js?v=20261103c"></script>
-<script src="js/ui.js?v=20261103c"></script>
+<script defer src="js/baekgwi.js?v=20261103d"></script>
+<script defer src="js/gungsang.js?v=20261103d"></script>
+<script defer src="js/face.js?v=20261103d"></script>
+<script defer src="js/measure.js?v=20261103d"></script>
+<script defer src="js/clues.js?v=20261103d"></script>
+<script defer src="js/engine.js?v=20261103d"></script>
+<script defer src="js/cheop.js?v=20261103d"></script>
+<script defer src="js/sound.js?v=20261103d"></script>
+<script defer src="js/save.js?v=20261103d"></script>
+<script defer src="js/ui.js?v=20261103d"></script>
 </body>
 </html>
